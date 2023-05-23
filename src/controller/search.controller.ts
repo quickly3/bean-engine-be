@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { SearchService } from '../service/search.service';
 
 @Controller('search')
@@ -8,5 +8,45 @@ export class SearchController {
   @Post('getAll')
   async getAll(@Body() payload) {
     return this.searchService.getAll(payload);
+  }
+
+  @Get('getTags')
+  async getTags(@Query() params) {
+    return this.searchService.getTags(params);
+  }
+
+  @Get('getCategories')
+  async getCategories(@Query() params) {
+    return this.searchService.getCategories(params);
+  }
+
+  @Get('autoComplete')
+  async autoComplete(@Query() params) {
+    return this.searchService.autoComplete(params);
+  }
+
+  @Post('getArticleHistogram')
+  async getArticleHistogram(@Body() payload) {
+    return this.searchService.getArticleHistogram(payload);
+  }
+
+  @Post('getWordsCloudByQueryBuilder')
+  async getWordsCloudByQueryBuilder(@Body() payload) {
+    return this.searchService.getWordsCloud(payload);
+  }
+
+  @Post('getAuthorTermsAgg')
+  async getAuthorTermsAgg(@Body() payload) {
+    return this.searchService.getAuthorTermsAgg(payload);
+  }
+
+  @Post('getTagsTermsAgg')
+  async getTagsTermsAgg(@Body() payload) {
+    return this.searchService.getTagsTermsAgg(payload);
+  }
+
+  @Post('getCatesTermsAgg')
+  async getCatesTermsAgg(@Query() params) {
+    return this.searchService.getCatesTermsAgg(params);
   }
 }

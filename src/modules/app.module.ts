@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from 'src/config';
 import { SearchService } from 'src/service/search.service';
 import { SearchController } from 'src/controller/search.controller';
+import { AuthorController } from 'src/controller/author.controller';
+import { AuthorService } from 'src/service/author.service';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { SearchController } from 'src/controller/search.controller';
       }),
     }),
   ],
-  controllers: [AppController, SearchController],
-  providers: [AppService, SearchService],
+  controllers: [AppController, SearchController, AuthorController],
+  providers: [AppService, SearchService, AuthorService],
 })
 export class AppModule {}

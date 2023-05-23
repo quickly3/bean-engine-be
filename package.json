@@ -27,6 +27,7 @@
     "@nestjs/elasticsearch": "^9.0.0",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
+    "helmet": "^7.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "reflect-metadata": "^0.1.13",

@@ -87,3 +87,24 @@ export const parseQueryString = (payload) => {
 
   return query;
 };
+
+export const parseAuthorQueryString = (payload) => {
+  const keywords = _.get(payload, 'keywords', '*');
+  const source = _.get(payload, 'source', 'all');
+
+  let query_string = '*:*';
+  if (keywords.trim() !== '') {
+    query_string = `user_name:\"${keywords}\" || user_name:*${keywords}* `;
+  }
+
+  if (source !== 'all') {
+    query_string += ` && source:${source} `;
+  }
+
+  const query = {
+    query_string: {
+      query: query_string,
+    },
+  };
+  return query;
+};
