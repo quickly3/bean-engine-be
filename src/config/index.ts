@@ -7,6 +7,7 @@ export default () => {
     debug: process.env.DEBUG === 'true',
     env: nodeEnv,
     nodeEnv,
+    feUrl: process.env.FE_URL,
     port: parseInt(process.env.PORT, 10) || 3001,
     es: {
       node: process.env.ES_HOST,
