@@ -8,6 +8,10 @@ import { SearchService } from 'src/service/search.service';
 import { SearchController } from 'src/controller/search.controller';
 import { AuthorController } from 'src/controller/author.controller';
 import { AuthorService } from 'src/service/author.service';
+import { ArticleService } from 'src/service/article.service';
+import { ArticleController } from 'src/controller/article.controller';
+import { GraphController } from 'src/controller/graph.controller';
+import { GraphService } from 'src/service/graph.service';
 
 @Module({
   imports: [
@@ -23,7 +27,19 @@ import { AuthorService } from 'src/service/author.service';
       }),
     }),
   ],
-  controllers: [AppController, SearchController, AuthorController],
-  providers: [AppService, SearchService, AuthorService],
+  controllers: [
+    AppController,
+    SearchController,
+    AuthorController,
+    ArticleController,
+    GraphController,
+  ],
+  providers: [
+    AppService,
+    SearchService,
+    AuthorService,
+    ArticleService,
+    GraphService,
+  ],
 })
 export class AppModule {}

@@ -218,20 +218,25 @@ export class EsQueryBuilder {
     };
   };
 
-  getFieldAggByQueryBuilder = async (field, size) => {
+  getFieldAggByQueryBuilder = async (field, size = 0) => {
     const agg_name = `${field}_terms`;
     const aggs: any = {};
     aggs[agg_name] = {
       terms: {
         field,
-        size: size,
       },
     };
+
+    if (size !== 0) {
+      aggs[agg_name].terms.size = size;
+    }
+
     const body = {
       query: this.query,
       aggs,
       size: 0,
     };
+    console.log(body);
     this.setQueryBody(body);
 
     const resp = await this.aggs();

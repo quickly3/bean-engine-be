@@ -49,4 +49,10 @@ export class SearchController {
   async getCatesTermsAgg(@Query() params) {
     return this.searchService.getCatesTermsAgg(params);
   }
+
+  @Get('getWordsCloud')
+  async getWordsCloud(@Query() params) {
+    const resp = await this.searchService.getWordsCloud(params);
+    return resp.data;
+  }
 }

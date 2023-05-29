@@ -5,6 +5,7 @@ import { ES_INDEX } from 'src/enum/enum';
 import { EsQueryBuilder } from 'src/utils/EsQueryBuilder';
 import { parseQueryString } from './utils';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
+import * as moment from 'moment';
 
 @Injectable()
 export class SearchService {
@@ -274,5 +275,116 @@ export class SearchService {
       data: categories,
       query_string: query.query_string,
     };
+  }
+
+  async dailyMd() {
+    const yesterday = moment().add('-1', 'days').format('YYYY-MM-DD');
+    const today = moment().format('YYYY-MM-DD');
+
+    const escn = await this.getLastDayArticleByQuery('source:escn');
+    const juejin = await this.getLastDayArticleByQuery(
+      'source:juejin && tag:news',
+    );
+    const infoq = await this.getLastDayArticleByQuery('source:infoq');
+    const oschina = await this.getLastDayArticleByQuery(
+      'source:oschina && tag:news',
+    );
+    const cnblogs = await this.getLastDayArticleByQuery(
+      'source:cnblogs && tag:news',
+    );
+    const krs = await this.getLastDayArticleByQuery('source:36kr', 50);
+
+    const escn0 = _.get(escn, '[0].summary', '');
+    const escn_title = escn0.replace(`(${yesterday})`, '');
+    const resp = {
+      title: `换联网摸鱼日报(${today})`,
+      data: [
+        { title: 'InfoQ 热门话题', data: infoq },
+        { title: '博客园新闻', data: cnblogs },
+        { title: '36氪新闻', data: krs },
+        { title: '开源中国资讯', data: oschina },
+        { title: '掘金资讯', data: juejin },
+        { title: escn_title, data: escn },
+      ],
+    };
+
+    return resp;
+  }
+
+  async dailyKr() {
+    const today = moment().format('YYYY-MM-DD');
+
+    const krs = await this.getLastDayArticleByQuery('source:36kr', 50);
+
+    const resp = {
+      title: `36Kr新闻(${today})`,
+      data: [{ title: '36Kr新闻', data: krs }],
+    };
+
+    return resp;
+  }
+
+  async getLastDayArticleByQuery(query_string, size = 20) {
+    const queryBuilder = new EsQueryBuilder(
+      ES_INDEX.ARTICLE,
+      this.elasticsearchService,
+    );
+
+    const lastDay = moment().add('-1', 'days').format('YYYY-MM-DD');
+    const body = {
+      query: {
+        query_string: {
+          query: `${query_string} && created_at:${lastDay}`,
+        },
+      },
+      size: size,
+      sort: [
+        {
+          created_at: {
+            order: 'desc',
+          },
+        },
+      ],
+    };
+
+    queryBuilder.setQueryBody(body);
+    const resp = await queryBuilder.search();
+    return resp.data;
+  }
+
+  async dailyGitHub(params) {
+    const tags = [];
+    const { since, lan, spl } = params;
+
+    if (since) {
+      tags.push(since);
+    }
+
+    if (lan) {
+      tags.push(lan);
+    }
+
+    if (spl) {
+      tags.push(spl);
+    }
+
+    let query_string = 'source:github';
+    if (tags.length > 0) {
+      const tags_string = tags.join(' && ');
+      query_string += ` && tag:(${tags_string})`;
+    }
+
+    const github = await this.getLastDayArticleByQuery(query_string, 25);
+    const yesterday = moment().add('-1', 'days').format('YYYY-MM-DD');
+    const resp = {
+      title: `GitHub Trending（${yesterday}`,
+      data: [
+        {
+          title: 'GitHub Trending',
+          data: github,
+        },
+      ],
+    };
+    return resp;
   }
 }
