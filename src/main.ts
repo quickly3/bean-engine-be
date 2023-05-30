@@ -15,8 +15,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  const feUrl = configService.get('FE_URL');
-
+  const feUrl = configService.get('FE_URL').split(',');
   app.enableCors({
     origin: feUrl,
   });

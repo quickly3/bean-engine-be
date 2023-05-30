@@ -3,11 +3,13 @@ dotenv.config();
 
 export default () => {
   const nodeEnv: string = process.env.NODE_ENV || 'local';
+
+  const feUrl = process.env.FE_URL;
   return {
     debug: process.env.DEBUG === 'true',
     env: nodeEnv,
     nodeEnv,
-    feUrl: process.env.FE_URL.split(','),
+    feUrl: feUrl,
     port: parseInt(process.env.PORT, 10) || 3001,
     es: {
       node: process.env.ES_HOST,
