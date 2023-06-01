@@ -14,6 +14,8 @@ export class EsQueryBuilder {
   };
   query;
   resp: any;
+  size: 20;
+  from: 0;
   client: ElasticsearchService;
 
   constructor(index, client) {
@@ -33,6 +35,16 @@ export class EsQueryBuilder {
   setHighlight = (highlight) => {
     this.highlight = highlight;
     this.body.highlight = highlight;
+  };
+
+  setSize = (size) => {
+    this.size = size;
+    this.body.size = size;
+  };
+
+  setFrom = (from) => {
+    this.from = from;
+    this.body.from = from;
   };
 
   setOrderBy = (orderBy) => {
@@ -90,9 +102,9 @@ export class EsQueryBuilder {
     const total: number = _.get(this.resp, 'body.hits.total.value', 0);
     const query_string = _.get(this.query, 'query_string');
     const current_page = _.get(this.paginate, 'page', 1);
-    const from = (this.paginate.page - 1) * this.paginate.size;
+    const from = this.from;
     const last_page = total / this.paginate.size;
-    const to = from + this.paginate.size;
+    const to = from + this.size;
     const took = _.get(this.resp, 'body.took');
     const data = this.getIdRes();
 

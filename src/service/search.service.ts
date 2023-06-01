@@ -16,9 +16,16 @@ export class SearchService {
       this.elasticsearchService,
     );
     const query = parseQueryString(payload);
+
     queryBuilder.setQuery(query);
 
-    const { search_type, sortBy } = payload;
+    const { search_type, sortBy, page, size = 20 } = payload;
+
+    const from = (page - 1) * size;
+
+    queryBuilder.setSize(size);
+    queryBuilder.setFrom(from);
+
     if (search_type == 'simple') {
       queryBuilder.setSource(['title']);
     } else {
@@ -297,7 +304,7 @@ export class SearchService {
     const escn0 = _.get(escn, '[0].summary', '');
     const escn_title = escn0.replace(`(${yesterday})`, '');
     const resp = {
-      title: `换联网摸鱼日报(${today})`,
+      title: `互联网摸鱼日报(${today})`,
       data: [
         { title: 'InfoQ 热门话题', data: infoq },
         { title: '博客园新闻', data: cnblogs },
