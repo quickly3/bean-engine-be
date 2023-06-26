@@ -12,6 +12,10 @@ import { ArticleService } from 'src/service/article.service';
 import { ArticleController } from 'src/controller/article.controller';
 import { GraphController } from 'src/controller/graph.controller';
 import { GraphService } from 'src/service/graph.service';
+import { CommandModule } from 'nestjs-command';
+import { EsCommand } from 'src/commands/es.command';
+import { SyncService } from 'src/service/sync.sevice';
+import { EsService } from 'src/service/es.service';
 
 @Module({
   imports: [
@@ -20,7 +24,7 @@ import { GraphService } from 'src/service/graph.service';
       load: [configuration],
     }),
     ElasticsearchModule.registerAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, CommandModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         ...configService.get('es'),
@@ -40,6 +44,9 @@ import { GraphService } from 'src/service/graph.service';
     AuthorService,
     ArticleService,
     GraphService,
+    EsCommand,
+    SyncService,
+    EsService,
   ],
 })
 export class AppModule {}
