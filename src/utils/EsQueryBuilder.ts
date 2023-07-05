@@ -14,8 +14,12 @@ export class EsQueryBuilder {
   };
   query;
   resp: any;
-  size: 20;
-  from: 0;
+  size = 20;
+  from = 0;
+  to = 0;
+  total = 0;
+  scroll;
+  scroll_id;
   client: ElasticsearchService;
 
   constructor(index, client) {
@@ -30,6 +34,7 @@ export class EsQueryBuilder {
 
   setSource = (source: string[]) => {
     this.source = source;
+    this.body._source = this.source;
   };
 
   setHighlight = (highlight) => {
@@ -50,6 +55,10 @@ export class EsQueryBuilder {
   setOrderBy = (orderBy) => {
     this.orderBy = orderBy;
     this.body.sort = orderBy;
+  };
+
+  setScroll = (scroll) => {
+    this.scroll = scroll;
   };
 
   setPaginate = (paginate) => {
@@ -94,19 +103,39 @@ export class EsQueryBuilder {
   };
 
   search = async () => {
-    this.resp = await this.client.search({
+    const searchParams: any = {
       index: this.index,
       body: this.body,
-    });
+    };
 
+    if (this.scroll) {
+      searchParams.scroll = this.scroll;
+    }
+
+    this.resp = await this.client.search(searchParams);
+    return this.searchRespParser();
+  };
+
+  searchRespParser = () => {
     const total: number = _.get(this.resp, 'body.hits.total.value', 0);
     const query_string = _.get(this.query, 'query_string');
     const current_page = _.get(this.paginate, 'page', 1);
-    const from = this.from;
     const last_page = total / this.paginate.size;
-    const to = from + this.size;
     const took = _.get(this.resp, 'body.took');
     const data = this.getIdRes();
+    const scroll_id = _.get(this.resp, 'body._scroll_id');
+
+    const from = this.from || 0;
+    const to = from + _.min([this.size, data.length]);
+    this.to = to;
+    this.total = total;
+
+    if (scroll_id) {
+      this.scroll_id = scroll_id;
+    }
+    if (this.to >= this.total || data.length === 0) {
+      this.scroll_id = undefined;
+    }
 
     const searchResp = {
       total,
@@ -118,8 +147,19 @@ export class EsQueryBuilder {
       per_page: this.paginate.size,
       took,
       data,
+      scroll_id: this.scroll_id,
     };
     return searchResp;
+  };
+
+  scrollSerch = async () => {
+    this.from = this.to;
+    this.resp = await this.client.scroll({
+      scroll_id: this.scroll_id,
+      scroll: '1m',
+    });
+
+    return this.searchRespParser();
   };
 
   rawSearch = async () => {
@@ -248,7 +288,6 @@ export class EsQueryBuilder {
       aggs,
       size: 0,
     };
-    console.log(body);
     this.setQueryBody(body);
 
     const resp = await this.aggs();

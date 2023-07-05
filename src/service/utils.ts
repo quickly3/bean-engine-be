@@ -108,3 +108,7 @@ export const parseAuthorQueryString = (payload) => {
   };
   return query;
 };
+
+export const jsonToNeoString = (object) => {
+  return JSON.stringify(object).replace(/"([^"]+)":/g, '$1:');
+};

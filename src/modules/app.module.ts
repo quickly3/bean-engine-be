@@ -16,19 +16,38 @@ import { CommandModule } from 'nestjs-command';
 import { EsCommand } from 'src/commands/es.command';
 import { SyncService } from 'src/service/sync.sevice';
 import { EsService } from 'src/service/es.service';
+import { JuejinNeoService } from 'src/service/juejinNeo.service';
+import { Neo4jModule } from 'nest-neo4j';
 
 @Module({
   imports: [
+    CommandModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
     }),
     ElasticsearchModule.registerAsync({
-      imports: [ConfigModule, CommandModule],
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         ...configService.get('es'),
       }),
+    }),
+    // Neo4jModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => ({
+    //     ...configService.get('neo4j'),
+    //   }),
+    // }),
+
+    Neo4jModule.forRoot({
+      scheme: 'neo4j',
+      host: 'localhost',
+      port: 7687,
+      database: 'neo4j',
+      username: 'neo4j',
+      password: 'Bean.123',
     }),
   ],
   controllers: [
@@ -47,6 +66,7 @@ import { EsService } from 'src/service/es.service';
     EsCommand,
     SyncService,
     EsService,
+    JuejinNeoService,
   ],
 })
 export class AppModule {}

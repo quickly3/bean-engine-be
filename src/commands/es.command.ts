@@ -1,10 +1,11 @@
 import { Command, Positional, Option } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
-import { EsService } from 'src/service/es.service';
+import { JuejinNeoService } from 'src/service/juejinNeo.service';
 
 @Injectable()
 export class EsCommand {
-  constructor(private esService: EsService) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  constructor(private juejinNeoService: JuejinNeoService) {}
   @Command({
     command: 'sync:neo4j <source>',
     describe: 'create a user',
@@ -17,7 +18,6 @@ export class EsCommand {
     })
     source: string,
   ) {
-    const resp = await this.esService.getHello();
-    console.log(resp);
+    await this.juejinNeoService.syncJuejin();
   }
 }
