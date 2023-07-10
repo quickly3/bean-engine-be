@@ -12,8 +12,6 @@ export class JuejinNeoService {
   async syncJuejin() {
     const neoQueryBuilder = new NeoQueryBuilder(this.neo4jService);
 
-    // await neoQueryBuilder.truncateDB('juejin');
-
     // console.log('Truncate neo4j');
     // await neoQueryBuilder.truncate();
     // console.log('Drop all constraints');
@@ -21,8 +19,19 @@ export class JuejinNeoService {
     // console.log('Import company data');
     // await this.esService.syncCompany();
 
-    console.log('Import author data and build comapny-author relation');
-    await neoQueryBuilder.dropByType('Author');
-    await this.esService.syncAuthors(100);
+    // console.log('Import author data and build comapny-author relation');
+    // await neoQueryBuilder.dropByType('Author');
+    // await this.esService.syncAuthors(1000);
+
+    console.log('Import author data and build author-article relation');
+    await neoQueryBuilder.dropRelationByType('FOLLOWEE');
+    await this.esService.syncFollowee(3000);
+
+    // await this.esService.syncFollowee();
+
+    // await this.esService.syncFollower();
+
+    // await this.esService.syncFolloweTag();
+    // await this.esService.syncArticles();
   }
 }

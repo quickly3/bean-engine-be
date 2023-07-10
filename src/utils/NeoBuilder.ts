@@ -2,6 +2,7 @@ import { Neo4jService } from 'nest-neo4j';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import { jsonToNeoString } from 'src/service/utils';
+import { CreateRelationsParamsDto, CreateRelationsValuesDto } from './neo.dto';
 
 export class NeoQueryBuilder {
   servive: Neo4jService;
@@ -21,20 +22,16 @@ export class NeoQueryBuilder {
     return resp;
   }
 
-  async createByObjets(name, objects) {
-    let cql = '';
-    for (const i in objects) {
-      const object = objects[i];
-      const propertery = JSON.stringify(object).replace(/"([^"]+)":/g, '$1:');
-      cql += `CREATE(o${i}:${name} ${propertery})\n`;
-    }
-    let resp;
+  async createByObjets(name, props) {
+    const cql = `UNWIND $props AS properties
+    CREATE (n:${name})
+    SET n = properties`;
+
     try {
-      resp = await this.servive.write(cql);
+      const resp = await this.servive.write(cql, { props });
     } catch (error) {
       console.error(error);
     }
-    return resp;
   }
 
   async createUniqueKey(type, field) {
@@ -53,10 +50,10 @@ export class NeoQueryBuilder {
     return resp;
   }
 
-  async createRelationsByObjets(r_type, relations) {
-    let cql = '';
-    let match_cql = '';
-    let create_cql = '';
+  async createRelationsByObjets2(r_type, relations) {
+    const cqls = [];
+    // let match_cql = '';
+    // let create_cql = '';
 
     for (const i in relations) {
       const object = relations[i];
@@ -77,18 +74,36 @@ export class NeoQueryBuilder {
         continue;
       }
 
-      match_cql += `MATCH (a${i}:${type_a}),(b${i}:${type_b})
-      WHERE a${i}.${field_a} = "${value_a}" AND b${i}.${field_b} = "${value_b}"\n`;
-      create_cql += `CREATE (a${i})-[r${i}:${r_type}]->(b${i})\n`;
+      cqls.push(`MATCH (a${i}:${type_a}),(b${i}:${type_b})
+      WHERE a${i}.${field_a} = "${value_a}" AND b${i}.${field_b} = "${value_b}"
+      CREATE (a${i})-[r${i}:${r_type}]->(b${i})`);
     }
-    cql = match_cql + create_cql;
-    let resp;
+
+    for (const cql of cqls) {
+      try {
+        const resp = await this.servive.write(cql);
+      } catch (error) {
+        console.log(cql);
+        console.error(error);
+      }
+    }
+  }
+
+  async createRelationsByObjets(
+    p: CreateRelationsParamsDto,
+    values: CreateRelationsValuesDto[],
+  ) {
+    const cql = `UNWIND $values AS v
+    MATCH (a:${p.a_type}),(b:${p.b_type})
+    WHERE a.${p.a_field} = v.a_value AND b.${p.b_field} = v.b_value
+    CREATE (a)-[r:${p.r_type}]->(b)`;
+
     try {
-      resp = await this.servive.write(cql);
+      const resp = await this.servive.write(cql, { values });
     } catch (error) {
+      console.log(cql);
       console.error(error);
     }
-    return resp;
   }
 
   async addUniqueKey(name, field) {
@@ -131,6 +146,17 @@ export class NeoQueryBuilder {
     let resp;
     try {
       resp = await this.servive.write(cql);
+    } catch (error) {
+      console.error(cql);
+      console.error(error);
+    }
+    return resp;
+  }
+
+  async rawQuery(cql, params) {
+    let resp;
+    try {
+      resp = await this.servive.write(cql, params);
     } catch (error) {
       console.error(cql);
       console.error(error);
@@ -195,6 +221,21 @@ export class NeoQueryBuilder {
         delete a, r`,
       `match (n:${type})
        delete n`,
+    ];
+    for (const cql of cqls) {
+      try {
+        await this.servive.write(cql);
+      } catch (error) {
+        console.log(cql);
+        console.error(error);
+      }
+    }
+  }
+
+  async dropRelationByType(type) {
+    const cqls = [
+      `match () -[r:${type}] -> () 
+        delete r`,
     ];
     for (const cql of cqls) {
       try {
