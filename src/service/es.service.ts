@@ -212,7 +212,7 @@ export class EsService {
     }
   }
 
-  async syncFollower() {
+  async syncFollower(size = 100) {
     let current = 0;
     let total = 0;
     const query = {
@@ -228,7 +228,7 @@ export class EsService {
 
     queryBuilder.setQuery(query);
     queryBuilder.setScroll('1m');
-    queryBuilder.setSize(100);
+    queryBuilder.setSize(size);
     queryBuilder.setOrderBy({
       user_id: 'desc',
     });

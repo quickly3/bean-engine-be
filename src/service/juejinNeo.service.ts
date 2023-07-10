@@ -23,13 +23,11 @@ export class JuejinNeoService {
     // await neoQueryBuilder.dropByType('Author');
     // await this.esService.syncAuthors(1000);
 
-    console.log('Import author data and build author-article relation');
-    await neoQueryBuilder.dropRelationByType('FOLLOWEE');
-    await this.esService.syncFollowee(3000);
+    // console.log('Import author data and build author-article relation');
+    // await neoQueryBuilder.dropRelationByType('FOLLOWEE');
+    // await this.esService.syncFollowee(3000);
 
-    // await this.esService.syncFollowee();
-
-    // await this.esService.syncFollower();
+    await this.esService.syncFollower(2000);
 
     // await this.esService.syncFolloweTag();
     // await this.esService.syncArticles();
