@@ -24,7 +24,7 @@ export class NeoQueryBuilder {
 
   async createByObjets(name, props) {
     const cql = `UNWIND $props AS properties
-    CREATE (n:${name})
+    CREATE (n:${name} {})
     SET n = properties`;
 
     try {
@@ -50,53 +50,16 @@ export class NeoQueryBuilder {
     return resp;
   }
 
-  async createRelationsByObjets2(r_type, relations) {
-    const cqls = [];
-    // let match_cql = '';
-    // let create_cql = '';
-
-    for (const i in relations) {
-      const object = relations[i];
-
-      const type_a = object.a.type;
-      const field_a = object.a.field;
-      const value_a = object.a.value;
-
-      const type_b = object.b.type;
-      const field_b = object.b.field;
-      const value_b = object.b.value;
-
-      if (!value_a) {
-        continue;
-      }
-
-      if (!value_b) {
-        continue;
-      }
-
-      cqls.push(`MATCH (a${i}:${type_a}),(b${i}:${type_b})
-      WHERE a${i}.${field_a} = "${value_a}" AND b${i}.${field_b} = "${value_b}"
-      CREATE (a${i})-[r${i}:${r_type}]->(b${i})`);
-    }
-
-    for (const cql of cqls) {
-      try {
-        const resp = await this.servive.write(cql);
-      } catch (error) {
-        console.log(cql);
-        console.error(error);
-      }
-    }
-  }
-
   async createRelationsByObjets(
     p: CreateRelationsParamsDto,
     values: CreateRelationsValuesDto[],
+    unique = true,
   ) {
+    const model = unique ? 'MERGE' : 'CREATE';
     const cql = `UNWIND $values AS v
     MATCH (a:${p.a_type}),(b:${p.b_type})
     WHERE a.${p.a_field} = v.a_value AND b.${p.b_field} = v.b_value
-    CREATE (a)-[r:${p.r_type}]->(b)`;
+    ${model} (a)-[r:${p.r_type}]->(b)`;
 
     try {
       const resp = await this.servive.write(cql, { values });
