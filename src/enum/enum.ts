@@ -3,4 +3,5 @@ export enum ES_INDEX {
   AUTHOR = 'author',
   FOLLOWEE = 'followees',
   FOLLOWER = 'followers',
+  FOLLOW_TAG = 'follow_tags',
 }

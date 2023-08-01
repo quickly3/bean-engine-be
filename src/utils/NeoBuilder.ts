@@ -127,6 +127,31 @@ export class NeoQueryBuilder {
     return resp;
   }
 
+  parseQuery(resp) {
+    if (!resp) {
+      return null;
+    }
+    const parseResp = resp.records.map((r) => {
+      const obj = {};
+      for (const i in r.keys) {
+        obj[r.keys[i]] = r._fields[i];
+      }
+      return obj;
+    });
+    return parseResp;
+  }
+
+  async rawRead(cql, params = undefined) {
+    let resp;
+    try {
+      resp = await this.servive.read(cql, params);
+    } catch (error) {
+      console.error(cql);
+      console.error(error);
+    }
+    return this.parseQuery(resp);
+  }
+
   async dropAllConstraints() {
     const resp = await this.showConstraints();
     for (const constraint of resp) {
@@ -180,7 +205,7 @@ export class NeoQueryBuilder {
 
   async dropByType(type) {
     const cqls = [
-      `match (a:${type}) -[r] -> () 
+      `match (a:${type}) -[r] - () 
         delete a, r`,
       `match (n:${type})
        delete n`,

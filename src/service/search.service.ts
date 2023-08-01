@@ -306,12 +306,12 @@ export class SearchService {
     const resp = {
       title: `互联网摸鱼日报(${today})`,
       data: [
-        { title: 'InfoQ 热门话题', data: infoq },
-        { title: '博客园新闻', data: cnblogs },
         { title: '36氪新闻', data: krs },
+        { title: '博客园新闻', data: cnblogs },
         { title: '开源中国资讯', data: oschina },
         { title: '掘金资讯', data: juejin },
         { title: escn_title, data: escn },
+        { title: 'InfoQ 热门话题', data: infoq },
       ],
     };
 

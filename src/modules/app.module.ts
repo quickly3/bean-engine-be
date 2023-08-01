@@ -15,9 +15,9 @@ import { GraphService } from 'src/service/graph.service';
 import { CommandModule } from 'nestjs-command';
 import { EsCommand } from 'src/commands/es.command';
 import { SyncService } from 'src/service/sync.sevice';
-import { EsService } from 'src/service/es.service';
-import { JuejinNeoService } from 'src/service/juejinNeo.service';
-import { Neo4jModule } from 'nest-neo4j';
+// import { EsService } from 'src/service/es.service';
+// import { JuejinNeoService } from 'src/service/juejinNeo.service';
+// import { Neo4jModule } from 'nest-neo4j';
 
 @Module({
   imports: [
@@ -41,14 +41,14 @@ import { Neo4jModule } from 'nest-neo4j';
     //   }),
     // }),
 
-    Neo4jModule.forRoot({
-      scheme: 'neo4j',
-      host: 'localhost',
-      port: 7687,
-      database: 'neo4j',
-      username: 'neo4j',
-      password: 'Bean.123',
-    }),
+    // Neo4jModule.forRoot({
+    //   scheme: 'neo4j',
+    //   host: 'localhost',
+    //   port: 7687,
+    //   database: 'neo4j',
+    //   username: 'neo4j',
+    //   password: 'Bean.123',
+    // }),
   ],
   controllers: [
     AppController,
@@ -65,8 +65,8 @@ import { Neo4jModule } from 'nest-neo4j';
     GraphService,
     EsCommand,
     SyncService,
-    EsService,
-    JuejinNeoService,
+    // EsService,
+    // JuejinNeoService,
   ],
 })
 export class AppModule {}

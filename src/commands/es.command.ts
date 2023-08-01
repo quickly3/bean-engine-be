@@ -5,7 +5,7 @@ import { JuejinNeoService } from 'src/service/juejinNeo.service';
 @Injectable()
 export class EsCommand {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(private juejinNeoService: JuejinNeoService) {}
+  // constructor(private juejinNeoService: JuejinNeoService) {}
   @Command({
     command: 'sync:neo4j <source>',
     describe: 'create a user',
@@ -18,6 +18,6 @@ export class EsCommand {
     })
     source: string,
   ) {
-    await this.juejinNeoService.syncJuejin();
+    // await this.juejinNeoService.syncJuejin();
   }
 }
