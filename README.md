@@ -1,1 +1,1 @@
-pm2 start --name bean-be ./dist/main.js
+pm2 start --name bean-be ./dist/src/main.js
