@@ -1,13 +1,15 @@
-import { Command, Positional, Option } from 'nestjs-command';
+import { Command, Positional } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
 import { execSync } from 'child_process';
+import { SearchService } from 'src/service/search.service';
 
 @Injectable()
 export class EsCommand {
+  constructor(private readonly searchService: SearchService) {}
   @Command({
     command: 'crawl <source>',
   })
-  async sync(
+  async crawl(
     @Positional({
       name: 'source',
     })
@@ -15,9 +17,26 @@ export class EsCommand {
   ) {
     process.chdir('scrapy');
 
-    const cmd = `python3 -m scrapy crawl ${source}`;
-    const resp = await execSync(cmd, { encoding: 'utf-8' });
+    let python = 'python';
+    if (process.env.NODE_ENV === 'local') {
+      python = 'python3';
+    }
 
-    console.log(resp);
+    const cmd = `${python} -m scrapy crawl ${source}`;
+    await execSync(cmd, { encoding: 'utf-8' });
+  }
+
+  @Command({
+    command: 'esClearLast',
+  })
+  async esClearLast() {
+    await this.searchService.esClearLast();
+  }
+
+  @Command({
+    command: 'esClear',
+  })
+  async esClear() {
+    await this.searchService.esClear();
   }
 }

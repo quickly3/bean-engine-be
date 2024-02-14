@@ -15,6 +15,8 @@ import { GraphService } from 'src/service/graph.service';
 import { CommandModule } from 'nestjs-command';
 import { EsCommand } from 'src/commands/es.command';
 import { SyncService } from 'src/service/sync.sevice';
+import { ScheduleModule } from '@nestjs/schedule';
+import { SpiderController } from 'src/controller/spider.controller';
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
 // import { Neo4jModule } from 'nest-neo4j';
@@ -33,22 +35,7 @@ import { SyncService } from 'src/service/sync.sevice';
         ...configService.get('es'),
       }),
     }),
-    // Neo4jModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (configService: ConfigService) => ({
-    //     ...configService.get('neo4j'),
-    //   }),
-    // }),
-
-    // Neo4jModule.forRoot({
-    //   scheme: 'neo4j',
-    //   host: 'localhost',
-    //   port: 7687,
-    //   database: 'neo4j',
-    //   username: 'neo4j',
-    //   password: 'Bean.123',
-    // }),
+    ScheduleModule.forRoot(),
   ],
   controllers: [
     AppController,
@@ -56,6 +43,7 @@ import { SyncService } from 'src/service/sync.sevice';
     AuthorController,
     ArticleController,
     GraphController,
+    SpiderController,
   ],
   providers: [
     AppService,
