@@ -15,7 +15,7 @@ export class EsCommand {
   ) {
     process.chdir('scrapy');
 
-    const cmd = `python -m scrapy crawl ${source}`;
+    const cmd = `python3 -m scrapy crawl ${source}`;
     const resp = await execSync(cmd, { encoding: 'utf-8' });
 
     console.log(resp);

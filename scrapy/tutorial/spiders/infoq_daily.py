@@ -20,7 +20,6 @@ load_dotenv(dotenv_path=env_path)
 es_host = os.getenv("ES_HOST")
 es = Elasticsearch(es_host)
 
-
 class AliSpider(scrapy.Spider):
     # 593
     name = "infoq_daily"

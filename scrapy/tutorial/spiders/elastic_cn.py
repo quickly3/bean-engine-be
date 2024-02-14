@@ -8,6 +8,8 @@ from datetime import date,datetime
 import os
 import json
 from dateutil import parser
+from dotenv import load_dotenv
+from pathlib import Path
 
 env_path = Path('..')/'.env'
 load_dotenv(dotenv_path=env_path)
