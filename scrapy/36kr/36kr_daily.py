@@ -1,8 +1,6 @@
 import datetime
 import scrapy
 from scrapy.crawler import CrawlerProcess
-from urllib.parse import urlparse
-from urllib.parse import parse_qs
 import os
 import re
 import sys

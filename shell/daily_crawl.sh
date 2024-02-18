@@ -39,5 +39,5 @@ nohup python3 -m trending_daily >> /home/ubuntu/www/bean-engine-be/output/trendi
 cd /home/ubuntu/www/bean-engine-be/scrapy/36kr
 nohup python3 -m 36kr_daily >> /home/ubuntu/www/bean-engine-be/output/36kr_daily.log 2>&1
 
-cd /home/ubuntu/www/ng-blog
+cd /home/ubuntu/www/bean-engine-be
 nohup npm run cli esClearLast >> /home/ubuntu/www/bean-engine-be/output/EsClearLast.log 2>&1
