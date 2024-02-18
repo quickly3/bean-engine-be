@@ -29,7 +29,7 @@ export class EsCommand {
     command: 'crawl:all',
   })
   async crawlAll() {
-    await this.searchService.crawlLastDay();
+    this.searchService.crawlLastDay();
     await this.searchService.esClearLast();
   }
 

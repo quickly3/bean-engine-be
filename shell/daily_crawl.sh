@@ -40,4 +40,4 @@ cd /home/ubuntu/www/ng-blog/scrapy/36kr
 nohup python3 -m 36kr_daily >> /home/ubuntu/www/ng-blog/storage/logs/36kr_daily.log 2>&1
 
 cd /home/ubuntu/www/ng-blog
-nohup sudo php artisan EsClearLast >> /home/ubuntu/www/ng-blog/storage/logs/EsClearLast.log 2>&1
+nohup npm run cli esClearLast >> /home/ubuntu/www/ng-blog/storage/logs/EsClearLast.log 2>&1

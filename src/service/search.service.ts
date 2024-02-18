@@ -467,7 +467,7 @@ export class SearchService {
     }
   }
 
-  async crawlLastDay() {
+  crawlLastDay() {
     process.chdir('scrapy');
 
     const spiderNames = [
@@ -491,7 +491,9 @@ export class SearchService {
     for (const name of spiderNames) {
       const cmd = `${python} -m scrapy crawl ${name}`;
       try {
-        await execSync(cmd, { encoding: 'utf-8' });
+        console.log(`Start of ${name}`);
+        execSync(cmd, { encoding: 'utf-8' });
+        console.log(`End of ${name}`);
       } catch (error) {
         console.error(error);
       }
