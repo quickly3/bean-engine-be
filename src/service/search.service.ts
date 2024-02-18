@@ -486,10 +486,7 @@ export class SearchService {
       'data_whale_daily',
       'ali_dev_daily',
     ];
-    let python = 'python';
-    if (process.env.NODE_ENV === 'local') {
-      python = 'python3';
-    }
+    const python = 'python3';
 
     for (const name of spiderNames) {
       const cmd = `${python} -m scrapy crawl ${name}`;

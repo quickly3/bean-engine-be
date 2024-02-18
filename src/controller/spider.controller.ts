@@ -17,10 +17,7 @@ export class SpiderController {
     process.chdir('scrapy');
     const spiderNames = ['elastic_cn'];
 
-    let python = 'python';
-    if (process.env.NODE_ENV === 'local') {
-      python = 'python3';
-    }
+    const python = 'python3';
 
     for (const name of spiderNames) {
       const cmd = `${python} -m scrapy crawl ${name}`;
