@@ -6,6 +6,7 @@ import { EsQueryBuilder } from 'src/utils/EsQueryBuilder';
 import { parseQueryString } from './utils';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import * as moment from 'moment';
+import { execSync } from 'child_process';
 
 @Injectable()
 export class SearchService {
@@ -463,6 +464,40 @@ export class SearchService {
         await this.elasticsearchService.deleteByQuery(p);
       }
       console.log(`${current}/${count}`);
+    }
+  }
+
+  async crawlLastDay() {
+    process.chdir('scrapy');
+
+    const spiderNames = [
+      'escn_new',
+      'jianshu_daily',
+      'infoq_daily',
+      'sf_daily',
+      'juejin_daily',
+      'cnblogs_daily',
+      'cnblogs_news_daily',
+      'csdn_daily',
+      'oschina_daily',
+      'oschina_news_daily',
+      'oschina_project_daily',
+      'itpub_z_daily',
+      'data_whale_daily',
+      'ali_dev_daily',
+    ];
+    let python = 'python';
+    if (process.env.NODE_ENV === 'local') {
+      python = 'python3';
+    }
+
+    for (const name of spiderNames) {
+      const cmd = `${python} -m scrapy crawl ${name}`;
+      try {
+        await execSync(cmd, { encoding: 'utf-8' });
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 

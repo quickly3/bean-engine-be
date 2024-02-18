@@ -25,6 +25,13 @@ export class EsCommand {
     const cmd = `${python} -m scrapy crawl ${source}`;
     await execSync(cmd, { encoding: 'utf-8' });
   }
+  @Command({
+    command: 'crawl:all',
+  })
+  async crawlAll() {
+    await this.searchService.crawlLastDay();
+    await this.searchService.esClearLast();
+  }
 
   @Command({
     command: 'esClearLast',
