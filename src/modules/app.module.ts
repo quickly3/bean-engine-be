@@ -17,6 +17,9 @@ import { EsCommand } from 'src/commands/es.command';
 import { SyncService } from 'src/service/sync.sevice';
 import { PromptsService } from 'src/service/ai/prompts.service';
 import { AiCommand } from 'src/commands/ai.command';
+import { ScheduleModule } from '@nestjs/schedule';
+import { SpiderController } from 'src/controller/spider.controller';
+
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
 // import { Neo4jModule } from 'nest-neo4j';
@@ -35,6 +38,7 @@ import { AiCommand } from 'src/commands/ai.command';
         ...configService.get('es'),
       }),
     }),
+    ScheduleModule.forRoot(),
   ],
   controllers: [
     AppController,
@@ -42,6 +46,7 @@ import { AiCommand } from 'src/commands/ai.command';
     AuthorController,
     ArticleController,
     GraphController,
+    SpiderController,
   ],
   providers: [
     AppService,

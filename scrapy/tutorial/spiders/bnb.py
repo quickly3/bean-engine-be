@@ -3,8 +3,7 @@
 #
 
 import scrapy
-import sys
-import sqlalchemy
+
 import os
 import time
 import datetime

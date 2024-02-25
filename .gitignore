@@ -17,6 +17,7 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+/output
 
 # IDEs and editors
 /.idea
@@ -36,3 +37,4 @@ lerna-debug.log*
 .env
 
 tpl
+*.pyc

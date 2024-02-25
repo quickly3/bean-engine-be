@@ -12,7 +12,8 @@ import datetime
 # settings.py
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
-from elasticsearch import logger as es_logger
+from pathlib import Path
+
 
 env_path = Path('..')/'.env'
 load_dotenv(dotenv_path=env_path)

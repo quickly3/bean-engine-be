@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import logging
 import pydash as _
+from pathlib import Path
 
 logging.getLogger("urllib3").setLevel(logging.ERROR)
 
@@ -13,14 +14,10 @@ es_logger.setLevel(50)
 class EsClient:
 
     def __init__(self):
-        load_dotenv("../../.env")
-        es_user = os.getenv("ES_USER")
-        es_pwd = os.getenv("ES_PWD")
-        ES_HOST = os.getenv("ES_HOST")
-        ES_PORT = os.getenv("ES_PORT")
-        host = ES_HOST+":"+ES_PORT
-
-        self.client = Elasticsearch(host, http_auth=(es_user, es_pwd))
+        env_path = Path('../..')/'.env'
+        load_dotenv(dotenv_path=env_path)
+        es_host = os.getenv("ES_HOST")
+        self.client = Elasticsearch(es_host)
 
     def getDocs(self):
         query = {

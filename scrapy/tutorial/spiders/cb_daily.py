@@ -3,27 +3,15 @@
 #
 
 import scrapy
-import sys
-import sqlalchemy
 import os
 import json
 import datetime
 import time
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import sessionmaker
-from string import Template
-
 # settings.py
 from dotenv import load_dotenv
-from pathlib import Path
-import random
-from dateutil import parser
-
 from elasticsearch import Elasticsearch
-from elasticsearch import logger as es_logger
+from pathlib import Path
 
 
 env_path = Path('..')/'.env'

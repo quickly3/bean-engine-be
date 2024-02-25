@@ -13,8 +13,6 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 from elasticsearch import Elasticsearch
-from elasticsearch import logger as es_logger
-
 
 env_path = Path('..')/'.env'
 load_dotenv(dotenv_path=env_path)

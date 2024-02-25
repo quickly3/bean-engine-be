@@ -1,25 +1,13 @@
 # -*- coding:UTF-8 -*-
 import scrapy
-import sys
-import sqlalchemy
 import os
-import json
-import time
-
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import sessionmaker
 
 # settings.py
 from dotenv import load_dotenv
 from pathlib import Path
-import random
 from string import Template
 
 from elasticsearch import Elasticsearch
-from elasticsearch import logger as es_logger
-
 import numpy as np
 
 env_path = Path('..')/'.env'

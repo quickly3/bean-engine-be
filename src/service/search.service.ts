@@ -6,6 +6,7 @@ import { EsQueryBuilder } from 'src/utils/EsQueryBuilder';
 import { parseQueryString } from './utils';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import * as moment from 'moment';
+import { execSync } from 'child_process';
 
 @Injectable()
 export class SearchService {
@@ -393,5 +394,178 @@ export class SearchService {
       ],
     };
     return resp;
+  }
+
+  async esClearLast() {
+    const del_ids: any[] = [];
+    const lastDay = moment().subtract(1, 'days').format('YYYY-MM-DD');
+
+    const params = {
+      index: 'article',
+      scroll: '30s', // how long between scroll requests. should be small!
+      size: 100,
+      body: {
+        query: {
+          query_string: {
+            query: `source:* && -source:chatgpt && created_at:[${lastDay} TO *]`,
+          },
+        },
+      },
+      _source: ['url'],
+    };
+
+    const response = await this.elasticsearchService.search(params);
+
+    let hits: any[] = _.get(response, 'body.hits.hits');
+    let scroll_id = _.get(response, 'body._scroll_id');
+
+    while (hits && hits.length > 0) {
+      for (const value of hits) {
+        const url = _.get(value, '_source.url');
+        const tags = _.get(value, '_source.tag') || [];
+        if (!del_ids[url]) {
+          del_ids[url] = [value._id];
+        } else {
+          if (tags.indexOf('news') > -1) {
+            del_ids.unshift(value._id);
+          } else {
+            del_ids[url].push(value._id);
+          }
+        }
+      }
+
+      const response = await this.elasticsearchService.scroll({
+        scroll_id: scroll_id,
+        scroll: '30s',
+      });
+
+      hits = _.get(response, 'body.hits.hits');
+      scroll_id = _.get(response, 'body._scroll_id');
+    }
+
+    const count = Object.keys(del_ids).length;
+    let current = 0;
+
+    for (const url of Object.keys(del_ids)) {
+      const ids = del_ids[url];
+      current++;
+      if (ids.length > 0) {
+        const _id = ids[0];
+        const p = {
+          index: 'article',
+          body: {
+            query: {
+              query_string: {
+                query: `url:"${url}" && -_id:"${_id}"`,
+              },
+            },
+          },
+        };
+        await this.elasticsearchService.deleteByQuery(p);
+      }
+      console.log(`${current}/${count}`);
+    }
+  }
+
+  crawlLastDay() {
+    process.chdir('scrapy');
+
+    const spiderNames = [
+      'escn_new',
+      'jianshu_daily',
+      'infoq_daily',
+      'sf_daily',
+      'juejin_daily',
+      'cnblogs_daily',
+      'cnblogs_news_daily',
+      'csdn_daily',
+      'oschina_daily',
+      'oschina_news_daily',
+      'oschina_project_daily',
+      'itpub_z_daily',
+      'data_whale_daily',
+      'ali_dev_daily',
+    ];
+    const python = 'python3';
+
+    for (const name of spiderNames) {
+      const cmd = `${python} -m scrapy crawl ${name}`;
+      try {
+        console.log(`Start of ${name}`);
+        execSync(cmd, { encoding: 'utf-8' });
+        console.log(`End of ${name}`);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  async esClear() {
+    const del_ids: any[] = [];
+    const params = {
+      index: 'article',
+      scroll: '30s', // how long between scroll requests. should be small!
+      size: 100,
+      body: {
+        query: {
+          query_string: {
+            query: `source:* && -source:chatgpt`,
+          },
+        },
+      },
+      _source: ['url'],
+    };
+
+    const response = await this.elasticsearchService.search(params);
+
+    let hits: any[] = _.get(response, 'body.hits.hits');
+    let scroll_id = _.get(response, 'body._scroll_id');
+
+    while (hits && hits.length > 0) {
+      for (const value of hits) {
+        const url = _.get(value, '_source.url');
+        const tags = _.get(value, '_source.tag') || [];
+        if (!del_ids[url]) {
+          del_ids[url] = [value._id];
+        } else {
+          if (tags.indexOf('news') > -1) {
+            del_ids.unshift(value._id);
+          } else {
+            del_ids[url].push(value._id);
+          }
+        }
+      }
+
+      const response = await this.elasticsearchService.scroll({
+        scroll_id: scroll_id,
+        scroll: '30s',
+      });
+
+      hits = _.get(response, 'body.hits.hits');
+      scroll_id = _.get(response, 'body._scroll_id');
+    }
+
+    const count = Object.keys(del_ids).length;
+    let current = 0;
+
+    for (const url of Object.keys(del_ids)) {
+      const ids = del_ids[url];
+      current++;
+      if (ids.length > 0) {
+        const _id = ids[0];
+        const p = {
+          index: 'article',
+          body: {
+            query: {
+              query_string: {
+                query: `url:"${url}" && -_id:"${_id}"`,
+              },
+            },
+          },
+        };
+        await this.elasticsearchService.deleteByQuery(p);
+      }
+      console.log(`${current}/${count}`);
+    }
   }
 }

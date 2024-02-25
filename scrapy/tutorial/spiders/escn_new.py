@@ -5,17 +5,12 @@
 from elasticsearch import Elasticsearch
 from pathlib import Path
 from dotenv import load_dotenv
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
 from operator import itemgetter
 from itertools import groupby
 import scrapy
 import os
 import re
 import datetime
-
 
 env_path = Path('..')/'.env'
 load_dotenv(dotenv_path=env_path)
