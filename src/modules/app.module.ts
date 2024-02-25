@@ -15,6 +15,8 @@ import { GraphService } from 'src/service/graph.service';
 import { CommandModule } from 'nestjs-command';
 import { EsCommand } from 'src/commands/es.command';
 import { SyncService } from 'src/service/sync.sevice';
+import { PromptsService } from 'src/service/ai/prompts.service';
+import { AiCommand } from 'src/commands/ai.command';
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
 // import { Neo4jModule } from 'nest-neo4j';
@@ -33,22 +35,6 @@ import { SyncService } from 'src/service/sync.sevice';
         ...configService.get('es'),
       }),
     }),
-    // Neo4jModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (configService: ConfigService) => ({
-    //     ...configService.get('neo4j'),
-    //   }),
-    // }),
-
-    // Neo4jModule.forRoot({
-    //   scheme: 'neo4j',
-    //   host: 'localhost',
-    //   port: 7687,
-    //   database: 'neo4j',
-    //   username: 'neo4j',
-    //   password: 'Bean.123',
-    // }),
   ],
   controllers: [
     AppController,
@@ -64,7 +50,9 @@ import { SyncService } from 'src/service/sync.sevice';
     ArticleService,
     GraphService,
     EsCommand,
+    AiCommand,
     SyncService,
+    PromptsService,
     // EsService,
     // JuejinNeoService,
   ],

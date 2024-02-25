@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as UserAgent from 'user-agents';
 import * as _ from 'lodash';
 import * as simpleCookie from 'simple-cookie';
+import axios from 'axios';
 
 export function parseCookieFile() {
   const _cookies = fs.readFileSync('cookies.json', 'utf8');
