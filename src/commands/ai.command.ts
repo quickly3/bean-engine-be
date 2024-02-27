@@ -1,6 +1,5 @@
-import { Command, Positional } from 'nestjs-command';
+import { Command } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
-import { execSync } from 'child_process';
 import { PromptsService } from 'src/service/ai/prompts.service';
 
 @Injectable()
