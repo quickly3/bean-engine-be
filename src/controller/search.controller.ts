@@ -46,8 +46,8 @@ export class SearchController {
   }
 
   @Post('getCatesTermsAgg')
-  async getCatesTermsAgg(@Query() params) {
-    return this.searchService.getCatesTermsAgg(params);
+  async getCatesTermsAgg(@Body() payload) {
+    return this.searchService.getCatesTermsAgg(payload);
   }
 
   @Get('getWordsCloud')

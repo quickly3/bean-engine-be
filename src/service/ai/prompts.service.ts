@@ -33,12 +33,27 @@ export class PromptsService {
             return l.trim() !== '';
           })
           .map((r) => r.trim());
-        const record = {
-          title: recordArr[0],
-          category: 'prompt',
-          summary: recordArr[1],
+        const record: any = {
+          title: recordArr[1],
           source: 'chatgpt',
         };
+
+        let validCate = true;
+        if (recordArr[0].match(/^[\d.]+$/)) {
+          validCate = false;
+        }
+
+        if (recordArr[0].match(/^[-]+$/)) {
+          validCate = false;
+        }
+
+        if (validCate) {
+          record.category = recordArr[0];
+        }
+
+        if (!record.title || record.title === '') {
+          continue;
+        }
 
         records.push(record);
       }
