@@ -26,5 +26,9 @@ export default () => {
       FS_APP_ID: process.env.FS_APP_ID,
       FS_APP_SECRET: process.env.FS_APP_SECRET,
     },
+    openai: {
+      GPT_KEY: process.env.GPT_KEY,
+      ENV: process.env.GPT_ENV,
+    },
   };
 };

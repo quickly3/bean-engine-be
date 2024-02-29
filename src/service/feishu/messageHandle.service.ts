@@ -15,9 +15,12 @@ export class MessageHandleService {
       return;
     }
 
-    const { message_type } = message;
-
+    const { message_type, chat_id } = message;
     this.message = message;
+
+    if (this.feishu.bean_container_id !== chat_id) {
+      return;
+    }
 
     switch (message_type) {
       case 'text':
