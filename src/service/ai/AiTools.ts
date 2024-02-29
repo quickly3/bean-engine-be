@@ -33,9 +33,11 @@ export default class AiTools {
       return { role: 'system', content: d };
     });
 
+    // gpt-3.5-turbo
+
     const completion = await this.openai.chat.completions.create(
       {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4-0125-preview',
         messages: messages,
       },
       this.axiosRequestConfig,
