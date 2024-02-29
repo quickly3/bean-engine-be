@@ -43,11 +43,7 @@ export class MessageHandleService {
     const aiTools = new AiTools(this.configService);
 
     const messages = [contentObj.text];
-    console.log(messages);
-
     const chatMessage = await aiTools.simpleCompl(messages);
-
-    console.log(chatMessage);
 
     await this.feishu.set_app_access_token();
     await this.feishu.sendMessageToChat({

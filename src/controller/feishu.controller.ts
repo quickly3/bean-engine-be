@@ -13,11 +13,15 @@ export class FeishuController {
   @Post('event')
   @HttpCode(200)
   async event(@Body() payload) {
-    const messageHandleService = new MessageHandleService(
-      this.feishu,
-      this.configService,
-    );
-    await messageHandleService.handle(payload);
+    try {
+      const messageHandleService = new MessageHandleService(
+        this.feishu,
+        this.configService,
+      );
+      messageHandleService.handle(payload);
+    } catch (error) {
+      console.error(error);
+    }
     return true;
   }
 }
