@@ -22,6 +22,7 @@ import { SpiderController } from 'src/controller/spider.controller';
 import { FeishuRobotService } from 'src/service/feishu/feishuRobot.service';
 import { DailyReportService } from 'src/service/dailyReport.service';
 import { CronController } from 'src/controller/cron.controller';
+import { FeishuController } from 'src/controller/feishu.controller';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -51,6 +52,7 @@ import { CronController } from 'src/controller/cron.controller';
     GraphController,
     SpiderController,
     CronController,
+    FeishuController,
   ],
   providers: [
     AppService,
