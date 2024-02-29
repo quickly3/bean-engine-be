@@ -11,6 +11,7 @@ export class FeishuRobotService {
   bean_container_id = 'oc_ecdb5d055abbc0aa5bf91c1d4a77e1b1';
   bean_receive_id = 'ou_7ba56fd9ecc84f4115ba863607f3d898';
   company_receive_id = 'oc_59384feeb3ab194bdc0f9f385da7354f';
+  robot_open_id = 'ou_2d40378899416ae73ca59fb16c63d3f6';
 
   constructor(private readonly configService: ConfigService) {
     this.app_id = this.configService.get('feishu.FS_APP_ID');

@@ -25,8 +25,21 @@ export class MessageHandleService {
     const { message_type, chat_id } = message;
     this.message = message;
 
-    if (this.feishu.bean_container_id !== chat_id) {
-      return;
+    let allowReply = false;
+    if (this.feishu.bean_container_id === chat_id) {
+      allowReply = true;
+    }
+    if (this.feishu.company_receive_id === chat_id) {
+      const mentions = _.get(payload, 'event.message.mentions');
+      const mentionIds = _.map(mentions, (m) => m.id.open_id);
+
+      if (mentionIds.indexOf(this.feishu.robot_open_id) > -1) {
+        allowReply = true;
+      }
+    }
+
+    if (!allowReply) {
+      return false;
     }
 
     switch (message_type) {
