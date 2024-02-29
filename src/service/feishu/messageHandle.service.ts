@@ -34,7 +34,7 @@ export class MessageHandleService {
     const contentObj = JSON.parse(content);
 
     await this.feishu.set_app_access_token();
-    await this.feishu.sendMessage({
+    await this.feishu.sendMessageToChat({
       message: contentObj.text,
       receive_id: chat_id,
     });

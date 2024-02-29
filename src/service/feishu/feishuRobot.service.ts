@@ -67,7 +67,7 @@ export class FeishuRobotService {
     }
   }
 
-  async sendMessage(params: { message: string; receive_id: string }) {
+  async sendMessageToChat(params: { message: string; receive_id: string }) {
     const { message, receive_id } = params;
 
     const data = {
@@ -80,7 +80,7 @@ export class FeishuRobotService {
     try {
       const response = await axios({
         method: 'post',
-        url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id',
+        url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
         data,
       });
       return response.data;
