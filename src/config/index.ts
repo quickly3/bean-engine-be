@@ -22,5 +22,9 @@ export default () => {
       password: process.env.NEO4J_PASSWORD,
       database: process.env.NEO4J_DATABASE,
     },
+    feishu: {
+      FS_APP_ID: process.env.FS_APP_ID,
+      FS_APP_SECRET: process.env.FS_APP_SECRET,
+    },
   };
 };
