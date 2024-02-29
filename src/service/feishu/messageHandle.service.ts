@@ -1,10 +1,15 @@
 import * as _ from 'lodash';
 import { FeishuRobotService } from './feishuRobot.service';
+import AiTools from '../ai/AiTools';
+import { ConfigService } from '@nestjs/config';
 
 export class MessageHandleService {
   message;
 
-  constructor(private readonly feishu: FeishuRobotService) {}
+  constructor(
+    private readonly feishu: FeishuRobotService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async handle(payload) {
     console.log('payload', payload);
@@ -35,10 +40,13 @@ export class MessageHandleService {
     const { chat_id, content } = this.message;
 
     const contentObj = JSON.parse(content);
+    const aiTools = new AiTools(this.configService);
+    const messages = [contentObj.text];
+    const chatMessage = await aiTools.simpleCompl(messages);
 
     await this.feishu.set_app_access_token();
     await this.feishu.sendMessageToChat({
-      message: contentObj.text,
+      message: chatMessage,
       receive_id: chat_id,
     });
   }
