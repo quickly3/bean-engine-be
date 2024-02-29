@@ -16,6 +16,8 @@ export class MessageHandleService {
 
     console.log('payload', payload);
 
+    console.log(payload.event.message.mentions);
+
     if (!message) {
       return;
     }
