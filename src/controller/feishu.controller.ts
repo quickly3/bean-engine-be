@@ -1,12 +1,12 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
 @Controller('feishu')
 export class FeishuController {
   constructor() {}
 
   @Post('event')
-  async event() {
-    console.log('event');
-    return true;
+  async event(@Body() payload) {
+    console.log(payload);
+    return payload;
   }
 }
