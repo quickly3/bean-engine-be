@@ -6,7 +6,7 @@ export class FeishuController {
 
   @Post('event')
   async event(@Body() payload) {
-    console.log(payload);
-    return payload;
+    console.log('payload', payload);
+    return true;
   }
 }
