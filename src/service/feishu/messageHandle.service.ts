@@ -7,6 +7,8 @@ export class MessageHandleService {
   constructor(private readonly feishu: FeishuRobotService) {}
 
   async handle(payload) {
+    console.log('payload', payload);
+
     const message = _.get(payload, 'event.message');
 
     if (!message) {
