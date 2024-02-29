@@ -23,6 +23,7 @@ import { FeishuRobotService } from 'src/service/feishu/feishuRobot.service';
 import { DailyReportService } from 'src/service/dailyReport.service';
 import { CronController } from 'src/controller/cron.controller';
 import { FeishuController } from 'src/controller/feishu.controller';
+import { MessageHandleService } from 'src/service/feishu/messageHandle.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -66,6 +67,7 @@ import { FeishuController } from 'src/controller/feishu.controller';
     PromptsService,
     FeishuRobotService,
     DailyReportService,
+    MessageHandleService,
   ],
 })
 export class AppModule {}

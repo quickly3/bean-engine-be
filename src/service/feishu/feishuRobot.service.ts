@@ -67,6 +67,28 @@ export class FeishuRobotService {
     }
   }
 
+  async sendMessage(params: { message: string; receive_id: string }) {
+    const { message, receive_id } = params;
+
+    const data = {
+      receive_id,
+      msg_type: 'text',
+      content: JSON.stringify({
+        text: message,
+      }),
+    };
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id',
+        data,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  }
+
   async sendToBean(message) {
     const receive_id = this.bean_receive_id;
 
