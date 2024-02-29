@@ -40,7 +40,8 @@ export default class AiTools {
       },
       this.axiosRequestConfig,
     );
-    return completion.choices[0].message;
+    const message = _.get(completion, 'choices[0].message.content');
+    return message;
   }
 
   async listModels() {

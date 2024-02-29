@@ -12,9 +12,9 @@ export class MessageHandleService {
   ) {}
 
   async handle(payload) {
-    console.log('payload', payload);
-
     const message = _.get(payload, 'event.message');
+
+    console.log('payload', payload);
 
     if (!message) {
       return;
@@ -41,8 +41,13 @@ export class MessageHandleService {
 
     const contentObj = JSON.parse(content);
     const aiTools = new AiTools(this.configService);
+
     const messages = [contentObj.text];
+    console.log(messages);
+
     const chatMessage = await aiTools.simpleCompl(messages);
+
+    console.log(chatMessage);
 
     await this.feishu.set_app_access_token();
     await this.feishu.sendMessageToChat({
