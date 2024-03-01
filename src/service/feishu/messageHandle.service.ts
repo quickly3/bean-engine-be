@@ -70,6 +70,7 @@ export class MessageHandleService {
   async setSpPrompt() {
     const chat_id = _.get(this.payload, 'event.message.chat_id');
     const chat_type = _.get(this.payload, 'event.message.chat_type');
+    const user_open_id = _.get(this.payload, 'event.sender.sender_id.open_id');
 
     if (chat_type === CHAT_TYPE.P2P) {
       if (this.feishu.wenyu_member_id === chat_id) {
@@ -81,6 +82,15 @@ export class MessageHandleService {
         this.aiModel = AI_MODEL.GPT3;
       }
     }
+
+    const fsMemberNames = fsMembers.map((m) => m.name).join(',');
+    const myName = fsMembers.filter((m) => m.member_id === user_open_id)[0]
+      .name;
+    this.prompts.push(
+      `我是 ${myName}`,
+      `你在一个群里面这个群里面有以下这些大佬: ${fsMemberNames}`,
+      `当问你谁最帅的时候，那肯定是 ${myName}。`,
+    );
   }
 
   async handleText() {
