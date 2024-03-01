@@ -2,10 +2,11 @@ import * as _ from 'lodash';
 import { FeishuRobotService } from './feishuRobot.service';
 import AiTools from '../ai/AiTools';
 import { ConfigService } from '@nestjs/config';
+import { PROMPTS } from './enum';
 
 export class MessageHandleService {
   message;
-
+  prompt;
   constructor(
     private readonly feishu: FeishuRobotService,
     private readonly configService: ConfigService,
@@ -27,8 +28,14 @@ export class MessageHandleService {
 
     let allowReply = false;
     if (this.feishu.bean_container_id === chat_id) {
+      this.prompt = PROMPTS.SSGF;
       allowReply = true;
     }
+    if (this.feishu.wenyu_member_id === chat_id) {
+      this.prompt = PROMPTS.SSGF;
+      allowReply = true;
+    }
+
     if (this.feishu.company_receive_id === chat_id) {
       const mentions = _.get(payload, 'event.message.mentions');
       const mentionIds = _.map(mentions, (m) => m.id.open_id);
@@ -58,7 +65,7 @@ export class MessageHandleService {
     const aiTools = new AiTools(this.configService);
 
     const messages = [contentObj.text];
-    const chatMessage = await aiTools.simpleCompl(messages);
+    const chatMessage = await aiTools.simpleCompl(messages, this.prompt);
 
     await this.feishu.set_app_access_token();
     await this.feishu.sendMessageToChat({

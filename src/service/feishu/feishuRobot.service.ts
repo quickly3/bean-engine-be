@@ -10,6 +10,7 @@ export class FeishuRobotService {
   app_access_token: string;
   bean_container_id = 'oc_ecdb5d055abbc0aa5bf91c1d4a77e1b1';
   bean_receive_id = 'ou_7ba56fd9ecc84f4115ba863607f3d898';
+  wenyu_member_id = 'ou_cda6a2e844dca261b72be3ac48f6ade1';
   company_receive_id = 'oc_59384feeb3ab194bdc0f9f385da7354f';
   robot_open_id = 'ou_2d40378899416ae73ca59fb16c63d3f6';
 
@@ -46,6 +47,18 @@ export class FeishuRobotService {
         url: 'https://open.feishu.cn/open-apis/im/v1/chats',
       });
       return response.data.data.items;
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  }
+
+  async getGroupMembers(chat_id) {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `https://open.feishu.cn/open-apis/im/v1/chats/${chat_id}/members`,
+      });
+      return response.data.data;
     } catch (error) {
       console.error(error.response.data);
     }

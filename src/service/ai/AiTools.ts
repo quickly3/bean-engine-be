@@ -28,16 +28,21 @@ export default class AiTools {
     return;
   }
 
-  async simpleCompl(_messages) {
-    const messages = _messages.map((d) => {
-      return { role: 'system', content: d };
-    });
-
+  async simpleCompl(_messages, prompt) {
+    let messages = [];
+    if (prompt) {
+      messages.push({ role: 'system', content: prompt });
+    }
+    messages = messages.concat(
+      _messages.map((d) => {
+        return { role: 'user', content: d };
+      }),
+    );
+    // gpt-4-0125-preview
     // gpt-3.5-turbo
-
     const completion = await this.openai.chat.completions.create(
       {
-        model: 'gpt-4-0125-preview',
+        model: 'gpt-3.5-turbo',
         messages: messages,
       },
       this.axiosRequestConfig,
