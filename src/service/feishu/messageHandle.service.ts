@@ -45,7 +45,7 @@ export class MessageHandleService {
 
   async checkCallbackAuthority() {
     const chat_id = _.get(this.payload, 'event.message.chat_id');
-    const chat_type = _.get(this.payload, 'event.message.chat_id');
+    const chat_type = _.get(this.payload, 'event.message.chat_type');
 
     if (chat_type === CHAT_TYPE.GROUP) {
       if (this.feishu.company_receive_id === chat_id) {
