@@ -47,8 +47,12 @@ export class MessageHandleService {
     const chat_id = _.get(this.payload, 'event.message.chat_id');
     const chat_type = _.get(this.payload, 'event.message.chat_type');
 
+    const allowGroupId = [
+      this.feishu.company_receive_id,
+      this.feishu.robot_group_id,
+    ];
     if (chat_type === CHAT_TYPE.GROUP) {
-      if (this.feishu.company_receive_id === chat_id) {
+      if (allowGroupId.indexOf(chat_id) > -1) {
         const mentions = _.get(this.payload, 'event.message.mentions');
         const mentionIds = _.map(mentions, (m) => m.id.open_id);
 
