@@ -28,10 +28,14 @@ export class MessageHandleService {
 
     let allowReply = false;
     if (this.feishu.bean_container_id === chat_id) {
-      this.prompt = PROMPTS.SSGF;
       allowReply = true;
     }
     if (this.feishu.wenyu_member_id === chat_id) {
+      this.prompt = PROMPTS.SSGF;
+      allowReply = true;
+    }
+
+    if (this.feishu.tan_member_id === chat_id) {
       this.prompt = PROMPTS.SSGF;
       allowReply = true;
     }
