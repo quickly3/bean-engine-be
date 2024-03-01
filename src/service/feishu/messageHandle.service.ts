@@ -87,6 +87,7 @@ export class MessageHandleService {
     const myName = fsMembers.filter((m) => m.member_id === user_open_id)[0]
       .name;
     this.prompts.push(
+      `聊天的时候要加上表情包`,
       `我是 ${myName}`,
       `你在一个群里面这个群里面有以下这些大佬: ${fsMemberNames}`,
       `当问你谁最帅的时候，那肯定是 ${myName}。`,
