@@ -6,6 +6,8 @@ import { ConfigService } from '@nestjs/config';
 export default class AiTools {
   openai;
   axiosRequestConfig: any;
+  aiModel = 'gpt-4-0125-preview';
+  prompts: any[] = [];
 
   constructor(private readonly configService: ConfigService) {
     const { GPT_KEY } = this.configService.get('openai');
@@ -28,21 +30,30 @@ export default class AiTools {
     return;
   }
 
-  async simpleCompl(_messages, prompt) {
+  async setPrompts(prompts) {
+    this.prompts = prompts;
+  }
+
+  async setModel(aiModel) {
+    this.aiModel = aiModel;
+  }
+
+  async simpleCompl(_messages) {
     let messages = [];
-    if (prompt) {
-      messages.push({ role: 'system', content: prompt });
+    if (this.prompts.length > 0) {
+      for (const prompt of this.prompts) {
+        messages.push({ role: 'system', content: prompt });
+      }
     }
     messages = messages.concat(
       _messages.map((d) => {
         return { role: 'user', content: d };
       }),
     );
-    // gpt-4-0125-preview
-    // gpt-3.5-turbo
+
     const completion = await this.openai.chat.completions.create(
       {
-        model: 'gpt-3.5-turbo',
+        model: this.aiModel,
         messages: messages,
       },
       this.axiosRequestConfig,

@@ -28,7 +28,8 @@ export class AiCommand {
   async gpt() {
     const aiTools = new AiTools(this.configService);
     const messages = ['你是谁？'];
-    const resp = await aiTools.simpleCompl(messages, PROMPTS.SSGF);
+    aiTools.setPrompts([PROMPTS.SSGF]);
+    const resp = await aiTools.simpleCompl(messages);
     console.log(resp);
   }
 

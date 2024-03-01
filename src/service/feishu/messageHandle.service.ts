@@ -2,11 +2,16 @@ import * as _ from 'lodash';
 import { FeishuRobotService } from './feishuRobot.service';
 import AiTools from '../ai/AiTools';
 import { ConfigService } from '@nestjs/config';
-import { PROMPTS } from './enum';
+import { CHAT_TYPE, PROMPTS } from './enum';
+import { fsMembers } from './members';
+import { AI_MODEL } from '../ai/enum';
 
 export class MessageHandleService {
+  payload;
   message;
-  prompt;
+  prompts: any[] = [];
+  allowReply = false;
+  aiModel;
   constructor(
     private readonly feishu: FeishuRobotService,
     private readonly configService: ConfigService,
@@ -16,40 +21,16 @@ export class MessageHandleService {
     const message = _.get(payload, 'event.message');
 
     console.log('payload', payload);
-
-    console.log(payload.event.message.mentions);
-
     if (!message) {
       return;
     }
+    this.payload = payload;
+    this.checkCallbackAuthority();
+    this.setSpPrompt();
+    const { message_type } = message;
 
-    const { message_type, chat_id } = message;
-    this.message = message;
-
-    let allowReply = false;
-    if (this.feishu.bean_container_id === chat_id) {
-      allowReply = true;
-    }
-    if (this.feishu.wenyu_member_id === chat_id) {
-      this.prompt = PROMPTS.SSGF;
-      allowReply = true;
-    }
-
-    if (this.feishu.tan_member_id === chat_id) {
-      this.prompt = PROMPTS.SSGF;
-      allowReply = true;
-    }
-
-    if (this.feishu.company_receive_id === chat_id) {
-      const mentions = _.get(payload, 'event.message.mentions');
-      const mentionIds = _.map(mentions, (m) => m.id.open_id);
-
-      if (mentionIds.indexOf(this.feishu.robot_open_id) > -1) {
-        allowReply = true;
-      }
-    }
-
-    if (!allowReply) {
+    console.log('this.allowReply', this.allowReply);
+    if (!this.allowReply) {
       return false;
     }
 
@@ -62,14 +43,47 @@ export class MessageHandleService {
     }
   }
 
+  async checkCallbackAuthority() {
+    const chat_id = _.get(this.payload, 'event.message.chat_id');
+    const chat_type = _.get(this.payload, 'event.message.chat_id');
+
+    if (chat_type === CHAT_TYPE.GROUP) {
+      if (this.feishu.company_receive_id === chat_id) {
+        const mentions = _.get(this.payload, 'event.message.mentions');
+        const mentionIds = _.map(mentions, (m) => m.id.open_id);
+
+        if (mentionIds.indexOf(this.feishu.robot_open_id) > -1) {
+          this.allowReply = true;
+        }
+      }
+    }
+
+    if (chat_type === CHAT_TYPE.P2P) {
+      this.allowReply = true;
+    }
+  }
+
+  async setSpPrompt() {
+    const chat_id = _.get(this.payload, 'event.message.chat_id');
+    if (this.feishu.wenyu_member_id === chat_id) {
+      this.prompts.push(PROMPTS.SSGF);
+      this.aiModel = AI_MODEL.GPT3;
+    }
+    if (this.feishu.bean_container_id === chat_id) {
+      this.prompts.push(PROMPTS.SSGF);
+      this.aiModel = AI_MODEL.GPT3;
+    }
+  }
+
   async handleText() {
     const { chat_id, content } = this.message;
 
     const contentObj = JSON.parse(content);
     const aiTools = new AiTools(this.configService);
-
     const messages = [contentObj.text];
-    const chatMessage = await aiTools.simpleCompl(messages, this.prompt);
+    aiTools.setPrompts(this.prompts);
+    aiTools.setModel(this.aiModel);
+    const chatMessage = await aiTools.simpleCompl(messages);
 
     await this.feishu.set_app_access_token();
     await this.feishu.sendMessageToChat({
