@@ -76,7 +76,8 @@ export class MessageHandleService {
   }
 
   async handleText() {
-    const { chat_id, content } = this.message;
+    const chat_id = _.get(this.payload, 'event.message.chat_id');
+    const content = _.get(this.payload, 'event.message.content');
 
     const contentObj = JSON.parse(content);
     const aiTools = new AiTools(this.configService);
