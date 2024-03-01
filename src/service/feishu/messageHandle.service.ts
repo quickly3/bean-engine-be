@@ -12,6 +12,7 @@ export class MessageHandleService {
   prompts: any[] = [];
   allowReply = false;
   aiModel;
+  aiTools: AiTools;
   constructor(
     private readonly feishu: FeishuRobotService,
     private readonly configService: ConfigService,
@@ -75,35 +76,34 @@ export class MessageHandleService {
     if (chat_type === CHAT_TYPE.P2P) {
       if (this.feishu.wenyu_member_id === chat_id) {
         this.prompts.push(PROMPTS.EEEE);
-        this.aiModel = AI_MODEL.GPT3;
+        this.aiModel = AI_MODEL.GPT4;
       }
       if (this.feishu.bean_container_id === chat_id) {
         this.prompts.push(PROMPTS.EEEE);
-        this.aiModel = AI_MODEL.GPT3;
+        this.aiModel = AI_MODEL.GPT4;
       }
     }
 
-    const fsMemberNames = fsMembers.map((m) => m.name).join(',');
     const myName = fsMembers.filter((m) => m.member_id === user_open_id)[0]
       .name;
     this.prompts.push(
-      `聊天的时候要加上表情包`,
+      `聊天的时候要加上表情包和emoji`,
       `我是 ${myName}`,
-      `你在一个群里面这个群里面有以下这些大佬: ${fsMemberNames}`,
       `当问你谁最帅的时候，那肯定是 ${myName}。`,
     );
   }
 
   async handleText() {
+    this.aiTools = new AiTools(this.configService);
     const chat_id = _.get(this.payload, 'event.message.chat_id');
     const content = _.get(this.payload, 'event.message.content');
 
     const contentObj = JSON.parse(content);
-    const aiTools = new AiTools(this.configService);
+
     const messages = [contentObj.text];
-    aiTools.setPrompts(this.prompts);
-    aiTools.setModel(this.aiModel);
-    const chatMessage = await aiTools.simpleCompl(messages);
+    this.aiTools.setPrompts(this.prompts);
+    this.aiTools.setModel(this.aiModel);
+    const chatMessage = await this.aiTools.simpleCompl(messages);
 
     await this.feishu.set_app_access_token();
     await this.feishu.sendMessageToChat({
