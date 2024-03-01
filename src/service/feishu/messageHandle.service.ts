@@ -69,13 +69,17 @@ export class MessageHandleService {
 
   async setSpPrompt() {
     const chat_id = _.get(this.payload, 'event.message.chat_id');
-    if (this.feishu.wenyu_member_id === chat_id) {
-      this.prompts.push(PROMPTS.SSGF);
-      this.aiModel = AI_MODEL.GPT3;
-    }
-    if (this.feishu.bean_container_id === chat_id) {
-      this.prompts.push(PROMPTS.SSGF);
-      this.aiModel = AI_MODEL.GPT3;
+    const chat_type = _.get(this.payload, 'event.message.chat_type');
+
+    if (chat_type === CHAT_TYPE.P2P) {
+      if (this.feishu.wenyu_member_id === chat_id) {
+        this.prompts.push(PROMPTS.SSGF);
+        this.aiModel = AI_MODEL.GPT3;
+      }
+      if (this.feishu.bean_container_id === chat_id) {
+        this.prompts.push(PROMPTS.SSGF);
+        this.aiModel = AI_MODEL.GPT3;
+      }
     }
   }
 
