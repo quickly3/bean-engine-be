@@ -38,18 +38,25 @@ export default class AiTools {
     this.aiModel = aiModel;
   }
 
+  getChatMemo() {
+    return false;
+  }
+
   async simpleCompl(_messages) {
-    let messages = [];
-    if (this.prompts.length > 0) {
-      for (const prompt of this.prompts) {
-        messages.push({ role: 'system', content: prompt });
+    let messages: any = [];
+
+    const memo = this.getChatMemo();
+    if (memo) {
+      messages = messages.concat(memo);
+    } else {
+      if (this.prompts.length > 0) {
+        for (const prompt of this.prompts) {
+          messages.push({ role: 'system', content: prompt });
+        }
       }
     }
-    messages = messages.concat(
-      _messages.map((d) => {
-        return { role: 'user', content: d };
-      }),
-    );
+
+    messages.push({ role: 'user', content: _messages });
 
     const completion = await this.openai.chat.completions.create(
       {

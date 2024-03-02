@@ -100,9 +100,10 @@ export class MessageHandleService {
 
     const contentObj = JSON.parse(content);
 
-    const messages = [contentObj.text];
+    const messages = contentObj.text;
     this.aiTools.setPrompts(this.prompts);
     this.aiTools.setModel(this.aiModel);
+
     const chatMessage = await this.aiTools.simpleCompl(messages);
 
     await this.feishu.set_app_access_token();
