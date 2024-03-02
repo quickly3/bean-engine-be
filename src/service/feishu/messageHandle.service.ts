@@ -5,27 +5,34 @@ import { ConfigService } from '@nestjs/config';
 import { CHAT_TYPE, PROMPTS } from './enum';
 import { fsMembers } from './members';
 import { AI_MODEL } from '../ai/enum';
+import * as fse from 'fs-extra';
+import { fileExists } from '../ai/util';
 
 export class MessageHandleService {
   payload;
   message;
+  chat_id;
   prompts: any[] = [];
   allowReply = false;
   aiModel;
   aiTools: AiTools;
+  memoPath = 'output/memno';
+  memoFile;
   constructor(
     private readonly feishu: FeishuRobotService,
     private readonly configService: ConfigService,
   ) {}
 
   async handle(payload) {
+    this.payload = payload;
     const message = _.get(payload, 'event.message');
-
+    this.chat_id = _.get(this.payload, 'event.message.chat_id');
+    this.memoFile = this.memoPath + '/' + this.chat_id + '.json';
     console.log('payload', payload);
+    console.log(this.memoFile);
     if (!message) {
       return;
     }
-    this.payload = payload;
     this.checkCallbackAuthority();
     this.setSpPrompt();
     const { message_type } = message;
@@ -34,6 +41,8 @@ export class MessageHandleService {
     if (!this.allowReply) {
       return false;
     }
+
+    await this.feishu.set_app_access_token();
 
     switch (message_type) {
       case 'text':
@@ -45,7 +54,6 @@ export class MessageHandleService {
   }
 
   async checkCallbackAuthority() {
-    const chat_id = _.get(this.payload, 'event.message.chat_id');
     const chat_type = _.get(this.payload, 'event.message.chat_type');
 
     const allowGroupId = [
@@ -53,7 +61,7 @@ export class MessageHandleService {
       this.feishu.robot_group_id,
     ];
     if (chat_type === CHAT_TYPE.GROUP) {
-      if (allowGroupId.indexOf(chat_id) > -1) {
+      if (allowGroupId.indexOf(this.chat_id) > -1) {
         const mentions = _.get(this.payload, 'event.message.mentions');
         const mentionIds = _.map(mentions, (m) => m.id.open_id);
 
@@ -69,16 +77,15 @@ export class MessageHandleService {
   }
 
   async setSpPrompt() {
-    const chat_id = _.get(this.payload, 'event.message.chat_id');
     const chat_type = _.get(this.payload, 'event.message.chat_type');
     const user_open_id = _.get(this.payload, 'event.sender.sender_id.open_id');
 
     if (chat_type === CHAT_TYPE.P2P) {
-      if (this.feishu.wenyu_member_id === chat_id) {
+      if (this.feishu.wenyu_member_id === this.chat_id) {
         this.prompts.push(PROMPTS.EEEE);
         this.aiModel = AI_MODEL.GPT4;
       }
-      if (this.feishu.bean_container_id === chat_id) {
+      if (this.feishu.bean_container_id === this.chat_id) {
         this.prompts.push(PROMPTS.EEEE);
         this.aiModel = AI_MODEL.GPT4;
       }
@@ -93,23 +100,75 @@ export class MessageHandleService {
     );
   }
 
+  async getChatMemo() {
+    if (!fileExists(this.memoFile)) {
+      return false;
+    }
+    const memo = await fse.readJsonSync(this.memoFile);
+    return memo;
+  }
+
+  async handleMessage(_messages) {
+    this.aiTools.setPrompts(this.prompts);
+    this.aiTools.setModel(this.aiModel);
+
+    let messages: any = [];
+
+    const memo = await this.getChatMemo();
+
+    if (memo) {
+      messages = messages.concat(memo);
+    } else {
+      if (this.prompts.length > 0) {
+        for (const prompt of this.prompts) {
+          messages.push({ role: 'system', content: prompt });
+        }
+      }
+    }
+
+    messages.push({ role: 'user', content: _messages });
+    await fse.ensureFileSync(this.memoFile);
+    await fse.writeJsonSync(this.memoFile, messages);
+    return messages;
+  }
+
   async handleText() {
     this.aiTools = new AiTools(this.configService);
-    const chat_id = _.get(this.payload, 'event.message.chat_id');
+
     const content = _.get(this.payload, 'event.message.content');
 
     const contentObj = JSON.parse(content);
 
-    const messages = contentObj.text;
-    this.aiTools.setPrompts(this.prompts);
-    this.aiTools.setModel(this.aiModel);
+    const clearMemo = await this.checkMemoClear(contentObj.text);
 
+    if (clearMemo) {
+      return false;
+    }
+
+    const messages = await this.handleMessage(contentObj.text);
     const chatMessage = await this.aiTools.simpleCompl(messages);
 
-    await this.feishu.set_app_access_token();
     await this.feishu.sendMessageToChat({
       message: chatMessage,
-      receive_id: chat_id,
+      receive_id: this.chat_id,
     });
+  }
+
+  async checkMemoClear(content) {
+    let clearMemo = false;
+
+    const regex = new RegExp('清除记忆', 'gi');
+    const matches = content.match(regex);
+
+    if (matches) {
+      clearMemo = true;
+      await fse.removeSync(this.memoFile);
+      await this.feishu.sendMessageToChat({
+        message: '好的，记忆已经清除',
+        receive_id: this.chat_id,
+      });
+    }
+
+    return clearMemo;
   }
 }
