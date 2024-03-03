@@ -35,3 +35,11 @@ export enum CHAT_TYPE {
 }
 
 // 9.我叫【填写你的称呼】，你在接下来和我聊天的时候要有对我的称呼。
+export enum SP_TEXT {
+  ES_PREFIX = 'QueryEs:',
+}
+
+export enum MSG_TYPE {
+  TEXT = 'text',
+  POST = 'post',
+}

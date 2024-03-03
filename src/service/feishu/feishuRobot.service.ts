@@ -105,6 +105,41 @@ export class FeishuRobotService {
     }
   }
 
+  async sendPostToChat(params: { records; receive_id: string }) {
+    const content: any = [];
+    const { records, receive_id } = params;
+
+    for (const i in records) {
+      const r = records[i];
+      content.push([
+        { tag: 'a', href: r.url, text: `${parseInt(i) + 1}.${r.title}` },
+      ]);
+      content.push([{ tag: 'text', text: r.summary }]);
+    }
+    const postContent = {
+      zh_cn: {
+        title: `以下是搜索结果：`,
+        content,
+      },
+    };
+    const data = {
+      receive_id,
+      msg_type: 'post',
+      content: JSON.stringify(postContent),
+    };
+
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
+        data,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  }
+
   async sendToBean(message) {
     const receive_id = this.bean_receive_id;
 

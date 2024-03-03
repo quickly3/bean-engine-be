@@ -2,11 +2,12 @@ import * as _ from 'lodash';
 import { FeishuRobotService } from './feishuRobot.service';
 import AiTools from '../ai/AiTools';
 import { ConfigService } from '@nestjs/config';
-import { CHAT_TYPE, PROMPTS } from './enum';
+import { CHAT_TYPE, MSG_TYPE, PROMPTS, SP_TEXT } from './enum';
 import { fsMembers } from './members';
 import { AI_MODEL } from '../ai/enum';
 import * as fse from 'fs-extra';
 import { fileExists } from '../ai/util';
+import { ArticleService } from '../article.service';
 
 export class MessageHandleService {
   payload;
@@ -16,11 +17,13 @@ export class MessageHandleService {
   allowReply = false;
   aiModel;
   aiTools: AiTools;
-  memoPath = 'output/memno';
+  memoPath = 'output/memo';
   memoFile;
+  messageType = MSG_TYPE.TEXT;
   constructor(
     private readonly feishu: FeishuRobotService,
     private readonly configService: ConfigService,
+    private readonly articleEs: ArticleService,
   ) {}
 
   async handle(payload) {
@@ -29,7 +32,6 @@ export class MessageHandleService {
     this.chat_id = _.get(this.payload, 'event.message.chat_id');
     this.memoFile = this.memoPath + '/' + this.chat_id + '.json';
     console.log('payload', payload);
-    console.log(this.memoFile);
     if (!message) {
       return;
     }
@@ -125,11 +127,43 @@ export class MessageHandleService {
         }
       }
     }
-
     messages.push({ role: 'user', content: _messages });
     await fse.ensureFileSync(this.memoFile);
-    await fse.writeJsonSync(this.memoFile, messages);
     return messages;
+  }
+
+  async hasSpText(text) {
+    const regex = new RegExp(`^${SP_TEXT.ES_PREFIX}`, 'gi');
+    const matches = text.match(regex);
+    return matches;
+  }
+
+  async queryEs(spText) {
+    const regex = new RegExp(`${SP_TEXT.ES_PREFIX}`, 'gi');
+    const keyword = spText.replace(regex, '').replace(':', '');
+    const resp = await this.articleEs.queryByString(
+      `title:\"${keyword}\" && url:*`,
+    );
+    return resp;
+  }
+
+  async analyseMessage(text) {
+    const spText = await this.hasSpText(text);
+
+    if (spText) {
+      this.messageType = MSG_TYPE.POST;
+      const esMessage = await this.queryEs(text);
+      return esMessage.data;
+    } else {
+      this.messageType = MSG_TYPE.TEXT;
+      const messages = await this.handleMessage(text);
+      const chatMessage = await this.aiTools.simpleCompl(messages);
+
+      messages.push(chatMessage);
+      await fse.writeJsonSync(this.memoFile, messages);
+
+      return chatMessage.content;
+    }
   }
 
   async handleText() {
@@ -145,13 +179,24 @@ export class MessageHandleService {
       return false;
     }
 
-    const messages = await this.handleMessage(contentObj.text);
-    const chatMessage = await this.aiTools.simpleCompl(messages);
+    const chatMessage = await this.analyseMessage(contentObj.text);
 
-    await this.feishu.sendMessageToChat({
-      message: chatMessage,
-      receive_id: this.chat_id,
-    });
+    switch (this.messageType) {
+      case MSG_TYPE.POST:
+        await this.feishu.sendPostToChat({
+          records: chatMessage,
+          receive_id: this.chat_id,
+        });
+        break;
+      case MSG_TYPE.TEXT:
+        await this.feishu.sendMessageToChat({
+          message: chatMessage,
+          receive_id: this.chat_id,
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   async checkMemoClear(content) {

@@ -46,7 +46,7 @@ export default class AiTools {
       },
       this.axiosRequestConfig,
     );
-    const message = _.get(completion, 'choices[0].message.content');
+    const message = _.get(completion, 'choices[0].message');
     return message;
   }
 

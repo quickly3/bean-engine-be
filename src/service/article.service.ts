@@ -23,6 +23,25 @@ export class ArticleService {
     const resp = await queryBuilder.getHistogram(calendar_interval);
     return resp.data;
   }
+
+  async queryByString(query_string) {
+    const query = {
+      query_string: {
+        query: query_string,
+      },
+    };
+
+    const queryBuilder = new EsQueryBuilder(
+      ES_INDEX.ARTICLE,
+      this.elasticsearchService,
+    );
+    queryBuilder.setSource(['title', 'url', 'source', 'summary']);
+    queryBuilder.setSize(10);
+    queryBuilder.setQuery(query);
+    const resp = await queryBuilder.search();
+    return resp;
+  }
+
   async getAuthorTermsAgg() {
     const resp = await this.elasticsearchService.search({
       index: 'article',
