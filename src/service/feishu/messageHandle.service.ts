@@ -128,13 +128,13 @@ export class MessageHandleService {
   }
 
   async hasSpText(text) {
-    const regex = new RegExp(`${SP_TEXT.ES_PREFIX}`, 'gi');
+    const regex = new RegExp(`^.*${SP_TEXT.ES_PREFIX}`, 'gi');
     const matches = text.match(regex);
     return matches;
   }
 
   async queryEs(spText) {
-    const regex = new RegExp(`${SP_TEXT.ES_PREFIX}`, 'gi');
+    const regex = new RegExp(`.*${SP_TEXT.ES_PREFIX}`, 'gi');
     const keyword = spText.replace(regex, '').replace(':', '');
     const resp = await this.articleEs.queryByString(
       `title:\"${keyword}\" && url:*`,
