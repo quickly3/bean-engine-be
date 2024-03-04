@@ -500,8 +500,14 @@ export class SearchService {
     }
   }
 
-  async esClear() {
+  async esClear(source) {
     const del_ids: any[] = [];
+
+    let query_string = `source:* && -source:chatgpt`;
+    if (source) {
+      query_string = `source:${source} && -source:chatgpt`;
+    }
+
     const params = {
       index: 'article',
       scroll: '30s', // how long between scroll requests. should be small!
@@ -509,7 +515,7 @@ export class SearchService {
       body: {
         query: {
           query_string: {
-            query: `source:* && -source:chatgpt`,
+            query: query_string,
           },
         },
       },

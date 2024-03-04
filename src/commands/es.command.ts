@@ -41,9 +41,14 @@ export class EsCommand {
   }
 
   @Command({
-    command: 'esClear',
+    command: 'esClear <source>',
   })
-  async esClear() {
-    await this.searchService.esClear();
+  async esClear(
+    @Positional({
+      name: 'source',
+    })
+    source: string,
+  ) {
+    await this.searchService.esClear(source);
   }
 }
