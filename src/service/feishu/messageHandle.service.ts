@@ -84,11 +84,11 @@ export class MessageHandleService {
 
     if (chat_type === CHAT_TYPE.P2P) {
       if (this.feishu.wenyu_member_id === this.chat_id) {
-        this.prompts.push(PROMPTS.EEEE);
+        this.prompts.push(PROMPTS.SSGF);
         this.aiModel = AI_MODEL.GPT4;
       }
       if (this.feishu.bean_container_id === this.chat_id) {
-        this.prompts.push(PROMPTS.EEEE);
+        // this.prompts.push(PROMPTS.EEEE);
         this.aiModel = AI_MODEL.GPT4;
       }
     }
