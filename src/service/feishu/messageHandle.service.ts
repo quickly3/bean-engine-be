@@ -15,7 +15,7 @@ export class MessageHandleService {
   chat_id;
   prompts: any[] = [];
   allowReply = false;
-  aiModel;
+  aiModel = AI_MODEL.GPT4;
   aiTools: AiTools;
   memoPath = 'output/memo';
   memoFile;
@@ -88,7 +88,7 @@ export class MessageHandleService {
         this.aiModel = AI_MODEL.GPT4;
       }
       if (this.feishu.bean_container_id === this.chat_id) {
-        // this.prompts.push(PROMPTS.EEEE);
+        // this.prompts.push(PROMPTSE);
         this.aiModel = AI_MODEL.GPT4;
       }
     }
