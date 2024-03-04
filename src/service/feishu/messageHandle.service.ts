@@ -3,7 +3,6 @@ import { FeishuRobotService } from './feishuRobot.service';
 import AiTools from '../ai/AiTools';
 import { ConfigService } from '@nestjs/config';
 import { CHAT_TYPE, MSG_TYPE, PROMPTS, SP_TEXT } from './enum';
-import { fsMembers } from './members';
 import { AI_MODEL } from '../ai/enum';
 import * as fse from 'fs-extra';
 import { fileExists } from '../ai/util';
@@ -80,7 +79,7 @@ export class MessageHandleService {
 
   async setSpPrompt() {
     const chat_type = _.get(this.payload, 'event.message.chat_type');
-    const user_open_id = _.get(this.payload, 'event.sender.sender_id.open_id');
+    // const user_open_id = _.get(this.payload, 'event.sender.sender_id.open_id');
 
     if (chat_type === CHAT_TYPE.P2P) {
       if (this.feishu.wenyu_member_id === this.chat_id) {
@@ -93,10 +92,9 @@ export class MessageHandleService {
       }
     }
 
-    const myName = fsMembers.filter((m) => m.member_id === user_open_id)[0]
-      .name;
+    // const myName = fsMembers.filter((m) => m.member_id === user_open_id)[0]
+    //   .name;
     this.prompts.push(PROMPTS.SELF);
-    this.prompts.push(`我是 ${myName}`);
   }
 
   async getChatMemo() {
@@ -130,7 +128,7 @@ export class MessageHandleService {
   }
 
   async hasSpText(text) {
-    const regex = new RegExp(`^${SP_TEXT.ES_PREFIX}`, 'gi');
+    const regex = new RegExp(`${SP_TEXT.ES_PREFIX}`, 'gi');
     const matches = text.match(regex);
     return matches;
   }
