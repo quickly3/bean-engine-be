@@ -38,26 +38,7 @@ export default class AiTools {
     this.aiModel = aiModel;
   }
 
-  getChatMemo() {
-    return false;
-  }
-
-  async simpleCompl(_messages) {
-    let messages: any = [];
-
-    const memo = this.getChatMemo();
-    if (memo) {
-      messages = messages.concat(memo);
-    } else {
-      if (this.prompts.length > 0) {
-        for (const prompt of this.prompts) {
-          messages.push({ role: 'system', content: prompt });
-        }
-      }
-    }
-
-    messages.push({ role: 'user', content: _messages });
-
+  async simpleCompl(messages) {
     const completion = await this.openai.chat.completions.create(
       {
         model: this.aiModel,
@@ -65,7 +46,7 @@ export default class AiTools {
       },
       this.axiosRequestConfig,
     );
-    const message = _.get(completion, 'choices[0].message.content');
+    const message = _.get(completion, 'choices[0].message');
     return message;
   }
 
