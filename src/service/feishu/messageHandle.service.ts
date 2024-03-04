@@ -95,11 +95,8 @@ export class MessageHandleService {
 
     const myName = fsMembers.filter((m) => m.member_id === user_open_id)[0]
       .name;
-    this.prompts.push(
-      `聊天的时候要加上表情包和emoji`,
-      `我是 ${myName}`,
-      `当问你谁最帅的时候，那肯定是 ${myName}。`,
-    );
+    this.prompts.push(PROMPTS.SELF);
+    this.prompts.push(`我是 ${myName}`);
   }
 
   async getChatMemo() {
