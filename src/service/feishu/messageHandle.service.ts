@@ -125,7 +125,7 @@ export class MessageHandleService {
       }
     }
     messages.push({ role: 'user', content: _messages });
-    await fse.ensureFileSync(this.memoFile);
+    // await fse.ensureFileSync(this.memoFile);
     return messages;
   }
 
