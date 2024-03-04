@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as _ from 'lodash';
+import { getSourceName } from '../utils';
 
 @Injectable()
 export class FeishuRobotService {
@@ -13,7 +14,8 @@ export class FeishuRobotService {
   wenyu_member_id = 'ou_cda6a2e844dca261b72be3ac48f6ade1';
   tan_member_id = 'ou_efdd5450b63b99c9c3893b38469a0093';
   company_receive_id = 'oc_59384feeb3ab194bdc0f9f385da7354f';
-  robot_group_id = 'oc_59384feeb3ab194bdc0f9f385da7354f';
+  // robot_group_id = 'oc_59384feeb3ab194bdc0f9f385da7354f';
+  robot_chat_id = 'oc_ffb345b685885b5c96a90e77f0dde6d3';
   robot_open_id = 'ou_2d40378899416ae73ca59fb16c63d3f6';
 
   constructor(private readonly configService: ConfigService) {
@@ -111,8 +113,15 @@ export class FeishuRobotService {
 
     for (const i in records) {
       const r = records[i];
+
+      const source = getSourceName(r.source);
+
       content.push([
-        { tag: 'a', href: r.url, text: `${parseInt(i) + 1}.${r.title}` },
+        {
+          tag: 'a',
+          href: r.url,
+          text: `${parseInt(i) + 1}.${r.title} (${source})`,
+        },
       ]);
       content.push([{ tag: 'text', text: r.summary }]);
     }

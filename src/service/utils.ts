@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { source_mapping } from 'src/enum/enum';
 import { escapeElasticReservedChars } from 'src/utils/es';
 
 export const parseQueryString = (payload) => {
@@ -112,3 +113,8 @@ export const parseAuthorQueryString = (payload) => {
 export const jsonToNeoString = (object) => {
   return JSON.stringify(object).replace(/"([^"]+)":/g, '$1:');
 };
+
+export function getSourceName(source) {
+  const _source = _.findLast(source_mapping, (s) => s.source === source);
+  return _source.text;
+}

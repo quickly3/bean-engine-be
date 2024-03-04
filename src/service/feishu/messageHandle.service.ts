@@ -60,7 +60,7 @@ export class MessageHandleService {
 
     const allowGroupId = [
       this.feishu.company_receive_id,
-      this.feishu.robot_group_id,
+      this.feishu.robot_chat_id,
     ];
     if (chat_type === CHAT_TYPE.GROUP) {
       if (allowGroupId.indexOf(this.chat_id) > -1) {
