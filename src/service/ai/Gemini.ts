@@ -11,11 +11,11 @@ export default class GeminiAi {
   }
 
   async test() {
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-pro-vision' });
+    const model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
 
     const prompt = '我帅嘛？';
 
-    const result = await model.generateContent([prompt]);
+    const result = await model.generateContent(prompt);
     console.log(result.response.text());
   }
 }
