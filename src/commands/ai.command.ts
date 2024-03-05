@@ -6,6 +6,7 @@ import { DailyReportService } from 'src/service/dailyReport.service';
 import AiTools from 'src/service/ai/AiTools';
 import { ConfigService } from '@nestjs/config';
 import { PROMPTS } from 'src/service/feishu/enum';
+import GeminiAi from 'src/service/ai/Gemini';
 
 @Injectable()
 export class AiCommand {
@@ -51,5 +52,13 @@ export class AiCommand {
   async info() {
     // const resp = await this.feishu.sendToBean('holle');
     await this.dailyReportService.sendToFs('company');
+  }
+
+  @Command({
+    command: 'gemini',
+  })
+  async gemini() {
+    const genAi = new GeminiAi(this.configService);
+    await genAi.test();
   }
 }

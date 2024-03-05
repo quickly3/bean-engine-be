@@ -30,5 +30,8 @@ export default () => {
       GPT_KEY: process.env.GPT_KEY,
       ENV: process.env.GPT_ENV,
     },
+    google: {
+      geminiKey: process.env.GEMINI_KEY,
+    },
   };
 };
