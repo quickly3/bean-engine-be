@@ -24,6 +24,9 @@ export default class GeminiAi {
     const model = this.genAI.getGenerativeModel({ model: this.model });
     const prompts = message.map((p) => p.content);
     const result = await model.generateContent(prompts);
-    return result.response.text();
+    return {
+      role: 'assistant',
+      content: result.response.text(),
+    };
   }
 }
