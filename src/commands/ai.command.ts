@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PromptsService } from 'src/service/ai/prompts.service';
 import { FeishuRobotService } from 'src/service/feishu/feishuRobot.service';
 import { DailyReportService } from 'src/service/dailyReport.service';
-import AiTools from 'src/service/ai/AiTools';
+import OpenAi from 'src/service/ai/OpenAi';
 import { ConfigService } from '@nestjs/config';
 import { PROMPTS } from 'src/service/feishu/enum';
 import GeminiAi from 'src/service/ai/Gemini';
@@ -27,7 +27,7 @@ export class AiCommand {
     command: 'gpt',
   })
   async gpt() {
-    const aiTools = new AiTools(this.configService);
+    const aiTools = new OpenAi(this.configService);
     const messages = ['你是谁？'];
     aiTools.setPrompts([PROMPTS.SSGF]);
     const resp = await aiTools.simpleCompl(messages);
@@ -39,7 +39,6 @@ export class AiCommand {
   })
   async fsTest() {
     await this.feishu.set_app_access_token();
-    // const resp = await this.feishu.sendToBean('holle');
     const resp = await this.feishu.getGroupMembers(
       this.feishu.company_receive_id,
     );
@@ -58,7 +57,8 @@ export class AiCommand {
     command: 'gemini',
   })
   async gemini() {
+    const messages = '你是谁？';
     const genAi = new GeminiAi(this.configService);
-    await genAi.test();
+    await genAi.simpleCompl(messages);
   }
 }

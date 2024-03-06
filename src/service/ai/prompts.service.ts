@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import axios from 'axios';
 import { readFileSync } from 'fs';
 import { readFilesInDirectory } from 'src/utils/file';
 

@@ -1,21 +1,28 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
+import { GEMINI_MODEL } from './enum';
 
 export default class GeminiAi {
+  prompts = [];
   genAI: GoogleGenerativeAI;
+  model = GEMINI_MODEL.GEMINI_PRO;
+
   constructor(private readonly configService: ConfigService) {
     const geminiKey = this.configService.get('google.geminiKey');
     console.log(geminiKey);
     this.genAI = new GoogleGenerativeAI(geminiKey);
   }
 
-  async test() {
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
-
-    const prompt = '我帅嘛？';
-
-    const result = await model.generateContent([prompt]);
-    console.log(result.response.text());
+  async setPrompts(prompts) {
+    this.prompts = prompts;
+  }
+  async setModel(model) {
+    this.model = model;
+  }
+  async simpleCompl(message) {
+    const model = this.genAI.getGenerativeModel({ model: this.model });
+    const result = await model.generateContent([...this.prompts, message]);
+    return result.response.text();
   }
 }

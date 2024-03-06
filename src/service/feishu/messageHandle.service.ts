@@ -1,12 +1,13 @@
 import * as _ from 'lodash';
 import { FeishuRobotService } from './feishuRobot.service';
-import AiTools from '../ai/AiTools';
+import OpenAi from '../ai/OpenAi';
 import { ConfigService } from '@nestjs/config';
 import { CHAT_TYPE, MSG_TYPE, PROMPTS, SP_TEXT } from './enum';
-import { AI_MODEL } from '../ai/enum';
+import { AI_TYPE, OPENAI_MODEL } from '../ai/enum';
 import * as fse from 'fs-extra';
 import { fileExists } from '../ai/util';
 import { ArticleService } from '../article.service';
+import GeminiAi from '../ai/Gemini';
 
 export class MessageHandleService {
   payload;
@@ -14,16 +15,20 @@ export class MessageHandleService {
   chat_id;
   prompts: any[] = [];
   allowReply = false;
-  aiModel = AI_MODEL.GPT4;
-  aiTools: AiTools;
+  aiTools: any;
   memoPath = 'output/memo';
   memoFile;
+  aiType = AI_TYPE.OPENAI;
   messageType = MSG_TYPE.TEXT;
   constructor(
     private readonly feishu: FeishuRobotService,
     private readonly configService: ConfigService,
     private readonly articleEs: ArticleService,
   ) {}
+
+  setAiType(aiType) {
+    this.aiType = aiType;
+  }
 
   async handle(payload) {
     this.payload = payload;
@@ -84,11 +89,9 @@ export class MessageHandleService {
     if (chat_type === CHAT_TYPE.P2P) {
       if (this.feishu.wenyu_member_id === this.chat_id) {
         this.prompts.push(PROMPTS.SSGF);
-        this.aiModel = AI_MODEL.GPT4;
       }
       if (this.feishu.bean_container_id === this.chat_id) {
         // this.prompts.push(PROMPTSE);
-        this.aiModel = AI_MODEL.GPT4;
       }
     }
 
@@ -107,8 +110,6 @@ export class MessageHandleService {
 
   async handleMessage(_messages) {
     this.aiTools.setPrompts(this.prompts);
-    this.aiTools.setModel(this.aiModel);
-
     let messages: any = [];
 
     const memo = await this.getChatMemo();
@@ -162,7 +163,13 @@ export class MessageHandleService {
   }
 
   async handleText() {
-    this.aiTools = new AiTools(this.configService);
+    if (this.aiType === AI_TYPE.OPENAI) {
+      this.aiTools = new OpenAi(this.configService);
+    }
+
+    if (this.aiType === AI_TYPE.GEMINI) {
+      this.aiTools = new GeminiAi(this.configService);
+    }
 
     const content = _.get(this.payload, 'event.message.content');
 
