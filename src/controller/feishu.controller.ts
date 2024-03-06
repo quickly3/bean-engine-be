@@ -22,7 +22,7 @@ export class FeishuController {
         this.configService,
         this.articleService,
       );
-      messageHandleService.setAiType(AI_TYPE.OPENAI);
+      messageHandleService.setAiType(AI_TYPE.GEMINI);
       messageHandleService.handle(payload);
     } catch (error) {
       console.error(error);
@@ -33,7 +33,6 @@ export class FeishuController {
   @Post('event/gemini')
   @HttpCode(200)
   async eventGemini(@Body() payload) {
-    return payload;
     try {
       const messageHandleService = new MessageHandleService(
         this.feishu,
