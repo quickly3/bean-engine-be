@@ -1,5 +1,6 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AI_TYPE } from 'src/service/ai/enum';
 import { ArticleService } from 'src/service/article.service';
 import { FeishuRobotService } from 'src/service/feishu/feishuRobot.service';
 import { MessageHandleService } from 'src/service/feishu/messageHandle.service';
@@ -12,15 +13,16 @@ export class FeishuController {
     private readonly articleService: ArticleService,
   ) {}
 
-  @Post('event')
+  @Post('event/:aiType')
   @HttpCode(200)
-  async event(@Body() payload) {
+  async event(@Body() payload, @Param('aiType') aiType: string) {
     try {
       const messageHandleService = new MessageHandleService(
         this.feishu,
         this.configService,
         this.articleService,
       );
+      messageHandleService.setAiType(aiType);
       messageHandleService.handle(payload);
     } catch (error) {
       console.error(error);

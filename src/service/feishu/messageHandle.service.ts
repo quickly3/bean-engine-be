@@ -153,12 +153,17 @@ export class MessageHandleService {
     } else {
       this.messageType = MSG_TYPE.TEXT;
       const messages = await this.handleMessage(text);
-      const chatMessage = await this.aiTools.simpleCompl(messages);
 
-      messages.push(chatMessage);
-      await fse.writeJsonSync(this.memoFile, messages);
+      try {
+        const chatMessage = await this.aiTools.simpleCompl(messages);
+        messages.push(chatMessage);
+        await fse.writeJsonSync(this.memoFile, messages);
 
-      return chatMessage.content;
+        return chatMessage.content;
+      } catch (error) {
+        console.error(error);
+        return '对话发生错误';
+      }
     }
   }
 

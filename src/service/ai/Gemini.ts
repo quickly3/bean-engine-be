@@ -22,7 +22,9 @@ export default class GeminiAi {
   }
   async simpleCompl(message) {
     const model = this.genAI.getGenerativeModel({ model: this.model });
-    const result = await model.generateContent([...this.prompts, message]);
+    const prompts = message.map((p) => p.content);
+    console.log(prompts);
+    const result = await model.generateContent(prompts);
     return result.response.text();
   }
 }
