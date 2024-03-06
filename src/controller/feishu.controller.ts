@@ -13,16 +13,34 @@ export class FeishuController {
     private readonly articleService: ArticleService,
   ) {}
 
-  @Post('event/:aiType')
+  @Post('event/openai')
   @HttpCode(200)
-  async event(@Body() payload, @Param('aiType') aiType: string) {
+  async event(@Body() payload) {
     try {
       const messageHandleService = new MessageHandleService(
         this.feishu,
         this.configService,
         this.articleService,
       );
-      messageHandleService.setAiType(aiType);
+      messageHandleService.setAiType(AI_TYPE.OPENAI);
+      messageHandleService.handle(payload);
+    } catch (error) {
+      console.error(error);
+    }
+    return true;
+  }
+
+  @Post('event/gemini')
+  @HttpCode(200)
+  async eventGemini(@Body() payload) {
+    return payload;
+    try {
+      const messageHandleService = new MessageHandleService(
+        this.feishu,
+        this.configService,
+        this.articleService,
+      );
+      messageHandleService.setAiType(AI_TYPE.GEMINI);
       messageHandleService.handle(payload);
     } catch (error) {
       console.error(error);
