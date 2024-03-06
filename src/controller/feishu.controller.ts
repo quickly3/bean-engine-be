@@ -16,6 +16,7 @@ export class FeishuController {
   @Post('event/:aiType')
   @HttpCode(200)
   async event(@Body() payload, @Param('aiType') aiType: string) {
+    return payload;
     try {
       const messageHandleService = new MessageHandleService(
         this.feishu,
