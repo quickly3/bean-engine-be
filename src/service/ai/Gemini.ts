@@ -15,7 +15,7 @@ export default class GeminiAi {
 
     const prompt = '我帅嘛？';
 
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent([prompt]);
     console.log(result.response.text());
   }
 }
