@@ -39,6 +39,7 @@ export class FeishuController {
         this.configService,
         this.articleService,
       );
+
       messageHandleService.setAiType(AI_TYPE.GEMINI);
       messageHandleService.handle(payload);
     } catch (error) {

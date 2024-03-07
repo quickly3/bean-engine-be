@@ -48,7 +48,11 @@ export class MessageHandleService {
       return false;
     }
 
-    await this.feishu.set_app_access_token();
+    let feishuId = 'feishu';
+    if (this.aiType === AI_TYPE.GEMINI) {
+      feishuId = 'feishu2';
+    }
+    await this.feishu.set_app_access_token(feishuId);
 
     switch (message_type) {
       case 'text':

@@ -26,6 +26,10 @@ export default () => {
       FS_APP_ID: process.env.FS_APP_ID,
       FS_APP_SECRET: process.env.FS_APP_SECRET,
     },
+    feishu2: {
+      FS_APP_ID: process.env.FS_APP_ID_2,
+      FS_APP_SECRET: process.env.FS_APP_SECRET_2,
+    },
     openai: {
       GPT_KEY: process.env.GPT_KEY,
       ENV: process.env.GPT_ENV,
