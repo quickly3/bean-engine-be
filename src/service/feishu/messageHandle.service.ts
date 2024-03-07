@@ -34,7 +34,9 @@ export class MessageHandleService {
     this.payload = payload;
     const message = _.get(payload, 'event.message');
     this.chat_id = _.get(this.payload, 'event.message.chat_id');
-    this.memoFile = this.memoPath + `/${this.aiType}/` + this.chat_id + '.json';
+    const memoDir = this.memoPath + `/${this.aiType}/`;
+    fse.ensureDir(memoDir);
+    this.memoFile = memoDir + this.chat_id + '.json';
     console.log('payload', payload);
     if (!message) {
       return;
