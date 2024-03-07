@@ -99,9 +99,11 @@ export class MessageHandleService {
       }
     }
 
-    // const myName = fsMembers.filter((m) => m.member_id === user_open_id)[0]
-    //   .name;
-    this.prompts.push(PROMPTS.SELF);
+    if (this.aiType === AI_TYPE.OPENAI) {
+      this.prompts.push(PROMPTS.DUNDUN);
+    } else {
+      this.prompts.push(PROMPTS.GEMINI);
+    }
   }
 
   async getChatMemo() {
