@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { FeishuRobotService } from './feishuRobot.service';
+import { FeishuRobot } from './feishuRobot';
 import OpenAi from '../ai/OpenAi';
 import { ConfigService } from '@nestjs/config';
 import { CHAT_TYPE, MSG_TYPE, PROMPTS, SP_TEXT } from './enum';
@@ -18,13 +18,15 @@ export class MessageHandleService {
   aiTools: any;
   memoPath = 'output/memo';
   memoFile;
+  feishu: FeishuRobot;
   aiType = AI_TYPE.OPENAI;
   messageType = MSG_TYPE.TEXT;
   constructor(
-    private readonly feishu: FeishuRobotService,
     private readonly configService: ConfigService,
     private readonly articleEs: ArticleService,
-  ) {}
+  ) {
+    this.feishu = new FeishuRobot(this.configService);
+  }
 
   setAiType(aiType) {
     this.aiType = aiType;

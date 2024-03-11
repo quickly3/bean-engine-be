@@ -1,11 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as _ from 'lodash';
 import { getSourceName } from '../utils';
 
-@Injectable()
-export class FeishuRobotService {
+export class FeishuRobot {
   app_id: string;
   app_secret: string;
   app_access_token: string;

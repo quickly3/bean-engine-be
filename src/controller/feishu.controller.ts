@@ -2,13 +2,11 @@ import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AI_TYPE } from 'src/service/ai/enum';
 import { ArticleService } from 'src/service/article.service';
-import { FeishuRobotService } from 'src/service/feishu/feishuRobot.service';
 import { MessageHandleService } from 'src/service/feishu/messageHandle.service';
 
 @Controller('feishu')
 export class FeishuController {
   constructor(
-    private readonly feishu: FeishuRobotService,
     private readonly configService: ConfigService,
     private readonly articleService: ArticleService,
   ) {}
@@ -18,7 +16,6 @@ export class FeishuController {
   async event(@Body() payload) {
     try {
       const messageHandleService = new MessageHandleService(
-        this.feishu,
         this.configService,
         this.articleService,
       );
@@ -35,7 +32,6 @@ export class FeishuController {
   async eventGemini(@Body() payload) {
     try {
       const messageHandleService = new MessageHandleService(
-        this.feishu,
         this.configService,
         this.articleService,
       );
