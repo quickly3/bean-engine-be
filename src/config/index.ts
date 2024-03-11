@@ -25,12 +25,12 @@ export default () => {
     feishu: {
       FS_APP_ID: process.env.FS_APP_ID,
       FS_APP_SECRET: process.env.FS_APP_SECRET,
-      FS_ROBOT_OPEN_ID: process.env.FS_ROBOT_OPEN_ID,
+      FS_ROBOT_UNION_ID: process.env.FS_ROBOT_UNION_ID,
     },
     feishu2: {
       FS_APP_ID: process.env.FS_APP_ID_2,
       FS_APP_SECRET: process.env.FS_APP_SECRET_2,
-      FS_ROBOT_OPEN_ID: process.env.FS_ROBOT_OPEN_ID_2,
+      FS_ROBOT_UNION_ID: process.env.FS_ROBOT_UNION_ID_2,
     },
     openai: {
       GPT_KEY: process.env.GPT_KEY,

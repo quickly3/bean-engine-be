@@ -17,12 +17,14 @@ export class FeishuRobotService {
   // robot_group_id = 'oc_59384feeb3ab194bdc0f9f385da7354f';
   robot_chat_id = 'oc_ffb345b685885b5c96a90e77f0dde6d3';
   robot_open_id = 'ou_2d40378899416ae73ca59fb16c63d3f6';
+  robot_union_id;
 
   constructor(private readonly configService: ConfigService) {}
 
   async set_app_access_token(id = 'feishu') {
     this.app_id = this.configService.get(`${id}.FS_APP_ID`);
     this.app_secret = this.configService.get(`${id}.FS_APP_SECRET`);
+    this.robot_union_id = this.configService.get(`${id}.FS_ROBOT_UNION_ID`);
 
     const body = {
       app_id: this.app_id,
