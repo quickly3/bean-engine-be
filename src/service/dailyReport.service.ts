@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { FeishuRobotService } from './feishu/feishuRobot.service';
+import { FeishuRobot } from './feishu/feishuRobot';
 import { SearchService } from './search.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DailyReportService {
+  feishu: FeishuRobot;
   constructor(
-    private readonly feishu: FeishuRobotService,
     private readonly searchService: SearchService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.feishu = new FeishuRobot(this.configService);
+  }
 
   async sendToFs(toGroup = 'bean') {
     const resp = await this.searchService.dailyMd();

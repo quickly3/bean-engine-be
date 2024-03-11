@@ -1,7 +1,7 @@
 import { Command } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
 import { PromptsService } from 'src/service/ai/prompts.service';
-import { FeishuRobotService } from 'src/service/feishu/feishuRobot.service';
+import { FeishuRobot } from 'src/service/feishu/feishuRobot';
 import { DailyReportService } from 'src/service/dailyReport.service';
 import OpenAi from 'src/service/ai/OpenAi';
 import { ConfigService } from '@nestjs/config';
@@ -10,12 +10,14 @@ import GeminiAi from 'src/service/ai/Gemini';
 
 @Injectable()
 export class AiCommand {
+  feishu: FeishuRobot;
   constructor(
     private readonly promptsService: PromptsService,
-    private readonly feishu: FeishuRobotService,
     private readonly dailyReportService: DailyReportService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.feishu = new FeishuRobot(this.configService);
+  }
   @Command({
     command: 'ai:prompts-cn',
   })

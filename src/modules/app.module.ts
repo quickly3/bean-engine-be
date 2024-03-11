@@ -19,11 +19,9 @@ import { PromptsService } from 'src/service/ai/prompts.service';
 import { AiCommand } from 'src/commands/ai.command';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SpiderController } from 'src/controller/spider.controller';
-import { FeishuRobotService } from 'src/service/feishu/feishuRobot.service';
 import { DailyReportService } from 'src/service/dailyReport.service';
 import { CronController } from 'src/controller/cron.controller';
 import { FeishuController } from 'src/controller/feishu.controller';
-import { MessageHandleService } from 'src/service/feishu/messageHandle.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -65,9 +63,7 @@ import { MessageHandleService } from 'src/service/feishu/messageHandle.service';
     AiCommand,
     SyncService,
     PromptsService,
-    FeishuRobotService,
     DailyReportService,
-    MessageHandleService,
   ],
 })
 export class AppModule {}
