@@ -41,6 +41,12 @@ export class MessageHandleService {
     if (!message) {
       return;
     }
+    let feishuId = 'feishu';
+    if (this.aiType === AI_TYPE.GEMINI) {
+      feishuId = 'feishu2';
+    }
+    await this.feishu.set_app_access_token(feishuId);
+
     this.checkCallbackAuthority();
     this.setSpPrompt();
     const { message_type } = message;
@@ -49,12 +55,6 @@ export class MessageHandleService {
     if (!this.allowReply) {
       return false;
     }
-
-    let feishuId = 'feishu';
-    if (this.aiType === AI_TYPE.GEMINI) {
-      feishuId = 'feishu2';
-    }
-    await this.feishu.set_app_access_token(feishuId);
 
     switch (message_type) {
       case 'text':
@@ -75,10 +75,7 @@ export class MessageHandleService {
     if (chat_type === CHAT_TYPE.GROUP) {
       if (allowGroupId.indexOf(this.chat_id) > -1) {
         const mentions = _.get(this.payload, 'event.message.mentions');
-        const mentionIds = _.map(mentions, (m) => m.id.open_id);
-
-        console.log(this.feishu.robot_union_id);
-        console.log(mentions);
+        const mentionIds = _.map(mentions, (m) => m.id.union_id);
 
         if (mentionIds.indexOf(this.feishu.robot_union_id) > -1) {
           this.allowReply = true;
