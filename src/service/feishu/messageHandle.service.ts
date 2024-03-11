@@ -77,6 +77,9 @@ export class MessageHandleService {
         const mentions = _.get(this.payload, 'event.message.mentions');
         const mentionIds = _.map(mentions, (m) => m.id.union_id);
 
+        console.log(this.feishu.robot_union_id);
+        console.log(mentionIds);
+
         if (mentionIds.indexOf(this.feishu.robot_union_id) > -1) {
           this.allowReply = true;
         }
