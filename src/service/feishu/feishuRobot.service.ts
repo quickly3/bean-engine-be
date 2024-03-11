@@ -22,6 +22,7 @@ export class FeishuRobotService {
   constructor(private readonly configService: ConfigService) {}
 
   async set_app_access_token(id = 'feishu') {
+    console.log(id);
     this.app_id = this.configService.get(`${id}.FS_APP_ID`);
     this.app_secret = this.configService.get(`${id}.FS_APP_SECRET`);
     this.robot_union_id = this.configService.get(`${id}.FS_ROBOT_UNION_ID`);
