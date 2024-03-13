@@ -3,7 +3,7 @@ import { FeishuRobot } from './feishuRobot';
 import OpenAi from '../ai/OpenAi';
 import { ConfigService } from '@nestjs/config';
 import { CHAT_TYPE, MSG_TYPE, PROMPTS, SP_TEXT } from './enum';
-import { AI_TYPE, OPENAI_MODEL } from '../ai/enum';
+import { AI_TYPE } from '../ai/enum';
 import * as fse from 'fs-extra';
 import { fileExists } from '../ai/util';
 import { ArticleService } from '../article.service';
@@ -39,7 +39,9 @@ export class MessageHandleService {
     const memoDir = this.memoPath + `/${this.aiType}/`;
     fse.ensureDir(memoDir);
     this.memoFile = memoDir + this.chat_id + '.json';
-    console.log('payload', payload);
+
+    const payloadFile = memoDir + 'payload_' + this.chat_id + '.json';
+    fse.writeJSONSync(payloadFile, payload);
     if (!message) {
       return;
     }
