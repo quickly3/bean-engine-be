@@ -41,7 +41,6 @@ export default class OpenAi {
   }
 
   async simpleCompl(messages) {
-    console.log(this.aiModel);
     const completion = await this.openai.chat.completions.create(
       {
         model: this.aiModel,

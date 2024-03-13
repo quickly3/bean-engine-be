@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { getSourceName } from '../utils';
 
 export class FeishuRobot {
+  headers: any;
   app_id: string;
   app_secret: string;
   app_access_token: string;
@@ -42,9 +43,10 @@ export class FeishuRobot {
         data: body,
       });
       this.app_access_token = _.get(response, 'data.app_access_token');
-      axios.defaults.headers.common[
-        'Authorization'
-      ] = `Bearer ${this.app_access_token}`;
+
+      this.headers = {
+        Authorization: `Bearer ${this.app_access_token}`,
+      };
     } catch (error) {}
   }
 
@@ -53,6 +55,7 @@ export class FeishuRobot {
       const response = await axios({
         method: 'get',
         url: 'https://open.feishu.cn/open-apis/im/v1/chats',
+        headers: this.headers,
       });
       return response.data.data.items;
     } catch (error) {
@@ -65,6 +68,7 @@ export class FeishuRobot {
       const response = await axios({
         method: 'get',
         url: `https://open.feishu.cn/open-apis/im/v1/chats/${chat_id}/members`,
+        headers: this.headers,
       });
       return response.data.data;
     } catch (error) {
@@ -82,6 +86,7 @@ export class FeishuRobot {
           container_id: this.bean_container_id,
           page_size: 5,
         },
+        headers: this.headers,
       });
       return response.data.data.items;
     } catch (error) {
@@ -104,6 +109,7 @@ export class FeishuRobot {
         method: 'post',
         url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
         data,
+        headers: this.headers,
       });
       return response.data;
     } catch (error) {
@@ -146,6 +152,7 @@ export class FeishuRobot {
         method: 'post',
         url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
         data,
+        headers: this.headers,
       });
       return response.data;
     } catch (error) {
@@ -169,6 +176,7 @@ export class FeishuRobot {
         method: 'post',
         url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id',
         data,
+        headers: this.headers,
       });
       return response.data;
     } catch (error) {
@@ -189,6 +197,7 @@ export class FeishuRobot {
         method: 'post',
         url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id',
         data,
+        headers: this.headers,
       });
       return response.data;
     } catch (error) {
@@ -208,6 +217,7 @@ export class FeishuRobot {
         method: 'post',
         url: 'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
         data,
+        headers: this.headers,
       });
       return response.data;
     } catch (error) {

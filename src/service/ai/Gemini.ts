@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
-import * as fs from 'fs';
 import { GEMINI_MODEL } from './enum';
 
 export default class GeminiAi {
@@ -10,7 +9,6 @@ export default class GeminiAi {
 
   constructor(private readonly configService: ConfigService) {
     const geminiKey = this.configService.get('google.geminiKey');
-    console.log(geminiKey);
     this.genAI = new GoogleGenerativeAI(geminiKey);
   }
 
