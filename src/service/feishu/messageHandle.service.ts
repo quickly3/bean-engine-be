@@ -132,7 +132,10 @@ export class MessageHandleService {
         }
       }
     }
-    messages.push({ role: 'user', content: _messages });
+
+    const fixedMessage = _messages.replace(/@_user_\d+/g, '').trim();
+
+    messages.push({ role: 'user', content: fixedMessage });
     // await fse.ensureFileSync(this.memoFile);
     return messages;
   }
