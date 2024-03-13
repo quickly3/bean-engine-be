@@ -72,12 +72,9 @@ export class MessageHandleService {
   async checkCallbackAuthority() {
     const chat_type = _.get(this.payload, 'event.message.chat_type');
 
-    const allowGroupId = [
-      this.feishu.company_receive_id,
-      this.feishu.robot_chat_id,
-    ];
+    const allowGroupIds = this.feishu.allowGroupIds;
     if (chat_type === CHAT_TYPE.GROUP) {
-      if (allowGroupId.indexOf(this.chat_id) > -1) {
+      if (allowGroupIds.indexOf(this.chat_id) > -1) {
         const mentions = _.get(this.payload, 'event.message.mentions');
         const mentionIds = _.map(mentions, (m) => m.id.union_id);
 

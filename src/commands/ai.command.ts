@@ -37,17 +37,6 @@ export class AiCommand {
   }
 
   @Command({
-    command: 'fs',
-  })
-  async fsTest() {
-    await this.feishu.set_app_access_token();
-    const resp = await this.feishu.getGroupMembers(
-      this.feishu.company_receive_id,
-    );
-    console.log(resp);
-  }
-
-  @Command({
     command: 'info',
   })
   async info() {
