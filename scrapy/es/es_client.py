@@ -33,6 +33,21 @@ class EsClient:
         resp = self.client.search(index="article", body=query, scroll='2m')
         result = self.formatResp(resp)
         return result
+    
+    def queryExistByUrl(self,url):
+        print(url)
+        queryString = f"url:\"{url}\""
+        print(queryString)
+        query = {
+            "query": {
+                "query_string": {
+                    "query": queryString
+                }
+            }
+        }
+
+        resp = self.client.count(index="article", body=query)
+        return resp['count']
 
     def getDocsByQuery(self, query):
         query = {

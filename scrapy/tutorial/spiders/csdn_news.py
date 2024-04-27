@@ -3,27 +3,15 @@
 #
 
 import scrapy
-import os
 import json
-import time
 from dateutil.parser import parse as dateparse
-import datetime
+import os
 import re
 import pydash as _
 
-from string import Template
-
-# settings.py
-from dotenv import load_dotenv
-from pathlib import Path
-import random
-from elasticsearch import Elasticsearch
-
-
-env_path = Path('..')/'.env'
-load_dotenv(dotenv_path=env_path)
-es_host = os.getenv("ES_HOST")
-es = Elasticsearch(es_host)
+import sys
+sys.path.append('..')
+from es.es_client import EsClient
 
 def clearHighLight(string):
     string = string.replace("<em>", "")
@@ -36,6 +24,7 @@ class AliSpider(scrapy.Spider):
     source = "csdn"
 
     def start_requests(self):
+        self.es = EsClient();
 
         url = 'https://www.csdn.net'
         yield scrapy.Request(url)
@@ -59,11 +48,24 @@ class AliSpider(scrapy.Spider):
                         headhots = _.get(python_obj,'pageData.data.www-headhot')
                         fields_to_extract = ["description", "title", "url"]
                         extracted_headhots = list(map(lambda x: {field: x[field] for field in fields_to_extract}, headhots))
-                        print(extracted_headhots)
+                        # print(extracted_headhots)
+                        # print(headhots[0])
+                        self.queryExist(extracted_headhots)
                         
                         headlines = _.get(python_obj,'pageData.data.www-Headlines')
                         extracted_headlines = list(map(lambda x: {field: x[field] for field in fields_to_extract}, headlines))
-                        print(extracted_headlines)
+                        # print(extracted_headlines)
                         
+                        
+    def queryExist(self, items):
+        for item in items:
+            url = item['url']
+            count = self.es.queryExistByUrl(url)
+            
+            if count > 0:
+                self.requestPage(url)
+                
+    def requestPage(self, url):
+        print(url)
         
         
