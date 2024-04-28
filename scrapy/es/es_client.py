@@ -35,9 +35,7 @@ class EsClient:
         return result
     
     def queryExistByUrl(self,url):
-        print(url)
         queryString = f"url:\"{url}\""
-        print(queryString)
         query = {
             "query": {
                 "query_string": {
