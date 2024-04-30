@@ -7,6 +7,7 @@ import OpenAi from 'src/service/ai/OpenAi';
 import { ConfigService } from '@nestjs/config';
 import { PROMPTS } from 'src/service/feishu/enum';
 import GeminiAi from 'src/service/ai/Gemini';
+import { HackerNewsService } from 'src/service/hackerNews.service';
 
 @Injectable()
 export class AiCommand {
@@ -15,6 +16,7 @@ export class AiCommand {
     private readonly promptsService: PromptsService,
     private readonly dailyReportService: DailyReportService,
     private readonly configService: ConfigService,
+    private readonly hackerNewsService: HackerNewsService,
   ) {
     this.feishu = new FeishuRobot(this.configService);
   }
@@ -51,5 +53,12 @@ export class AiCommand {
     const messages = '你是谁？';
     const genAi = new GeminiAi(this.configService);
     await genAi.simpleCompl(messages);
+  }
+
+  @Command({
+    command: 'getTopStories',
+  })
+  async getTopStories() {
+    await this.hackerNewsService.getTopStoriesParsed();
   }
 }

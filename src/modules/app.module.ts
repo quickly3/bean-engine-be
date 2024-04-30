@@ -22,6 +22,7 @@ import { SpiderController } from 'src/controller/spider.controller';
 import { DailyReportService } from 'src/service/dailyReport.service';
 import { CronController } from 'src/controller/cron.controller';
 import { FeishuController } from 'src/controller/feishu.controller';
+import { HackerNewsService } from 'src/service/hackerNews.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -64,6 +65,7 @@ import { FeishuController } from 'src/controller/feishu.controller';
     SyncService,
     PromptsService,
     DailyReportService,
+    HackerNewsService,
   ],
 })
 export class AppModule {}
