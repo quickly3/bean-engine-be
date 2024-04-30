@@ -40,9 +40,8 @@ export class AiCommand {
 
     const titles_string = JSON.stringify(titles);
 
-    const messages = [titles_string];
     aiTools.setPrompts([PROMPTS.TRANSLATE]);
-    const resp = await aiTools.simpleCompl(messages);
+    const resp = await aiTools.simpleComplSimple(titles_string);
     console.log(resp);
   }
 

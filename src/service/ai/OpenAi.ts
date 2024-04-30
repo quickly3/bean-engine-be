@@ -40,6 +40,20 @@ export default class OpenAi {
     this.aiModel = aiModel;
   }
 
+  async simpleComplSimple(message) {
+    this.setPrompts(this.prompts);
+    const messages: any = [];
+
+    if (this.prompts.length > 0) {
+      for (const prompt of this.prompts) {
+        messages.push({ role: 'system', content: prompt });
+      }
+    }
+
+    messages.push({ role: 'user', content: message });
+    return this.simpleCompl(messages);
+  }
+
   async simpleCompl(messages) {
     const completion = await this.openai.chat.completions.create(
       {
