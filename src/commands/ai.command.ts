@@ -42,7 +42,7 @@ export class AiCommand {
 
     aiTools.setPrompts([PROMPTS.TRANSLATE]);
     const resp = await aiTools.simpleComplSimple(titles_string);
-    console.log(resp);
+    console.log(resp.content);
   }
 
   @Command({
