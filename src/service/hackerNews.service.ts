@@ -87,6 +87,7 @@ export class HackerNewsService {
 
     const ids_chunk = _.chunk(ids, 10);
     for (const id of ids_chunk[0]) {
+      console.log(id);
       const resp = await this.getItem(id);
       const item = {
         title: resp.title,
@@ -112,6 +113,7 @@ export class HackerNewsService {
 
     aiTools.setPrompts([PROMPTS.TRANSLATE]);
     const resp = await aiTools.simpleComplSimple(titles_string);
+    console.log(resp);
     return JSON.parse(resp.content);
   }
 }
