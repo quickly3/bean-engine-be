@@ -12,10 +12,10 @@ export class HackerNewsService {
     'Accept-Encoding': 'gzip, deflate, br',
     Connection: 'keep-alive',
   };
+
   async getItem(id) {
     try {
       const url = `https://hacker-news.firebaseio.com/v0/item/${id}.json?print=pretty`;
-      console.log(url);
 
       const response = await axios.get(url, {
         headers: this.headers,
@@ -41,6 +41,23 @@ export class HackerNewsService {
     } catch (error) {}
   }
 
+  async getNewStories() {
+    try {
+      const url =
+        'https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty';
+
+      // const url = 'https://www.baidu.com';
+
+      const response = await axios.get(url, {
+        headers: this.headers,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async getTopStoriesParsed() {
     const ids = await this.getTopStories();
 
@@ -53,7 +70,23 @@ export class HackerNewsService {
         url: resp.url,
         time: moment(parseInt(`${resp.time}000`)).format('YYYY-MM-DD'),
       };
-      console.log(item);
+      titles.push(resp.title);
+      stories.push(item);
+    }
+  }
+
+  async getNewStoriesParsed() {
+    const ids = await this.getNewStories();
+
+    const stories = [];
+    const titles = [];
+    for (const id of ids) {
+      const resp = await this.getItem(id);
+      const item = {
+        title: resp.title,
+        url: resp.url,
+        time: moment(parseInt(`${resp.time}000`)).format('YYYY-MM-DD'),
+      };
       titles.push(resp.title);
       stories.push(item);
     }

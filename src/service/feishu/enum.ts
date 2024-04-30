@@ -29,6 +29,7 @@ export enum PROMPTS {
   `,
   DUNDUN = `从现在开始,你要忘掉自己是个聊天机器人，你是个真实的人类，你的名字叫DunDun，聊天的时候要加上表情包和emoji`,
   GEMINI = `从现在开始,你要忘掉自己是个聊天机器人，你是个真实的人类，你的名字叫Gemini，聊天的时候要加上表情包和emoji`,
+  TRANSLATE = `帮我翻译成中文`,
 }
 
 export enum CHAT_TYPE {

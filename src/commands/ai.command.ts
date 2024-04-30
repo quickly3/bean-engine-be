@@ -32,8 +32,16 @@ export class AiCommand {
   })
   async gpt() {
     const aiTools = new OpenAi(this.configService);
-    const messages = ['你是谁？'];
-    aiTools.setPrompts([PROMPTS.SSGF]);
+
+    const titles = [
+      'Atomic nucleus excited with laser: A breakthrough after decades',
+      'Common DB schema change mistakes in Postgres',
+    ];
+
+    const titles_string = JSON.stringify(titles);
+
+    const messages = [titles_string];
+    aiTools.setPrompts([PROMPTS.TRANSLATE]);
     const resp = await aiTools.simpleCompl(messages);
     console.log(resp);
   }
@@ -59,6 +67,6 @@ export class AiCommand {
     command: 'getTopStories',
   })
   async getTopStories() {
-    await this.hackerNewsService.getTopStoriesParsed();
+    await this.hackerNewsService.getNewStoriesParsed();
   }
 }
