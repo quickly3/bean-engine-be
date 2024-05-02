@@ -85,7 +85,7 @@ export class HackerNewsService {
     const stories = [];
     const titles = [];
 
-    const ids_chunk = _.chunk(ids, 10);
+    const ids_chunk = _.chunk(ids, 50);
     for (const id of ids_chunk[0]) {
       console.log(id);
       const resp = await this.getItem(id);
