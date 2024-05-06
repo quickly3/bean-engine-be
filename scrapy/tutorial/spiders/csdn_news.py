@@ -69,7 +69,7 @@ class AliSpider(scrapy.Spider):
                                     option = {}
                                     option['type'] = 'article'
                                     option['item'] = item
-                                    yield scrapy.Request(url, callback=lambda response, option=option : self.parse(response, option))
+                                    yield scrapy.Request(url,headers=self.headers, callback=lambda response, option=option : self.parse(response, option))
         else:
             bulk = []
             bulk.append({"index": {"_index": "article"}})
