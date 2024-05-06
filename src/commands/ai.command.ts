@@ -68,4 +68,11 @@ export class AiCommand {
   async getTopStories() {
     await this.hackerNewsService.getNewStoriesParsed();
   }
+
+  @Command({
+    command: 'sync es',
+  })
+  async syncEs() {
+    await this.hackerNewsService.syncEs();
+  }
 }

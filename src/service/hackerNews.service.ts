@@ -116,4 +116,15 @@ export class HackerNewsService {
     console.log(resp);
     return JSON.parse(resp.content);
   }
+
+  async syncEs() {
+    const records = [
+      {
+        title: 'Science Needs Neurodiversity – Science',
+        url: 'https://www.science.org/doi/10.1126/science.adq0060',
+        time: '2024-04-30',
+        title_cn: '科学需要神经多样性 - 科学',
+      },
+    ];
+  }
 }

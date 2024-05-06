@@ -24,13 +24,17 @@ class AliSpider(scrapy.Spider):
     name = "csdn_news"
     source = "csdn"
 
+    headers= {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+    }
+
     def start_requests(self):
         self.es = EsClient();
 
         url = 'https://www.csdn.net'
         option = {}
         option['type'] = 'home'
-        yield scrapy.Request(url, callback=lambda response, option=option : self.parse(response, option))
+        yield scrapy.Request(url,headers=self.headers, callback=lambda response, option=option : self.parse(response, option))
 
     def parse(self, response, option):
         items = []
