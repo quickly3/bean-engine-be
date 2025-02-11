@@ -18,9 +18,7 @@ nohup python3 -m scrapy crawl cnblogs_daily >> /home/ubuntu/www/bean-engine-be/o
 nohup python3 -m scrapy crawl cnblogs_news_daily >> /home/ubuntu/www/bean-engine-be/output/cnblogs_news_daily.log 2>&1
 
 
-nohup python3 -m scrapy crawl csdn_daily >> /home/ubuntu/www/bean-engine-be/output/csdn_daily.log 2>&1
-
-
+nohup python3 -m scrapy crawl csdn_news >> /home/ubuntu/www/bean-engine-be/output/csdn_news.log 2>&1
 
 nohup python3 -m scrapy crawl oschina_daily >> /home/ubuntu/www/bean-engine-be/output/oschina_daily.log 2>&1
 nohup python3 -m scrapy crawl oschina_news_daily >> /home/ubuntu/www/bean-engine-be/output/oschina_news_daily.log 2>&1
