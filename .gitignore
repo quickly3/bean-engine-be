@@ -45,4 +45,5 @@ py/**/*.png
 py/**/*.xlsx
 py/**/*.pdf
 py/**/*.csv
+**/output/*
 

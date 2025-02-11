@@ -1,16 +1,18 @@
 import puppeteer from 'puppeteer';
 import { saveJsonFile } from '../../src/utils/file';
-// Or import puppeteer from 'puppeteer-core';
+import * as fs from 'fs';
+import { readCookie } from '../bilibili/util';
 
 const run = async () => {
-  const headless = false;
+  const headless = true;
   const options = {
     headless: headless,
-    devtools: true,
+    devtools: false,
   };
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   await page.setViewport({ width: 1080, height: 1024 });
+  let maxNum = 0;
 
   const userAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
@@ -21,38 +23,55 @@ const run = async () => {
   const listReqUrl =
     'https://api.bilibili.com/x/web-interface/popular/series/one';
 
+  const smsLoginUrl =
+    'https://passport.bilibili.com/x/passport-login/web/login/sms';
+
+  const loginBtnSelector = '.header-login-entry > span';
+  const userAva = '.header-entry-mini';
+
+  const cookieFile = 'output/cookies.json';
+
   page.on('response', async (response) => {
     if (response.url().includes(listReqUrl)) {
-      const responseBody = await response.json(); // 或者 response.text() 如果响应是文本
-      console.log('Intercepted Response:', responseBody);
-      // throw new Error('Something went wrong during request interception!');
-      saveJsonFile('responseBody.json', responseBody);
+      const jumpUrl = new URL(response.url());
+      const urlParams = new URLSearchParams(jumpUrl.search);
+      maxNum = parseInt(urlParams.get('number'));
+
+      const responseBody = await response.json();
+      saveJsonFile(`output/${maxNum}.json`, responseBody);
+      maxNum--;
+      if (maxNum > 0) {
+        await new Promise((r) => setTimeout(r, 1000));
+        console.log(maxNum, Date());
+        await page.goto(
+          `https://www.bilibili.com/v/popular/weekly?num=${maxNum}`,
+        );
+      }
+    }
+
+    if (response.url().includes(smsLoginUrl)) {
+      const cookies = await browser.cookies();
+      fs.writeFileSync(cookieFile, JSON.stringify(cookies));
     }
   });
 
+  const cookies = readCookie(cookieFile);
+  await browser.setCookie(...cookies);
+
   // Navigate the page to a URL.
-  await page.goto('https://www.bilibili.com/v/popular/weekly?num=307');
+  await page.goto('https://www.bilibili.com/v/popular/weekly');
 
-  // Set screen size.
+  //
 
-  // 监听响应事件
+  const userAvaEle = await page.waitForSelector(userAva);
 
-  // Type into search box.
-  // await page.locator('.devsite-search-field').fill('automate beyond recorder');
+  if (userAvaEle) {
+  } else {
+    await page.waitForSelector(loginBtnSelector);
+    const loginBtn = await page.$(loginBtnSelector);
 
-  // // Wait and click on first result.
-  // await page.locator('.devsite-result-item-link').click();
-
-  // // Locate the full title with a unique string.
-  // const textSelector = await page
-  //   .locator('text/Customize and automate')
-  //   .waitHandle();
-  // const fullTitle = await textSelector?.evaluate((el) => el.textContent);
-
-  // // Print the full title.
-  // console.log('The title of this blog post is "%s".', fullTitle);
-
-  // await browser.close();
+    await loginBtn.click();
+  }
 };
 
 run();

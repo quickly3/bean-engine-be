@@ -20,3 +20,13 @@ export function getRandomUA() {
   const userAgent = new UserAgent({ deviceCategory: 'desktop' });
   return userAgent.random().toString();
 }
+
+export function readCookie(filePath) {
+  try {
+    fs.accessSync(filePath); // 检查文件是否存在
+    const data = fs.readFileSync(filePath, 'utf-8'); // 读取文件内容
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+}
