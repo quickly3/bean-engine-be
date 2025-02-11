@@ -21,6 +21,8 @@ NEWSPIDER_MODULE = 'tutorial.spiders'
 # print(IMAGES_STORE)
 
 IMAGES_STORE = '/Users/hongbinzhou/www/ng-blog/public/assets/images/'
+# 允许Scrapy使用HTTPS
+HTTPERROR_ALLOWED_CODES = [400, 401, 404, 407, 500, 503]
 
 
 FEED_EXPORT_ENCODING = 'utf-8'

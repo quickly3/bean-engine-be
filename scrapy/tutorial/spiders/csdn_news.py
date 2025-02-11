@@ -25,9 +25,13 @@ class AliSpider(scrapy.Spider):
 
     def start_requests(self):
         self.es = EsClient();
+        self.headers = {
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+        }
+
 
         url = 'https://www.csdn.net'
-        yield scrapy.Request(url)
+        yield scrapy.Request(url, headers=self.headers)
 
     def parse(self, response):
         
