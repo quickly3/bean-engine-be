@@ -39,6 +39,7 @@ lerna-debug.log*
 **/_pycache_/*
 
 tpl
+*.pyc
 scrapy/**/*.pyc
 py/**/*.png
 py/**/*.xlsx
