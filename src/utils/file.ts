@@ -14,3 +14,15 @@ export function readFilesInDirectory(directory) {
   });
   return files;
 }
+
+export function saveJsonFile(filename, jsonData) {
+  const jsonString = JSON.stringify(jsonData, null, 2);
+
+  fs.writeFile(filename, jsonString, 'utf8', (err) => {
+    if (err) {
+      console.error('Error writing JSON file:', err);
+    } else {
+      console.log('JSON file saved successfully.');
+    }
+  });
+}
