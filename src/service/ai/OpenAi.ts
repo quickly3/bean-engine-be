@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 import * as _ from 'lodash';
 import { ConfigService } from '@nestjs/config';
 import { OPENAI_MODEL } from './enum';
+import * as http from 'http';
 
 export default class OpenAi {
   openai;
@@ -13,19 +14,17 @@ export default class OpenAi {
   constructor(private readonly configService: ConfigService) {
     const { GPT_KEY } = this.configService.get('openai');
     const ENV = this.configService.get('env');
-    const PROXY = 'http://localhost:7890';
     const HTTPS_PROXY = 'https://localhost:7890';
 
-    const axiosConfig = {
-      proxy: false,
-      httpAgent: new HttpsProxyAgent(PROXY),
-      httpsAgent: new HttpsProxyAgent(HTTPS_PROXY),
+    const option: any = {
+      apiKey: GPT_KEY,
     };
-    this.axiosRequestConfig = ENV == 'local' ? axiosConfig : {};
 
-    this.openai = new OpenAI({
-      apiKey: GPT_KEY, // This is the default and can be omitted
-    });
+    if (ENV == 'local') {
+      option.httpAgent = new HttpsProxyAgent(HTTPS_PROXY);
+    }
+
+    this.openai = new OpenAI(option);
   }
 
   async getTypeSettings() {
@@ -55,13 +54,10 @@ export default class OpenAi {
   }
 
   async simpleCompl(messages) {
-    const completion = await this.openai.chat.completions.create(
-      {
-        model: this.aiModel,
-        messages: messages,
-      },
-      this.axiosRequestConfig,
-    );
+    const completion = await this.openai.chat.completions.create({
+      model: this.aiModel,
+      messages: messages,
+    });
     const message = _.get(completion, 'choices[0].message');
     return message;
   }
