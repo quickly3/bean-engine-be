@@ -22,7 +22,7 @@ export function saveJsonFile(filename, jsonData) {
     if (err) {
       console.error('Error writing JSON file:', err);
     } else {
-      console.log('JSON file saved successfully.');
+      // console.log('JSON file saved successfully.');
     }
   });
 }

@@ -41,9 +41,11 @@ lerna-debug.log*
 tpl
 *.pyc
 scrapy/**/*.pyc
-py/**/*.png
-py/**/*.xlsx
-py/**/*.pdf
-py/**/*.csv
+script/py/**/*.png
+script/py/**/*.xlsx
+script/py/**/*.pdf
+script/py/**/*.csv
+script/py/**/*.ncm
+
 **/output/*
 
