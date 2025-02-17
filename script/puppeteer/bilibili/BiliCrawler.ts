@@ -60,7 +60,7 @@ export class BiliCrawler {
     while (hasNextPage) {
       await nextPageBtn.click();
 
-      await this.page.waitForTimeout(this.timeout);
+      // await this.page.waitForTimeout(this.timeout);
       this.curPage += 1;
       console.log('Page: ', this.curPage);
       await this.videoPageParse();
@@ -70,7 +70,7 @@ export class BiliCrawler {
       if (!hasNextPage && this.totalCount > this.items.length) {
         await this.page.screenshot({ path: 'beForenextPageBtn.png' });
         console.log('Not end yet');
-        this.page.waitForTimeout(60000);
+        // this.page.waitForTimeout(60000);
 
         const _userAgent = getRandomUA();
         await this.page.setUserAgent(_userAgent);
@@ -116,7 +116,7 @@ export class BiliCrawler {
           path: 'screenshot.jpg',
         });
         // throw error;
-        this.page.waitForTimeout(10000);
+        // this.page.waitForTimeout(10000);
         await this.page.reload();
         await this.page.waitForSelector(itemSelector);
       }

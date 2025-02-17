@@ -5,7 +5,7 @@ export enum AI_TYPE {
 
 export enum OPENAI_MODEL {
   GPT3 = 'gpt-3.5-turbo',
-  GPT4 = 'gpt-4-0125-preview',
+  GPT4 = 'gpt-4o',
 }
 
 export enum GEMINI_MODEL {

@@ -35,9 +35,13 @@ export default () => {
     openai: {
       GPT_KEY: process.env.GPT_KEY,
       ENV: process.env.GPT_ENV,
+      GPT_PROXY: process.env.GPT_PROXY,
     },
     google: {
       geminiKey: process.env.GEMINI_KEY,
+    },
+    deepseek: {
+      DS_KEY: process.env.DS_KEY,
     },
   };
 };

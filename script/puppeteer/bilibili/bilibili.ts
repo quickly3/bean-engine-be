@@ -100,7 +100,7 @@ const bootstrap = async () => {
       await biliCrawler.crawlVideo();
       const header = !!i;
       await biliCrawler.appendCSV('upsVideos.csv', header);
-      await page.waitForTimeout(10000);
+      // await page.waitForTimeout(10000);
       // await page.close();
 
       if (test && parseInt(i) == 0) {

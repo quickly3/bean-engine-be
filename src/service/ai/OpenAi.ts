@@ -8,21 +8,29 @@ import * as http from 'http';
 export default class OpenAi {
   openai;
   axiosRequestConfig: any;
-  aiModel = OPENAI_MODEL.GPT4;
+  aiModel = OPENAI_MODEL.GPT3;
   prompts: any[] = [];
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    aiType = 'openai',
+  ) {
     const { GPT_KEY } = this.configService.get('openai');
-    const ENV = this.configService.get('env');
-    const HTTPS_PROXY = 'https://localhost:7890';
-
-    const option: any = {
+    let option: any = {
       apiKey: GPT_KEY,
     };
 
-    if (ENV == 'local') {
-      option.httpAgent = new HttpsProxyAgent(HTTPS_PROXY);
+    if (aiType && aiType === 'deepseek') {
+      const { DS_KEY } = this.configService.get('deepseek');
+      option = {
+        base_url: 'https://api.deepseek.com',
+        apiKey: DS_KEY,
+      };
     }
+
+    // if (ENV == 'local') {
+    //   option.httpAgent = new HttpsProxyAgent(HTTPS_PROXY);
+    // }
 
     this.openai = new OpenAI(option);
   }

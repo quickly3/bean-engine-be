@@ -1,9 +1,8 @@
 // import puppeteer from 'puppeteer';
-import { saveJsonFile } from '../../src/utils/file';
 import * as fs from 'fs';
-import { readCookie } from '../bilibili/util';
 
 import puppeteer from 'puppeteer-extra';
+import { saveJsonFile } from 'src/utils/file';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');

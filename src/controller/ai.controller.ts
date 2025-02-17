@@ -1,8 +1,14 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import OpenAI from 'openai';
 import GeminiAi from 'src/service/ai/Gemini';
 import OpenAi from 'src/service/ai/OpenAi';
 import { PROMPTS } from 'src/service/feishu/enum';
+import * as http from 'http';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GEMINI_MODEL } from 'src/service/ai/enum';
+import * as fs from 'fs';
 
 @Controller('ai')
 export class AiController {
@@ -10,21 +16,50 @@ export class AiController {
 
   @Post('openai')
   async openai(@Body() payload) {
-    const aiTools = new OpenAi(this.configService);
+    const { GPT_KEY, GPT_PROXY } = this.configService.get('openai');
+    console.log(GPT_PROXY);
+    const client = new OpenAI({
+      apiKey: GPT_KEY,
+      httpAgent: new HttpsProxyAgent(GPT_PROXY),
+    });
+    // const completion = await openai.chat.completions.create({
+    //   messages: [{ role: 'system', content: 'You are a helpful assistant.' }],
+    //   model: 'deepseek-chat',
+    // });
+    // return completion;
+    const list = await client.models.list({
+      httpAgent: new http.Agent({ keepAlive: false }),
+    });
+    return list;
+  }
 
-    const titles = [payload.content];
-
-    const titles_string = JSON.stringify(titles);
-
-    aiTools.setPrompts([PROMPTS.TRANSLATE]);
-    const resp = await aiTools.simpleComplSimple(titles_string);
-    return resp;
+  @Post('deepseek')
+  async deepseek(@Body() payload) {
+    const { DS_KEY } = this.configService.get('deepseek');
+    const openai = new OpenAI({
+      baseURL: 'https://api.deepseek.com',
+      apiKey: DS_KEY,
+    });
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: 'system', content: 'You are a helpful assistant.' }],
+      model: 'deepseek-chat',
+    });
+    return completion;
   }
 
   @Post('gemini')
   async gemini(@Body() payload) {
-    const messages = [payload.content];
-    const genAi = new GeminiAi(this.configService);
-    return await genAi.simpleCompl(messages);
+    const geminiKey = this.configService.get('google.geminiKey');
+    const genAI = new GoogleGenerativeAI(geminiKey);
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL.GEMINI_PRO });
+
+    const message = [payload.content];
+
+    const prompts = message.map((p) => p.content);
+    const result = await model.generateContent(prompts);
+    return {
+      role: 'assistant',
+      content: result.response.text(),
+    };
   }
 }
