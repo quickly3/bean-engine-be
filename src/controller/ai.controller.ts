@@ -7,7 +7,7 @@ import { PROMPTS } from 'src/service/feishu/enum';
 import * as http from 'http';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GEMINI_MODEL } from 'src/service/ai/enum';
+import { GEMINI_MODEL, OPENAI_MODEL } from 'src/service/ai/enum';
 import * as fs from 'fs';
 
 @Controller('ai')
@@ -17,20 +17,24 @@ export class AiController {
   @Post('openai')
   async openai(@Body() payload) {
     const { GPT_KEY, GPT_PROXY } = this.configService.get('openai');
-    console.log(GPT_PROXY);
     const client = new OpenAI({
       apiKey: GPT_KEY,
-      httpAgent: new HttpsProxyAgent(GPT_PROXY),
+      baseURL: 'https://api.openai-proxy.com/v1',
+      // httpAgent: new HttpsProxyAgent(GPT_PROXY),
     });
-    // const completion = await openai.chat.completions.create({
-    //   messages: [{ role: 'system', content: 'You are a helpful assistant.' }],
-    //   model: 'deepseek-chat',
-    // });
-    // return completion;
-    const list = await client.models.list({
-      httpAgent: new http.Agent({ keepAlive: false }),
-    });
-    return list;
+
+    const compOption: any = {
+      messages: [{ role: 'system', content: payload.content }],
+      model: OPENAI_MODEL.GPT4,
+    };
+
+    if (payload.session_id) {
+      compOption.session_id = payload.session_id;
+    }
+
+    const completion = await client.chat.completions.create(compOption);
+
+    return completion;
   }
 
   @Post('deepseek')
