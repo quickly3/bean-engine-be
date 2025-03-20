@@ -83,4 +83,11 @@ export class EsCommand {
   async testLangGraph() {
     this.langGraohService.testLangGraph();
   }
+
+  @Command({
+    command: 'testTavily',
+  })
+  async testTavily() {
+    this.langGraohService.testTavily();
+  }
 }

@@ -3,10 +3,15 @@ import { ChatDeepSeek } from '@langchain/deepseek';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { DynamicTool, tool } from '@langchain/core/tools';
-import { ChatAnthropic } from '@langchain/anthropic';
 import { createReactAgent } from '@langchain/langgraph/prebuilt';
-import { z } from 'zod';
+import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
+import { MemorySaver } from '@langchain/langgraph';
+import * as tslab from 'tslab';
+import { chartTool } from './tools/aiTools';
+import * as fs from 'fs';
+import { multiply } from './tools/weatherTool';
+import * as _ from 'lodash';
+import { END, START, StateGraph, Annotation } from '@langchain/langgraph';
 
 @Injectable()
 export class LangGraohService {
@@ -66,43 +71,94 @@ export class LangGraohService {
   }
 
   async testLangGraph() {
-    const search = tool(
-      async ({ query }) => {
-        if (
-          query.toLowerCase().includes('sf') ||
-          query.toLowerCase().includes('san francisco')
-        ) {
-          return "It's 60 degrees and foggy.";
-        }
-        return "It's 90 degrees and sunny.";
-      },
-      {
-        name: 'search',
-        description: 'Call to surf the web.',
-        schema: z.object({
-          query: z.string().describe('The query to use in your search.'),
-        }),
-      },
-    );
+    // Define the tools for the agent to use
 
-    const model = new ChatDeepSeek({
+    const StateAnnotation = Annotation.Root({
+      aggregate: Annotation<string[]>({
+        reducer: (x, y) => x.concat(y),
+      }),
+    });
+
+    // Create the graph
+    const nodeA = (state: typeof StateAnnotation.State) => {
+      console.log(`Adding I'm A to ${state.aggregate}`);
+      return { aggregate: [`I'm A`] };
+    };
+    const nodeB = (state: typeof StateAnnotation.State) => {
+      console.log(`Adding I'm B to ${state.aggregate}`);
+      return { aggregate: [`I'm B`] };
+    };
+    const nodeC = (state: typeof StateAnnotation.State) => {
+      console.log(`Adding I'm C to ${state.aggregate}`);
+      return { aggregate: [`I'm C`] };
+    };
+    const nodeD = (state: typeof StateAnnotation.State) => {
+      console.log(`Adding I'm D to ${state.aggregate}`);
+      return { aggregate: [`I'm D`] };
+    };
+
+    const builder = new StateGraph(StateAnnotation)
+      .addNode('a', nodeA)
+      .addEdge(START, 'a')
+      .addNode('b', nodeB)
+      .addNode('c', nodeC)
+      .addNode('d', nodeD)
+      .addEdge('a', 'b')
+      .addEdge('a', 'c')
+      .addEdge('b', 'd')
+      .addEdge('c', 'd')
+      .addEdge('d', END);
+
+    const graph = builder.compile();
+
+    // const representation = graph.getGraph();
+    // const image = await representation.drawMermaidPng();
+    // const arrayBuffer = await image.arrayBuffer();
+
+    // const buffer = Buffer.from(arrayBuffer);
+    // const filePath = 'graph.png';
+    // // Write the buffer to a PNG file
+    // fs.writeFileSync(filePath, new Uint8Array(buffer));
+
+    // console.log(`PNG file saved at: ${filePath}`);
+
+    const baseResult = await graph.invoke({ aggregate: [] });
+    console.log('Base Result: ', baseResult);
+  }
+
+  async testTavily() {
+    // Define the tools for the agent to use
+    const agentTools = [new TavilySearchResults({ maxResults: 3 })];
+    const agentModel = new ChatDeepSeek({
       model: 'deepseek-chat',
       apiKey: this.configService.get('deepseek.DS_KEY'),
     });
 
+    // Initialize memory to persist state between graph runs
+    const agentCheckpointer = new MemorySaver();
     const agent = createReactAgent({
-      llm: model,
-      tools: [search],
+      llm: agentModel,
+      tools: agentTools,
+      checkpointSaver: agentCheckpointer,
     });
 
-    const result = await agent.invoke({
-      messages: [
-        {
-          role: 'user',
-          content: 'what is the weather in sf',
-        },
-      ],
-    });
-    console.log(result);
+    // Now it's time to use!
+    const agentFinalState = await agent.invoke(
+      { messages: [new HumanMessage('what is the current weather in sf')] },
+      { configurable: { thread_id: '42' } },
+    );
+
+    console.log(
+      agentFinalState.messages[agentFinalState.messages.length - 1].content,
+    );
+
+    const agentNextState = await agent.invoke(
+      { messages: [new HumanMessage('what about ny')] },
+      { configurable: { thread_id: '42' } },
+    );
+
+    console.log(
+      agentNextState.messages[agentNextState.messages.length - 1].content,
+    );
   }
 }
