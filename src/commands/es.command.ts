@@ -2,10 +2,14 @@ import { Command, Positional } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
 import { execSync } from 'child_process';
 import { SearchService } from 'src/service/search.service';
+import { LangGraohService } from '../service/LangGraohService';
 
 @Injectable()
 export class EsCommand {
-  constructor(private readonly searchService: SearchService) {}
+  constructor(
+    private readonly searchService: SearchService,
+    private readonly langGraohService: LangGraohService,
+  ) {}
   @Command({
     command: 'crawl <source>',
   })
@@ -50,5 +54,33 @@ export class EsCommand {
     source: string,
   ) {
     await this.searchService.esClear(source);
+  }
+
+  @Command({
+    command: 'testLangChain',
+  })
+  async testLangChain() {
+    this.langGraohService.testLangChain();
+  }
+
+  @Command({
+    command: 'testLangChainStream',
+  })
+  async testLangChainStream() {
+    this.langGraohService.testLangChainStream();
+  }
+
+  @Command({
+    command: 'templateStream',
+  })
+  async templateStream() {
+    this.langGraohService.templateStream();
+  }
+
+  @Command({
+    command: 'testLangGraph',
+  })
+  async testLangGraph() {
+    this.langGraohService.testLangGraph();
   }
 }

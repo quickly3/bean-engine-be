@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from '../controller/app.controller';
+import { LangGraohService } from '../service/LangGraohService';
 import { AppService } from '../service/app.service';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -68,6 +69,7 @@ import { AiController } from 'src/controller/ai.controller';
     PromptsService,
     DailyReportService,
     HackerNewsService,
+    LangGraohService,
   ],
 })
 export class AppModule {}
