@@ -90,4 +90,11 @@ export class EsCommand {
   async testTavily() {
     this.langGraohService.testTavily();
   }
+
+  @Command({
+    command: 'testEmbedding',
+  })
+  async testEmbedding() {
+    this.langGraohService.testEmbedding();
+  }
 }

@@ -16,11 +16,10 @@ export class AiController {
 
   @Post('openai')
   async openai(@Body() payload) {
-    const { GPT_KEY, GPT_PROXY } = this.configService.get('openai');
+    const { GPT_KEY, OPENAI_PROXY_URL } = this.configService.get('openai');
     const client = new OpenAI({
       apiKey: GPT_KEY,
-      baseURL: 'https://api.openai-proxy.com/v1',
-      // httpAgent: new HttpsProxyAgent(GPT_PROXY),
+      baseURL: OPENAI_PROXY_URL,
     });
 
     const compOption: any = {

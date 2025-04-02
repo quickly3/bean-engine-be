@@ -6,12 +6,13 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { createReactAgent } from '@langchain/langgraph/prebuilt';
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
 import { MemorySaver } from '@langchain/langgraph';
-import * as tslab from 'tslab';
 import { chartTool } from './tools/aiTools';
 import * as fs from 'fs';
 import { multiply } from './tools/weatherTool';
 import * as _ from 'lodash';
 import { END, START, StateGraph, Annotation } from '@langchain/langgraph';
+import OpenAI from 'openai';
+import { OpenAIEmbeddings } from '@langchain/openai';
 
 @Injectable()
 export class LangGraohService {
@@ -160,5 +161,15 @@ export class LangGraohService {
     console.log(
       agentNextState.messages[agentNextState.messages.length - 1].content,
     );
+  }
+
+  async testEmbedding() {
+    const { GPT_KEY, GPT_PROXY } = this.configService.get('openai');
+
+    const embeddings = new OpenAIEmbeddings({
+      model: 'text-embedding-3-large',
+      apiKey: GPT_KEY,
+    });
+    await embeddings.embedQuery('Hello, world!');
   }
 }

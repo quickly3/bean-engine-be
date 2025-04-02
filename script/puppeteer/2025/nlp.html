@@ -1,0 +1,1622 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Language" content="zh-CN">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="referrer" content="always"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>自然语言处理 - 开源软件 - OSCHINA - 中文开源技术交流社区</title>
+            <meta name="keywords" content="开源,OSC,开源软件,开源硬件,开源网站,开源社区,java开源,perl开源,python开源,ruby开源,php开源,开源项目,开源代码"/>
+                <meta name="description" content="OSCHINA.NET 是目前领先的中文开源技术社区。我们传播开源的理念，推广开源项目，为 IT 开发者提供了一个发现、使用、并交流开源技术的平台"/>
+                            
+            <link rel="stylesheet" type="text/css" href="https://static.oschina.net/new-osc/js/utils/semantic-ui/semantic.min.css?t=1671184943000"/>
+                <link type="text/css" rel="stylesheet" href="https://static.oschina.net/new-osc/dist/css/web.40004a0b.css">        <script type="text/javascript">window.__STATIC_DOMAIN = "https://static.oschina.net";</script>
+    <script src="https://static.oschina.net/new-osc/js/utils/jquery.min.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="https://static.oschina.net/new-osc/img/favicon.ico"/>
+    <link rel="alternate" type="application/rss+xml" title="最新开源项目" href="https://www.oschina.net/project/rss"/>
+    <link rel="alternate" type="application/rss+xml" title="最新开源资讯" href="https://www.oschina.net/news/rss"/>
+    <link rel="alternate" type="application/rss+xml" title="最新问题列表" href="https://www.oschina.net/question/rss"/>
+    <link rel="alternate" type="application/rss+xml" title="最新翻译列表" href="https://www.oschina.net/translate/rss"/>
+    <link rel="alternate" type="application/rss+xml" title="最新博客列表" href="https://www.oschina.net/blog/rss"/>
+    <link rel="alternate" type="application/rss+xml" title="推荐博客列表" href="https://www.oschina.net/blog/rss?show=more"/>
+    <link rel="alternate" type="application/rss+xml" title="推荐软件列表" href="https://www.oschina.net/project/rss?show=recomms"/>
+    <link rel="alternate" type="application/rss+xml" title="最新代码分享列表" href="https://www.oschina.net/code/rss"/>
+    <link rel="alternate" type="application/rss+xml" title="OSCHINA - 源码列表" href="https://www.oschina.net/code/source_rss"/>
+
+    <link rel="alternate" type="application/rss+xml" title="昇腾Ascend最新文章" href="https://www.oschina.net/groups/rss?ident=ascend"/>
+    <link rel="alternate" type="application/rss+xml" title="Llama中文社区最新文章" href="https://www.oschina.net/groups/rss?ident=Llama2-Chinese"/>
+    <link rel="alternate" type="application/rss+xml" title="大模型最新文章" href="https://www.oschina.net/groups/rss?ident=llm"/>
+    <link rel="alternate" type="application/rss+xml" title="非结构化数据最新文章" href="https://www.oschina.net/groups/rss?ident=unstructured-data"/>
+    <link rel="alternate" type="application/rss+xml" title="大前端最新文章" href="https://www.oschina.net/groups/rss?ident=cross-front"/>
+    <link rel="alternate" type="application/rss+xml" title="开发技能最新文章" href="https://www.oschina.net/groups/rss?ident=skill"/>
+    <link rel="alternate" type="application/rss+xml" title="数据库最新文章" href="https://www.oschina.net/groups/rss?ident=database"/>
+    <link rel="alternate" type="application/rss+xml" title="云计算最新文章" href="https://www.oschina.net/groups/rss?ident=cloud"/>
+    <link rel="alternate" type="application/rss+xml" title="飞桨专区最新文章" href="https://www.oschina.net/groups/rss?ident=paddlepaddle"/>
+    <link rel="alternate" type="application/rss+xml" title="OpenHarmony专区最新文章" href="https://www.oschina.net/groups/rss?ident=openharmony"/>
+    <link rel="alternate" type="application/rss+xml" title="开源治理最新文章" href="https://www.oschina.net/groups/rss?ident=osgovernance"/>
+    <link rel="alternate" type="application/rss+xml" title="银河麒麟专区最新文章" href="https://www.oschina.net/groups/rss?ident=kylinos"/>
+    <link rel="alternate" type="application/rss+xml" title="OneOS最新文章" href="https://www.oschina.net/groups/rss?ident=oneos"/>
+    <link rel="alternate" type="application/rss+xml" title="程序人生最新文章" href="https://www.oschina.net/groups/rss?ident=programmer"/>
+    <link rel="alternate" type="application/rss+xml" title="软件架构最新文章" href="https://www.oschina.net/groups/rss?ident=architecture"/>
+    <link rel="alternate" type="application/rss+xml" title="行业趋势最新文章" href="https://www.oschina.net/groups/rss?ident=trend"/>
+    <link rel="alternate" type="application/rss+xml" title="硬件 & IoT最新文章" href="https://www.oschina.net/groups/rss?ident=hardware-iot"/>
+    <link rel="alternate" type="application/rss+xml" title="AI & 大数据最新文章" href="https://www.oschina.net/groups/rss?ident=ai-bigdata"/>
+    <link rel="alternate" type="application/rss+xml" title="云智慧AIOps技术社区最新文章" href="https://www.oschina.net/groups/rss?ident=cloudwise"/>
+    <link rel="alternate" type="application/rss+xml" title="摸鱼专区最新文章" href="https://www.oschina.net/groups/rss?ident=fishfish"/>
+    <link rel="alternate" type="application/rss+xml" title="HarmonyOS开发者社区最新文章" href="https://www.oschina.net/groups/rss?ident=huawei"/>
+    <link rel="alternate" type="application/rss+xml" title="PostgreSQL最新文章" href="https://www.oschina.net/groups/rss?ident=postgresql"/>
+    <link rel="alternate" type="application/rss+xml" title="LF开源软件学园最新文章" href="https://www.oschina.net/groups/rss?ident=lfossa"/>
+    <link rel="alternate" type="application/rss+xml" title="OSCTraining最新文章" href="https://www.oschina.net/groups/rss?ident=OSCTraining"/>
+    <link rel="alternate" type="application/rss+xml" title="EdgeX 中文社区最新文章" href="https://www.oschina.net/groups/rss?ident=edgex-foundry"/>
+    <link rel="alternate" type="application/rss+xml" title="信息安全最新文章" href="https://www.oschina.net/groups/rss?ident=cyber-security"/>
+    <link rel="alternate" type="application/rss+xml" title="运维最新文章" href="https://www.oschina.net/groups/rss?ident=ops"/>
+    <link rel="alternate" type="application/rss+xml" title="软件测试最新文章" href="https://www.oschina.net/groups/rss?ident=test"/>
+    <link rel="alternate" type="application/rss+xml" title="网络技术最新文章" href="https://www.oschina.net/groups/rss?ident=network"/>
+    <link rel="alternate" type="application/rss+xml" title="游戏开发最新文章" href="https://www.oschina.net/groups/rss?ident=game"/>
+    <link rel="alternate" type="application/rss+xml" title="多媒体处理最新文章" href="https://www.oschina.net/groups/rss?ident=media"/>
+    <link rel="alternate" type="application/rss+xml" title="DevOps最新文章" href="https://www.oschina.net/groups/rss?ident=devops"/>
+    <link rel="alternate" type="application/rss+xml" title="区块链最新文章" href="https://www.oschina.net/groups/rss?ident=blockchain"/>
+
+            </head>
+<body>
+        <val data-name="site_url" data-value="https://www.oschina.net"></val>      <val data-name="space_user_url" data-value=""></val>      <val data-name="space_user_id" data-value=""></val>      <val data-name="g_user_url" data-value=""></val>      <val data-name="api_prefix" data-value=""></val>      <val data-name="g_user_code" data-value=""></val>     <val data-name="g_user_id" data-value=""></val>     <val data-name="g_user_bind_phone" data-value="false"></val>     <val data-name="g_user_name" data-value=""></val>     <val data-name="g_user_small_portrait" data-value=""></val>     <val data-name="g_user_large_portrait" data-value="https://www.oschina.net/new-osc/img/portrait.gif"></val>     <val data-name="g_user_osc_staff" data-value="false"></val>     <val data-name="login_page" data-value="https://www.oschina.net/home/login?goto_page=https%3A%2F%2Fwww.oschina.net%2Fproject%2Ftag%2F305%2Fnlp"></val> 
+        <val data-name="rocommendGrayStatus" data-value="true"></val> 
+                <val data-name="weixinAppId" data-value="wx880def15e694b905"></val>
+        <val data-name="weixinTimestamp" data-value="1743587090331"></val>
+        <val data-name="weixinNonceStr" data-value="0f97a9e8-a07d-4803-9a5b-d142ba2afa09"></val>
+        <val data-name="weixinSignature" data-value="23cc2cdd4a3c68ada89e4ed0be9f64e90978d5c9"></val>
+        <val data-name="weixinShareUrl" data-value="https://www.oschina.net/project/tag/305/nlp"></val>                             
+            <val data-name="is_detail_page" data-value="false"></val>
+
+        <val data-name="secondaryHeaderEnable" data-value="true"></val>
+
+        
+        
+        <div class="ui left inverted sidebar vertical menu" id="mobileNavSidebar">
+        <a href="https://www.oschina.net" class="item">首页</a>
+        <a href="https://www.oschina.net/project" class="item project active">开源软件</a>
+                            <a href="https://www.oschina.net/question" class="item question">问答</a>
+                        <a href="https://www.oschina.net/blog" class="item blog">博客</a>
+        <a href="https://www.oschina.net/translate" class="item translate">翻译</a>
+        <a href="https://www.oschina.net/news" class="item news">资讯</a>
+        <a href="https://gitee.com/explore?utm_source=oschina&utm_medium=link-index&utm_campaign=home" class="item gitee" target="_blank">Gitee</a>
+        <a href="https://zb.oschina.net/projects/list.html" class="item" target="_blank">众包</a>
+        <a href="https://www.oschina.net/event" class="item">活动</a>
+        <a href="https://www.oschina.net/groups" class="item">专区</a>
+        <a href="https://www.oschina.net/event/ych" class="item meetup">源创会</a>
+                    <a href="https://www.oschina.net/question/topic/masteronline" class="item">高手问答</a>
+                <a href="https://www.oschina.net/question/topic/osc-interview" class="item">开源访谈</a>
+        <a href="https://my.oschina.net/editorial-story" class="item">周刊</a>
+        <a href="https://www.oschina.net/company" class="item">公司开源导航页</a>
+    </div>
+        <div class="ui right inverted sidebar vertical menu" id="mobileUserSidebar">
+                    <a class="item" href="https://www.oschina.net/home/login?goto_page=https%3A%2F%2Fwww.oschina.net%2Fproject%2Ftag%2F305%2Fnlp">登录</a>
+                                        <a class="item" href="https://www.oschina.net/home/reg?goto_page=https%3A%2F%2Fwww.oschina.net%2Fproject%2Ftag%2F305%2Fnlp">注册</a>
+                        </div>
+
+                    <div class="pusher">
+                <div class="layout-header-box fixed" id="mobileHeaderNavMenu">
+            <div class="ui secondary inverted menu inner">
+                <a class="icon item toggle-mobile-nav-sidebar">
+                    <i class="large content icon"></i>
+                </a>
+                <div class="logo back-to-top-toggle"><img src="https://static.oschina.net/new-osc/img/logo_new.svg" alt="OSCHINA"></div>
+                <a class="icon item toggle-mobile-user-sidebar">
+                                            <i class="large user outline icon"></i>
+                                    </a>
+            </div>
+        </div>
+
+                
+                                                                <div class="small-header-box small-header-box--responsive small-header-box--fixed">
+                <div class="small-header-box__wrapper">
+                    <div class="small-header-box__inner">
+                        <div class="small-header-box__inner__box">
+                            <div class="main-bar">
+                                <div class="main-bar__inner">
+                                                                        <div class="main-bar__row main-bar__row--full">
+                                                                                <div class="head-bar">
+                                            <a class="logo" href="https://www.oschina.net" aria-label="OSCHINA" title="OSCHINA">
+                                                <img src="https://oscimg.oschina.net/oscnet/up-6e4f0953700e35c31bee89a5d1a5b8596ba.png" alt="oschina">
+                                            </a>
+                                        </div>
+                                                                                                <div class="nav-bar" role="navigation">
+                                                                <ul class="nav-bar__tabs">
+    <li class="tabs-item">
+        <a href="https://www.oschina.net/news" class="tabs-link news">资讯</a>
+    </li>
+
+    <li class="tabs-item">
+        <a href="https://www.oschina.net/project" class="tabs-link project">软件</a>
+    </li>
+
+    <li class="tabs-item">
+        <a href="https://www.oschina.net/blog" class="tabs-link blog">博客</a>
+    </li>
+    <li class="tabs-item tabs-item--new tabs-item--new-show">
+        <a href="https://www.oschina.net/oscTweet" class="tabs-link oscTweet" target="_blank"
+            style="color: #db1104;">动弹</a>
+    </li>
+    <li class="tabs-item">
+        <a href="https://www.oschina.net/groups/" class="tabs-link group">专区</a>
+    </li>
+
+    <li class="tabs-item">
+        <a href="https://www.oschina.net/question" class="tabs-link question">问答</a>
+    </li>
+    <li class="tabs-item">
+        <a href="https://www.oschina.net/event" class="tabs-link event">活动</a>
+    </li>
+    <li class="tabs-item">
+        <a href="https://tool.oschina.net/" class="tabs-link explore">工具</a>
+    </li>
+    <li class="tabs-item">
+        <a href="https://www.oschina.net/action/visit/ad?id=1581" class="tabs-link zb" target="_blank">培训</a>
+    </li>
+
+    <li class="tabs-item">
+        <a href="https://www.oschina.net/app" class="tabs-link app" style="font-family: 'Roboto';">APP</a>
+    </li>
+
+    <li class="tabs-item">
+        <a href="https://gitee.com?utm_source=oschina&utm_medium=link-index&utm_campaign=home" target="_blank"
+            class="tabs-link gitee">Gitee</a>
+    </li>
+
+    <li class="tabs-item">
+        <style>
+            .new-media {
+                cursor: pointer;
+            }
+
+            .tabs-item .media-list {
+                position: fixed;
+                top: 71px;
+                right: 0;
+                display: none;
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+                color: #fff;
+                padding: 10px;
+                background-color: rgba(0, 0, 0, .8);
+                width: 100vw;
+                padding-bottom: 25px;
+            }
+
+            .tabs-item .media-list .nav-list {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+            }
+
+            .tabs-item .media-list .nav-list .media-list-item {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                line-height: 18px;
+                font-size: 12px;
+                width: 140px;
+            }
+
+            .tabs-item .media-list .nav-list .media-list-item img {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 10px;
+            }
+
+            .tabs-item .media-list .nav-list .media-frame-line {
+                width: 1px;
+                height: 130px;
+                background-color: #fff;
+                margin: 0 20px;
+            }
+        </style>
+        <a class="tabs-link new-media">新媒体<i class="dropdown icon"></i></a>
+        <div class="media-list">
+            <div class="nav-list">
+                <div class="media-list-item">
+                    <img src="https://oscimg.oschina.net/oscnet/up-8ac121f27aea51b6707575661ba5cd345df.png"
+                        alt="OSC 直播栏目">
+                    <span>OSC 直播栏目</span>
+                    <span>技术领航</span>
+                </div>
+                <div class="media-list-item">
+                    <img src="https://oscimg.oschina.net/oscnet/up-c965a0388a464b34ff3435f13e088347f6b.png"
+                        alt="OSC 公众号">
+                    <span>OSC 公众号</span>
+                    <span>硬核 + 嬉笑怒骂</span>
+                </div>
+                <div class="media-list-item">
+                    <img src="https://oscimg.oschina.net/oscnet/up-2a441ddb8e5de4869b6b01864260ec7053e.png"
+                        alt="OSC 微博">
+                    <span>OSC 微博</span>
+                    <span>技术圈大 V 出没</span>
+                </div>
+                <div class="media-list-item">
+                    <img src="https://oscimg.oschina.net/oscnet/up-78d92293b283f9cfb4215f29f4efb6f69ce.jpg"
+                        alt="OSC 视频号">
+                    <span>OSC 视频号</span>
+                    <span>AI 百科</span>
+                </div>
+                <div class="media-list-item">
+                    <img src="https://oscimg.oschina.net/oscnet/up-17ffeae584429e74b42d7c3422049c561e7.png"
+                        alt="OSC 今日头条">
+                    <span>OSC 今日头条</span>
+                    <span>微头条显行业百态</span>
+                </div>
+                <div class="media-list-item">
+                    <img src="https://oscimg.oschina.net/oscnet/up-4a006dc7c74a78b44ecead3e58920709530.jpg"
+                        alt="LFOSSA 公众号">
+                    <span>LFOSSA 公众号</span>
+                    <span>LF 开源软件学园</span>
+                </div>
+                <div class="media-frame-line"></div>
+                <div class="media-list-item">
+                    <img src="https://oscimg.oschina.net/oscnet/up-4dadd644e02a0ca625d618a09941ec9c3c6.jpg"
+                        alt="Gitee AI 公众号">
+                    <span>Gitee AI 公众号</span>
+                    <span>大模型托管平台</span>
+                </div>
+                <div class="media-list-item">
+                    <img src="https://oscimg.oschina.net/oscnet/up-daaed369fe9b8ce7f75e2d0bbf20a4a4088.jpg"
+                        alt="Gitee 服务号">
+                    <span>Gitee 服务号</span>
+                    <span>研发管理解决方案</span>
+                </div>
+            </div>
+        </div>
+        <script>
+            var setTimeShow
+            document.addEventListener('DOMContentLoaded', function () {
+                var mediaList = document.querySelector('.tabs-item .media-list');
+                var tabsLink = document.querySelector('.tabs-link.new-media');
+
+                tabsLink.addEventListener('mouseover', function () {
+                    clearTimeout(setTimeShow);
+                    mediaList.style.display = 'block';
+                    mediaList.style.opacity = '1';
+                    sendRequest();
+                });
+                mediaList.addEventListener('mouseover', function () {
+                    clearTimeout(setTimeShow);
+                    mediaList.style.opacity = '1';
+                });
+                mediaList.addEventListener('mouseout', function () {
+                    mediaList.style.opacity = '0';
+                    setTimeShow = setTimeout(function () {
+                        mediaList.style.display = 'none';
+                    }, 500);
+                });
+                tabsLink.addEventListener('mouseout', function () {
+                    mediaList.style.opacity = '0';
+                    setTimeShow = setTimeout(function () {
+                        mediaList.style.display = 'none';
+                    }, 500);
+                });
+            });
+
+            function sendRequest() {
+                fetch('https://apiv1.oschina.net/MjAyMi8xLzE2/gtags/v1/action/visit?type=index_hover')
+                    .then(response => response.json())
+                    .then(data => {
+                    })
+                    .catch(error => {
+                    });
+            }
+        </script>
+    </li>
+    <img style="display:none" crossorigin="use-credentials"
+        src="https://apiv1.oschina.net/MjAyMi8xLzE2/gtags/v1/action/visit?type=all"></img>
+</ul>
+                                    </div>
+            
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="small-header-box__inner__box">
+                                                        <div class="search-box">
+                                <form action="https://www.oschina.net/search" role="search">
+                                    <div class="search-box__inner">
+                                                                                <input class="search-box__input" aria-label="搜索" placeholder="大家都在搜..." name="q" value="" type="text" required />
+                                        <button type="submit" class="search-box__button"><i class="search icon"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="user-bar">
+                                <ul class="user-bar__links">
+
+                                                                            <a class="item" href="https://www.oschina.net/home/login?goto_page=https%3A%2F%2Fwww.oschina.net%2Fproject%2Ftag%2F305%2Fnlp">登录</a>
+                                                                                                                            <a class="item" href="https://www.oschina.net/home/reg?goto_page=https%3A%2F%2Fwww.oschina.net%2Fproject%2Ftag%2F305%2Fnlp">注册</a>
+                                                                                                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+                
+        
+                                <div id="mainScreen" class="grey">
+            <div class="ui container">
+                
+
+        
+ 
+
+
+
+  
+                  
+
+
+
+
+                                    
+
+    
+            
+
+<x-foo-define data-define="web-project-list"></x-foo-define> 
+<div class="ui internally grid web-project-common web-project-list">
+    
+    <div class="row">
+        <div class="twelve wide computer sixteen wide tablet column">
+                        <div class="ui breadcrumb project-breadcrumb">
+                <a class="section" href="https://www.oschina.net/project">开源软件</a>
+                <i class="right chevron icon divider"></i>
+                                                                                <a class="section" href="https://www.oschina.net/project/tag/401/Neural-Network">神经网络/人工智能</a>
+                        <i class="right chevron icon divider"></i>
+                                                                                    <div class="active section">自然语言处理 <span class="projects-count">(153)</span></div>
+                                                </div>
+
+                                                                                                            <div class="category-recommend-projects-wrap">
+                        <div class="ui list">
+                            <div class="item">
+                                <div class="ui right floated content">
+                                    <a href="https://www.oschina.net/project/tag/305/nlp/recommend">更多推荐</a>
+                                </div>
+                                <h4 class="ui header">本类推荐软件</h4>
+                            </div>
+                        </div>
+                        <div class="cards-list">
+                                                            <a href="https://www.oschina.net/p/sirmews_mcp-pinecone" class="item" title="Pinecone MCP 服务器 mcp-pinecone">
+                                    <img class="card-image" src="https://static.oschina.net/uploads/space/2025/0402/152538_QhkV_3820517.png" alt="Pinecone MCP 服务器 mcp-pinecone">
+                                    <div class="card-title-wrap">
+                                        <div class="card-title">mcp-pinecone - Pinecone MCP 服务器</div>
+                                    </div>
+                                </a>
+                                                            <a href="https://www.oschina.net/p/vivekvells_mcp-pandoc" class="item" title="文档转换 MCP 服务器 mcp-pandoc">
+                                    <img class="card-image" src="https://static.oschina.net/uploads/space/2025/0402/151943_Tuxi_3820517.png" alt="文档转换 MCP 服务器 mcp-pandoc">
+                                    <div class="card-title-wrap">
+                                        <div class="card-title">mcp-pandoc - 文档转换 MCP 服务器</div>
+                                    </div>
+                                </a>
+                                                            <a href="https://www.oschina.net/p/conechoai_openai-websearch-mcp" class="item" title="OpenAI 网络搜索 MCP 服务器 OpenAI WebSearch MCP Server">
+                                    <img class="card-image" src="/new-osc/img/default-software-logo.png" alt="OpenAI 网络搜索 MCP 服务器 OpenAI WebSearch MCP Server">
+                                    <div class="card-title-wrap">
+                                        <div class="card-title">OpenAI WebSearch MCP Server - OpenAI 网络搜索 MCP 服务器</div>
+                                    </div>
+                                </a>
+                                                    </div>
+                    </div>
+                            
+                        <div class="project-list-container-wrap">
+                                <div class="ui inverted dimmer project-list-container-loader">
+                    <div class="ui text loader">加载中</div>
+                </div>
+                                <div class="project-list-container">
+                    
+
+
+ 
+                  
+    <div class="header-wrap ui sticky">
+                <div class="extra toolbar">
+                                    
+
+
+
+
+
+
+
+<div class="filter-bar">
+                    <div class="ui search selection dropdown small language">
+            <input type="hidden" name="languageId" value="0">
+            <i class="dropdown icon"></i>
+            <div class="default text">所有编程语言</div>
+            <div class="menu">
+                <a class="item" data-value="0" href="?company=0&sort=time&tag=305&lang=0&recommend=false">所有编程语言</a>
+                                    <a class="item" data-value="467" href="?company=0&sort=time&tag=305&lang=467&recommend=false">Kotlin</a>
+                                    <a class="item" data-value="468" href="?company=0&sort=time&tag=305&lang=468&recommend=false">Red</a>
+                                    <a class="item" data-value="470" href="?company=0&sort=time&tag=305&lang=470&recommend=false">Haskell</a>
+                                    <a class="item" data-value="471" href="?company=0&sort=time&tag=305&lang=471&recommend=false">Clojure</a>
+                                    <a class="item" data-value="472" href="?company=0&sort=time&tag=305&lang=472&recommend=false">Ada</a>
+                                    <a class="item" data-value="490" href="?company=0&sort=time&tag=305&lang=490&recommend=false">Elixir</a>
+                                    <a class="item" data-value="491" href="?company=0&sort=time&tag=305&lang=491&recommend=false">Crystal</a>
+                                    <a class="item" data-value="492" href="?company=0&sort=time&tag=305&lang=492&recommend=false">V</a>
+                                    <a class="item" data-value="493" href="?company=0&sort=time&tag=305&lang=493&recommend=false">Nim</a>
+                                    <a class="item" data-value="497" href="?company=0&sort=time&tag=305&lang=497&recommend=false">Zig</a>
+                                    <a class="item" data-value="504" href="?company=0&sort=time&tag=305&lang=504&recommend=false">易语言</a>
+                                    <a class="item" data-value="19" href="?company=0&sort=time&tag=305&lang=19&recommend=false">Java</a>
+                                    <a class="item" data-value="21" href="?company=0&sort=time&tag=305&lang=21&recommend=false">C/C++</a>
+                                    <a class="item" data-value="341" href="?company=0&sort=time&tag=305&lang=341&recommend=false">Objective-C</a>
+                                    <a class="item" data-value="22" href="?company=0&sort=time&tag=305&lang=22&recommend=false">PHP</a>
+                                    <a class="item" data-value="24" href="?company=0&sort=time&tag=305&lang=24&recommend=false">Perl</a>
+                                    <a class="item" data-value="25" href="?company=0&sort=time&tag=305&lang=25&recommend=false">Python</a>
+                                    <a class="item" data-value="26" href="?company=0&sort=time&tag=305&lang=26&recommend=false">Ruby</a>
+                                    <a class="item" data-value="194" href="?company=0&sort=time&tag=305&lang=194&recommend=false">C#</a>
+                                    <a class="item" data-value="20" href="?company=0&sort=time&tag=305&lang=20&recommend=false">.NET</a>
+                                    <a class="item" data-value="23" href="?company=0&sort=time&tag=305&lang=23&recommend=false">ASP</a>
+                                    <a class="item" data-value="358" href="?company=0&sort=time&tag=305&lang=358&recommend=false">Google Go</a>
+                                    <a class="item" data-value="210" href="?company=0&sort=time&tag=305&lang=210&recommend=false">D语言</a>
+                                    <a class="item" data-value="213" href="?company=0&sort=time&tag=305&lang=213&recommend=false">Groovy</a>
+                                    <a class="item" data-value="261" href="?company=0&sort=time&tag=305&lang=261&recommend=false">Scala</a>
+                                    <a class="item" data-value="28" href="?company=0&sort=time&tag=305&lang=28&recommend=false">JavaScript</a>
+                                    <a class="item" data-value="460" href="?company=0&sort=time&tag=305&lang=460&recommend=false">TypeScript</a>
+                                    <a class="item" data-value="269" href="?company=0&sort=time&tag=305&lang=269&recommend=false">HTML/CSS</a>
+                                    <a class="item" data-value="29" href="?company=0&sort=time&tag=305&lang=29&recommend=false">ActionScript</a>
+                                    <a class="item" data-value="30" href="?company=0&sort=time&tag=305&lang=30&recommend=false">VBScript</a>
+                                    <a class="item" data-value="31" href="?company=0&sort=time&tag=305&lang=31&recommend=false">Delphi/Pascal</a>
+                                    <a class="item" data-value="32" href="?company=0&sort=time&tag=305&lang=32&recommend=false">Basic</a>
+                                    <a class="item" data-value="34" href="?company=0&sort=time&tag=305&lang=34&recommend=false">ErLang</a>
+                                    <a class="item" data-value="158" href="?company=0&sort=time&tag=305&lang=158&recommend=false">COBOL</a>
+                                    <a class="item" data-value="159" href="?company=0&sort=time&tag=305&lang=159&recommend=false">Fortran</a>
+                                    <a class="item" data-value="160" href="?company=0&sort=time&tag=305&lang=160&recommend=false">Lua</a>
+                                    <a class="item" data-value="209" href="?company=0&sort=time&tag=305&lang=209&recommend=false">SHELL</a>
+                                    <a class="item" data-value="161" href="?company=0&sort=time&tag=305&lang=161&recommend=false">Smalltalk</a>
+                                    <a class="item" data-value="162" href="?company=0&sort=time&tag=305&lang=162&recommend=false">汇编</a>
+                                    <a class="item" data-value="343" href="?company=0&sort=time&tag=305&lang=343&recommend=false">Sliverlight</a>
+                                    <a class="item" data-value="348" href="?company=0&sort=time&tag=305&lang=348&recommend=false">Lisp</a>
+                                    <a class="item" data-value="436" href="?company=0&sort=time&tag=305&lang=436&recommend=false">Swift</a>
+                                    <a class="item" data-value="449" href="?company=0&sort=time&tag=305&lang=449&recommend=false">Vala</a>
+                                    <a class="item" data-value="448" href="?company=0&sort=time&tag=305&lang=448&recommend=false">Rust</a>
+                                    <a class="item" data-value="450" href="?company=0&sort=time&tag=305&lang=450&recommend=false">Hack</a>
+                                    <a class="item" data-value="451" href="?company=0&sort=time&tag=305&lang=451&recommend=false">Dart</a>
+                            </div>
+        </div>
+    
+                <div class="ui search selection dropdown small os">
+            <input type="hidden" name="osId" value="0">
+            <i class="dropdown icon"></i>
+            <div class="default text">所有操作系统</div>
+            <div class="menu">
+                <a class="item" data-value="0" href="?company=0&sort=time&tag=305&lang=0&recommend=false">所有操作系统</a>
+                                    <a class="item" data-value="35" href="?company=0&sort=time&os=35&tag=305&lang=0&recommend=false">跨平台</a>
+                                    <a class="item" data-value="36" href="?company=0&sort=time&os=36&tag=305&lang=0&recommend=false">Windows</a>
+                                    <a class="item" data-value="37" href="?company=0&sort=time&os=37&tag=305&lang=0&recommend=false">Linux</a>
+                                    <a class="item" data-value="38" href="?company=0&sort=time&os=38&tag=305&lang=0&recommend=false">BSD</a>
+                                    <a class="item" data-value="156" href="?company=0&sort=time&os=156&tag=305&lang=0&recommend=false">UNIX</a>
+                                    <a class="item" data-value="39" href="?company=0&sort=time&os=39&tag=305&lang=0&recommend=false">OS X</a>
+                                    <a class="item" data-value="40" href="?company=0&sort=time&os=40&tag=305&lang=0&recommend=false">Symbian</a>
+                                    <a class="item" data-value="200" href="?company=0&sort=time&os=200&tag=305&lang=0&recommend=false">J2ME</a>
+                                    <a class="item" data-value="41" href="?company=0&sort=time&os=41&tag=305&lang=0&recommend=false">嵌入式</a>
+                                    <a class="item" data-value="189" href="?company=0&sort=time&os=189&tag=305&lang=0&recommend=false">Android</a>
+                                    <a class="item" data-value="190" href="?company=0&sort=time&os=190&tag=305&lang=0&recommend=false">iOS</a>
+                                    <a class="item" data-value="208" href="?company=0&sort=time&os=208&tag=305&lang=0&recommend=false">Windows Phone/Mobile</a>
+                                    <a class="item" data-value="266" href="?company=0&sort=time&os=266&tag=305&lang=0&recommend=false">Meego</a>
+                                    <a class="item" data-value="211" href="?company=0&sort=time&os=211&tag=305&lang=0&recommend=false">Moblin</a>
+                                    <a class="item" data-value="442" href="?company=0&sort=time&os=442&tag=305&lang=0&recommend=false">Firefox OS</a>
+                            </div>
+        </div>
+    
+                <div class="ui checkbox only-recommend" data-url="?company=0&sort=time&tag=305&lang=0&recommend=true">
+            <input type="checkbox" tabindex="0" class="hidden" >
+            <label>只看推荐</label>
+        </div>
+    </div>
+
+    <div class="sort-bar">
+                <div class="sort-title">排序：</div>
+        <div class="sort-list">
+            <a href="?company=0&sort=time&tag=305&lang=0&recommend=false" class="sort-item  active ">收录时间</a>
+            <a href="?company=0&sort=view&tag=305&lang=0&recommend=false" class="sort-item ">浏览数</a>
+            <a href="?company=0&sort=favorite&tag=305&lang=0&recommend=false" class="sort-item ">收藏数</a>
+        </div>
+    </div>
+        </div>
+    </div>
+
+<div class="ui basic segment article-list" id="projectList">
+    
+
+
+ 
+                  
+
+    
+
+
+
+     
+    <div class="ui very relaxed items list-container projects-list-container">
+                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/qwen2-5-omni" target="_blank" title="Qwen2.5-Omni 端到端多模态大模型"><span class="project-name">Qwen2.5-Omni</span>  <span class="project-title"> - 端到端多模态大模型</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Qwen2.5-Omni 是阿里通义千问开源的端到端多模态大模型，旨在感知各种模态，包括文本，图像，音频和视频，同时以流式方式生成文本和自然语音响应。 关键特点 Omni 和新颖的架构：我们提出...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 0</div>
+                    <div class="item"><a href="https://www.oschina.net/p/qwen2-5-omni#comments" target="_blank">评论 1</a></div>
+                                            <div class="item update-time">更新于 2025/04/02</div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/deepchat" target="_blank" title="DeepChat 连接强大AI与个人世界的智能助手"><span class="project-name">DeepChat</span>  <span class="project-title"> - 连接强大AI与个人世界的智能助手</span>                                     <div class="ui orange label horizontal" data-tooltip="推荐">荐</div>
+                                                    <div class="ui red label horizontal" data-tooltip="国产">国</div>
+                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">DeepChat - 连接强大AI与个人世界的智能助手 主要特性 🌐 支持多个模型云服务：DeepSeek、OpenAI、硅基流动等 🏠 支...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 3</div>
+                    <div class="item"><a href="https://www.oschina.net/p/deepchat#comments" target="_blank">评论 0</a></div>
+                                            <div class="item update-time">更新于 2025/03/26</div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/fluentread" target="_blank" title="FluentRead 浏览器翻译插件"><span class="project-name">FluentRead</span>  <span class="project-title"> - 浏览器翻译插件</span>                                                     <div class="ui red label horizontal" data-tooltip="国产">国</div>
+                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">FluentRead 是高效的开源浏览器翻译插件，可以将网页上的文字便捷翻译成任何语言，支持 20+ 种翻译服务，包括谷歌翻译、DeepL 翻译、DeepSeek、OpenAI 等。 主要特性 ...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 1</div>
+                    <div class="item"><a href="https://www.oschina.net/p/fluentread#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/amphion" target="_blank" title="Amphion 语音生成整合工具包"><span class="project-name">Amphion</span>  <span class="project-title"> - 语音生成整合工具包</span>                                                     <div class="ui red label horizontal" data-tooltip="国产">国</div>
+                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Amphion 是开源的音频、音乐和语音生成整合工具包。 主要特性 文本转语音（TTS）：高性能，支持主流模型及架构，可生成自然的声音。 歌声转换（SVC）：可将某人歌声转换成其他人歌声，内置张...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 2</div>
+                    <div class="item"><a href="https://www.oschina.net/p/amphion#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                                        
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/polite-guard" target="_blank" title="Polite Guard NLP 语言模型"><span class="project-name">Polite Guard</span>  <span class="project-title"> - NLP 语言模型</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Polite Guard 是英特尔开发的一种开源 NLP 语言模型，由 BERT 微调而成，用于文本分类任务。它旨在将文本分为四类：polite, somewhat polite、neutral...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 0</div>
+                    <div class="item"><a href="https://www.oschina.net/p/polite-guard#comments" target="_blank">评论 0</a></div>
+                                            <div class="item update-time">更新于 2025/02/12</div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/wiseflow" target="_blank" title="Wiseflow 基于大模型的信息挖掘工具"><span class="project-name">Wiseflow</span>  <span class="project-title"> - 基于大模型的信息挖掘工具</span>                                                     <div class="ui red label horizontal" data-tooltip="国产">国</div>
+                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">首席情报官（Wiseflow）是一个敏捷的信息挖掘工具，可以从网站、微信公众号、社交平台等各种信息源中按设定的关注点提炼讯息，自动做标签归类并上传数据库。 功能特色 原生 LLM 应用：精心选择...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 6</div>
+                    <div class="item"><a href="https://www.oschina.net/p/wiseflow#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/tiktokenizer" target="_blank" title="Tiktokenizer OpenAI token 生成器（分词器）在线 playground"><span class="project-name">Tiktokenizer</span>  <span class="project-title"> - OpenAI token 生成器（分词器）在线 playground</span>                                     <div class="ui orange label horizontal" data-tooltip="推荐">荐</div>
+                                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Tiktokenizer 是一个 openai/tiktoken 在线 playground，可视化地解析文本 token 化后的序列。</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 7</div>
+                    <div class="item"><a href="https://www.oschina.net/p/tiktokenizer#comments" target="_blank">评论 0</a></div>
+                                            <div class="item update-time">更新于 2024/12/23</div>
+                                    </div>
+            </div>
+        </div>
+                            <a class="ui small image" href="https://www.oschina.net/p/tiktokenizer" target="_blank" title="Tiktokenizer">
+                <img src="https://static.oschina.net/uploads/logo/tiktokenizer_tTf4Y.png" alt="Tiktokenizer" data-img-render>
+            </a>
+            </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/postgresml" target="_blank" title="PostgresML 基于 PostgreSQL 的 AI 应用数据库"><span class="project-name">PostgresML</span>  <span class="project-title"> - 基于 PostgreSQL 的 AI 应用数据库</span>                                     <div class="ui orange label horizontal" data-tooltip="推荐">荐</div>
+                                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">PostgresML是PostgreSQL的机器学习扩展，能让你使用SQL查询对文本和表格数据进行训练和推理。有了PostgresML，你可以将机器学习模型无缝集成到PostgreSQL数据库中...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 32</div>
+                    <div class="item"><a href="https://www.oschina.net/p/postgresml#comments" target="_blank">评论 1</a></div>
+                                            <div class="item update-time">更新于 2023/12/07</div>
+                                    </div>
+            </div>
+        </div>
+                            <a class="ui small image" href="https://www.oschina.net/p/postgresml" target="_blank" title="PostgresML">
+                <img src="https://static.oschina.net/uploads/logo/postgresml_WozOy.png" alt="PostgresML" data-img-render>
+            </a>
+            </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/free-nlp-api" target="_blank" title="free-nlp-api 多模态 NLP 自然语言处理引擎"><span class="project-name">free-nlp-api</span>  <span class="project-title"> - 多模态 NLP 自然语言处理引擎</span>                                                     <div class="ui red label horizontal" data-tooltip="国产">国</div>
+                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">思通数科利用自然语言处理技术，让计算机具备对网页、文件、文本、声音、图像的阅读能力，帮助客户自动化处理海量文本数据，打造一系列NLP技术工具集或场景化方案，提升文字处理效率和文本挖掘深度，降低人...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 12</div>
+                    <div class="item"><a href="https://www.oschina.net/p/free-nlp-api#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/dataherald" target="_blank" title="Dataherald 用自然语言查询结构化数据库"><span class="project-name">Dataherald</span>  <span class="project-title"> - 用自然语言查询结构化数据库</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Dataherald 是一种自然语言到 SQL 的引擎，专为针对结构化数据进行企业级问答而构建。它允许你从数据库中设置一个 API，可以用简单的英语回答问题。你可以使用 Dataherald 来...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 2</div>
+                    <div class="item"><a href="https://www.oschina.net/p/dataherald#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                            <a class="ui small image" href="https://www.oschina.net/p/dataherald" target="_blank" title="Dataherald">
+                <img src="https://static.oschina.net/uploads/logo/dataherald_Ubpoj.png" alt="Dataherald" data-img-render>
+            </a>
+            </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/towhee" target="_blank" title="Towhee 开源 embedding 框架"><span class="project-name">Towhee</span>  <span class="project-title"> - 开源 embedding 框架</span>                                     <div class="ui orange label horizontal" data-tooltip="推荐">荐</div>
+                                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Towhee 是一个开源的 embedding 框架，包含丰富的数据处理算法与神经网络模型。通过 Towhee，能够轻松地处理非结构化数据（如图片、视频、音频、长文本等），完成原始数据到向量的转...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 5</div>
+                    <div class="item"><a href="https://www.oschina.net/p/towhee#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/metagpt" target="_blank" title="MetaGPT 多智能体元编程框架"><span class="project-name">MetaGPT</span>  <span class="project-title"> - 多智能体元编程框架</span>                                     <div class="ui orange label horizontal" data-tooltip="推荐">荐</div>
+                                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">多智能体框架 MetaGPT 可以使 GPT 以软件公司的形式工作，协作处理更复杂的任务 。 介绍 多智能体框架 MetaGPT 开源了：https://github.com/geekan/Me...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 28</div>
+                    <div class="item"><a href="https://www.oschina.net/p/metagpt#comments" target="_blank">评论 1</a></div>
+                                            <div class="item update-time">更新于 2024/01/19</div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/solidui" target="_blank" title="SolidUI AI 生成可视化"><span class="project-name">SolidUI</span>  <span class="project-title"> - AI 生成可视化</span>                                     <div class="ui orange label horizontal" data-tooltip="推荐">荐</div>
+                                                    <div class="ui red label horizontal" data-tooltip="国产">国</div>
+                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">SolidUI 是一个创新的项目，旨在将自然语言处理（NLP）与计算机图形学相结合，实现文生图功能。 这是什么？ 随着文本生成图像的语言模型兴起，SolidUI想帮人们快速构建可视化工具，可视化...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 14</div>
+                    <div class="item"><a href="https://www.oschina.net/p/solidui#comments" target="_blank">评论 0</a></div>
+                                            <div class="item update-time">更新于 2023/07/03</div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/mkqa" target="_blank" title="MKQA 多语言知识问答数据集"><span class="project-name">MKQA</span>  <span class="project-title"> - 多语言知识问答数据集</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">MKQA 全称 Multilingual Knowledge Questions & Answers ，是一个开放域问答评估集，包含 10k 个问答对，跨越 26 种不同类型的语言（总共 260...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 3</div>
+                    <div class="item"><a href="https://www.oschina.net/p/mkqa#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/agentooba" target="_blank" title="AgentOoba Oobabooga 自主 AI 代理扩展"><span class="project-name">AgentOoba</span>  <span class="project-title"> - Oobabooga 自主 AI 代理扩展</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">AgentOoba 是 Oobabooga 的 web ui 的自主 AI 代理扩展。 AgentOoba 是一个非常新的项目，用于在 Oobabooga 的 Web UI 中实现自治代理。它通...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 1</div>
+                    <div class="item"><a href="https://www.oschina.net/p/agentooba#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                        
+    <div class="item project-item recommend-authors">
+        <div class="recommend-header">开源软件作者</div>
+        <div class="author-list-box">
+            <div class="ui three doubling stackable cards">
+                                                                                        <div class="card">
+                                <div class="content">
+                                    <div class="author-card">
+                                        <div class="author-content">
+                                            <div class="author-avatar">
+                                                <a href="https://my.oschina.net/u/5035299" target="_blank">
+                                                                                <div class="osc-avatar small-portrait _35x35 avatar" title="畅阳开源" data-user-id="5035299">
+                <img src="https://www.oschina.net/new-osc/img/portrait.gif" alt="畅阳开源" title="畅阳开源"/>
+            </div>
+                                                            </a>
+                                            </div>
+                                            <div class="author-info">
+                                                <div class="author-name">
+                                                    <a href="https://my.oschina.net/u/5035299" target="_blank" class="ui small header __user" title="畅阳开源">畅阳开源</a>                                                </div>
+                                                                                                <div class="description" title="畅阳在线教育系统 作者">畅阳在线教育系统 作者</div>
+                                            </div>
+                                        </div>
+                                                                                <div class="author-action">
+                                                                                                                                            <a class="ui basic mini compact button follow-btn icon" data-user-id="5035299" data-follow-status="1" title="关注"><i class="heart outline icon"></i></a>
+                                                                                                                                    <a class="ui basic mini compact button send-message-btn icon" data-user-id="5035299"
+                                               data-user-name="畅阳开源" title="私信"><i class="envelope outline icon"></i></a>
+                                                                                        <a class="ui basic mini compact button icon" href="https://www.oschina.net/question/ask?user=5035299" target="_blank" title="提问"><i class="comment outline icon"></i></a>
+                                        </div>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                                                                                                    <div class="card">
+                                <div class="content">
+                                    <div class="author-card">
+                                        <div class="author-content">
+                                            <div class="author-avatar">
+                                                <a href="https://my.oschina.net/u/6889877" target="_blank">
+                                                                                <div class="osc-avatar small-portrait _35x35 avatar" title="sunrisepeak" data-user-id="6889877">
+                <img src="https://static.oschina.net/uploads/user/3444/6889877_50.jpg?t=1692977403000" alt="sunrisepeak" title="sunrisepeak"/>
+            </div>
+                                                            </a>
+                                            </div>
+                                            <div class="author-info">
+                                                <div class="author-name">
+                                                    <a href="https://my.oschina.net/u/6889877" target="_blank" class="ui small header __user" title="sunrisepeak">sunrisepeak</a>                                                </div>
+                                                                                                <div class="description" title="DStruct 作者">DStruct 作者</div>
+                                            </div>
+                                        </div>
+                                                                                <div class="author-action">
+                                                                                                                                            <a class="ui basic mini compact button follow-btn icon" data-user-id="6889877" data-follow-status="1" title="关注"><i class="heart outline icon"></i></a>
+                                                                                                                                    <a class="ui basic mini compact button send-message-btn icon" data-user-id="6889877"
+                                               data-user-name="sunrisepeak" title="私信"><i class="envelope outline icon"></i></a>
+                                                                                        <a class="ui basic mini compact button icon" href="https://www.oschina.net/question/ask?user=6889877" target="_blank" title="提问"><i class="comment outline icon"></i></a>
+                                        </div>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                                                                                                    <div class="card">
+                                <div class="content">
+                                    <div class="author-card">
+                                        <div class="author-content">
+                                            <div class="author-avatar">
+                                                <a href="https://my.oschina.net/u/3911724" target="_blank">
+                                                                                <div class="osc-avatar small-portrait _35x35 avatar" title="easy4use" data-user-id="3911724">
+                <img src="https://oscimg.oschina.net/oscnet/up-8cb885b62c7cf46619d9397692f4168c.jpg!/both/50x50" alt="easy4use" title="easy4use"/>
+            </div>
+                                                            </a>
+                                            </div>
+                                            <div class="author-info">
+                                                <div class="author-name">
+                                                    <a href="https://my.oschina.net/u/3911724" target="_blank" class="ui small header __user" title="easy4use">easy4use</a>                                                </div>
+                                                                                                <div class="description" title="Hub-Link 作者">Hub-Link 作者</div>
+                                            </div>
+                                        </div>
+                                                                                <div class="author-action">
+                                                                                                                                            <a class="ui basic mini compact button follow-btn icon" data-user-id="3911724" data-follow-status="1" title="关注"><i class="heart outline icon"></i></a>
+                                                                                                                                    <a class="ui basic mini compact button send-message-btn icon" data-user-id="3911724"
+                                               data-user-name="easy4use" title="私信"><i class="envelope outline icon"></i></a>
+                                                                                        <a class="ui basic mini compact button icon" href="https://www.oschina.net/question/ask?user=3911724" target="_blank" title="提问"><i class="comment outline icon"></i></a>
+                                        </div>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                                        </div>
+        </div>
+    </div>
+                                                
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/chatvrm" target="_blank" title="ChatVRM 与浏览器中的 3D 角色交谈"><span class="project-name">ChatVRM</span>  <span class="project-title"> - 与浏览器中的 3D 角色交谈</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">ChatVRM 可轻松地与浏览器中的 3D 角色交谈。通过导入 VRM 文件，可以调整声音以匹配角色，并生成包含情感表达的响应。 ChatVRM的各项功能主要使用了以下技术。 用户语音识别 We...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 4</div>
+                    <div class="item"><a href="https://www.oschina.net/p/chatvrm#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/pandas-ai" target="_blank" title="Pandas AI 为 Pandas 库加入 AI 功能"><span class="project-name">Pandas AI</span>  <span class="project-title"> - 为 Pandas 库加入 AI 功能</span>                                     <div class="ui orange label horizontal" data-tooltip="推荐">荐</div>
+                                                </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Pandas AI 是一个 Python 库，它为流行的 Python 数据分析和操作工具 Pandas 库添加了生成人工智能功能，旨在与 Pandas 结合使用，而不是它的替代品。 Demo ...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 13</div>
+                    <div class="item"><a href="https://www.oschina.net/p/pandas-ai#comments" target="_blank">评论 2</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/freedom-gpt" target="_blank" title="Freedom GPT 本地运行 Alpaca 模型"><span class="project-name">Freedom GPT</span>  <span class="project-title"> - 本地运行 Alpaca 模型</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Freedom GPT 是一个桌面应用程序，允许用户在他们的本地机器上运行 Alpaca 模型，使用 Electron 和 React 构建。 需求 Node.js Yarn Git 直接运行应...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 7</div>
+                    <div class="item"><a href="https://www.oschina.net/p/freedom-gpt#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/ai-legion" target="_blank" title="AI Legion LLM 支持的自主代理平台"><span class="project-name">AI Legion</span>  <span class="project-title"> - LLM 支持的自主代理平台</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">AI Legion 是一个可以共同完成任务的自主代理框架。 设置 至少需要 Node 10。 
+npm install 将项目根目录下的 .env.template 文件重命名为 .env 并...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 1</div>
+                    <div class="item"><a href="https://www.oschina.net/p/ai-legion#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                                            
+                        
+    <div class="item project-item">
+        <div class="content">
+            <h3 class="header">
+                <a href="https://www.oschina.net/p/alpaca-turbo" target="_blank" title="Alpaca-Turbo 本地运行 Alpaca 模型的 Web UI"><span class="project-name">Alpaca-Turbo</span>  <span class="project-title"> - 本地运行 Alpaca 模型的 Web UI</span>                                                 </a>
+            </h3>
+            <div class="description">
+                <p class="line-clamp">Alpaca-Turbo 是一种无需太多设置即可在本地运行的语言模型，它基于 LLaMA 的 alpaca.cpp 语言模型的用户友好 Web UI，目标是在不牺牲速度或功能的情况下提供易于配置...</p>
+            </div>
+            <div class="extra">
+                <div class="ui horizontal list">
+                    <div class="item">收藏 2</div>
+                    <div class="item"><a href="https://www.oschina.net/p/alpaca-turbo#comments" target="_blank">评论 0</a></div>
+                                    </div>
+            </div>
+        </div>
+                    </div>
+
+                                    </div>
+    <div class="page-load-status">
+        <p class="infinite-scroll-request">
+            <i class="ui active small inline loader"></i>
+        </p>
+        <p class="infinite-scroll-last">没有更多内容</p>
+        <p class="infinite-scroll-error">加载失败，请刷新页面</p>
+    </div>
+    <a class="ui fluid button load-more-button" style="display: none">加载更多</a>
+                <p class="pagination">
+            <a class="project-pagination pagination__next" style="display: none" href="/project/widgets/_project_list?company=0&tag=305&lang=0&os=0&sort=time&recommend=false&cn=false&weekly=false&p=2&type=ajax">下一页</a>
+        </p>
+    </div>                </div>
+            </div>
+        </div>
+
+                <div class="four wide computer sixteen wide tablet column sidebar project-sidebar">
+            
+    
+
+            <div class="section articles-list articles-projects-list">
+    <h4 class="header">本类热门软件</h4>
+    <div class="ui items">
+                                    <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/clause" title="Clause 语义理解系统">
+                            <span class="project-name">Clause</span> <span class="project-title"> - 语义理解系统</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 37</div>
+                                <div class="item"><a href="https://www.oschina.net/p/clause#comments" target="_blank">评论 0</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/spacy" title="spaCy NLP 自然语言文本处理库">
+                            <span class="project-name">spaCy</span> <span class="project-title"> - NLP 自然语言文本处理库</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 28</div>
+                                <div class="item"><a href="https://www.oschina.net/p/spacy#comments" target="_blank">评论 2</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/code-as-policies" title="Code as Policies 自然语言代码生成系统">
+                            <span class="project-name">Code as Policies</span> <span class="project-title"> - 自然语言代码生成系统</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 10</div>
+                                <div class="item"><a href="https://www.oschina.net/p/code-as-policies#comments" target="_blank">评论 0</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/openai-whisper" title="OpenAI-Whisper OpenAI 开源的语音识别系统">
+                            <span class="project-name">OpenAI-Whisper</span> <span class="project-title"> - OpenAI 开源的语音识别系统</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 57</div>
+                                <div class="item"><a href="https://www.oschina.net/p/openai-whisper#comments" target="_blank">评论 2</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/ernie" title="ERNIE 基于持续学习的语义理解预训练框架">
+                            <span class="project-name">ERNIE</span> <span class="project-title"> - 基于持续学习的语义理解预训练框架</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 25</div>
+                                <div class="item"><a href="https://www.oschina.net/p/ernie#comments" target="_blank">评论 0</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/didi-delta" title="DELTA 自然语言理解模型训练平台">
+                            <span class="project-name">DELTA</span> <span class="project-title"> - 自然语言理解模型训练平台</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 22</div>
+                                <div class="item"><a href="https://www.oschina.net/p/didi-delta#comments" target="_blank">评论 0</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/synonyms" title="Synonyms 开源中文近义词工具包">
+                            <span class="project-name">Synonyms</span> <span class="project-title"> - 开源中文近义词工具包</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 63</div>
+                                <div class="item"><a href="https://www.oschina.net/p/synonyms#comments" target="_blank">评论 3</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/txtai" title="Txtai 人工智能驱动的搜索引擎">
+                            <span class="project-name">Txtai</span> <span class="project-title"> - 人工智能驱动的搜索引擎</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 83</div>
+                                <div class="item"><a href="https://www.oschina.net/p/txtai#comments" target="_blank">评论 2</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/hanlp" title="HanLP 自然语言处理">
+                            <span class="project-name">HanLP</span> <span class="project-title"> - 自然语言处理</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 273</div>
+                                <div class="item"><a href="https://www.oschina.net/p/hanlp#comments" target="_blank">评论 4</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <div class="content">
+                                                <a class="header" href="https://www.oschina.net/p/wantwords" title="WantWords 在线反向词典">
+                            <span class="project-name">WantWords</span> <span class="project-title"> - 在线反向词典</span></a>
+                        <div class="extra">
+                            <div class="ui horizontal list">
+                                <div class="item">收藏 33</div>
+                                <div class="item"><a href="https://www.oschina.net/p/wantwords#comments" target="_blank">评论 0</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        </div>
+</div>
+
+                        <div class="ad-wrap">
+            <a name="www_project_right_1"  data-traceid="www_project_right_1_ad" data-tracepid="www_project_right_1"  href="https://e.cn.miaozhen.com/r/k=2449142&p=8pTMj&rt=2&pro=s&dx=__IPDX__&ns=__IP__&ni=__IESID__&v=__LOC__&xa=__ADPLATFORM__&tr=__REQUESTID__&gc=__GCID__&o=https://activity.huaweicloud.com/newyear_promotion/index.html?utm_source=oschina&utm_medium=pr-cn&utm_campaign=newyear&utm_content=flexus-l" target="_blank" title="">
+                <img src="https://static.oschina.net/uploads/cooperation/www_project_right_1_qQtOR.jpg" width="300" height="250">
+            </a>
+                        </div>
+            
+
+<div class="section project-list use-tab">
+    <div class="ui list header-wrap">
+        <div class="item">
+            <div class="ui right floated content tabs">
+                <span class="tab active" data-tab="month">月</span>
+                <span class="tab" data-tab="year">年</span>
+            </div>
+            <h4 class="ui header">软件更新榜</h4>
+        </div>
+    </div>
+    <div class="ui items tab-body active" data-tab="month">
+                                    <div class="item">
+                    <span class="sort sort-1">1</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/sqltoy-orm" target="_blank" title="sqltoy-orm ORM 框架"><span class="project-name">sqltoy-orm</span> <span class="project-title"> - ORM 框架</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">4</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：4</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-2">2</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/vonce-sqlbean" target="_blank" title="vonce-sqlbean Sql 语句生成工具"><span class="project-name">vonce-sqlbean</span> <span class="project-title"> - Sql 语句生成工具</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">2</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：2</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-3">3</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/goodlink" target="_blank" title="GoodLink 内网穿透工具"><span class="project-name">GoodLink</span> <span class="project-title"> - 内网穿透工具</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">2</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：2</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-4">4</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/maxkey" target="_blank" title="MaxKey 单点登录认证系统"><span class="project-name">MaxKey</span> <span class="project-title"> - 单点登录认证系统</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">2</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：2</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-5">5</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/iyquecode" target="_blank" title="IYqueCode 企业微信活码神器"><span class="project-name">IYqueCode</span> <span class="project-title"> - 企业微信活码神器</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">2</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：2</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-6">6</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/gpress" target="_blank" title="gpress Web3 内容平台"><span class="project-name">gpress</span> <span class="project-title"> - Web3 内容平台</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">1</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：1</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-7">7</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/dante-cloud" target="_blank" title="Dante Cloud 企业级技术中台微服务架构"><span class="project-name">Dante Cloud</span> <span class="project-title"> - 企业级技术中台微服务架构</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">1</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：1</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-8">8</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/obs-studio" target="_blank" title="OBS Studio 实时流媒体和屏幕录制软件"><span class="project-name">OBS Studio</span> <span class="project-title"> - 实时流媒体和屏幕录制软件</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">1</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：1</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-9">9</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/CloudCanalProcess" target="_blank" title="CloudCanalProcess CloudCanal SDK 数据处理器"><span class="project-name">CloudCanalProcess</span> <span class="project-title"> - CloudCanal SDK 数据处理器</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">1</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：1</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-10">10</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/cmake" target="_blank" title="CMake 自动化构建系统"><span class="project-name">CMake</span> <span class="project-title"> - 自动化构建系统</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">1</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：1</div>
+                        </div>
+                    </div>
+                </div>
+                        </div>
+    <div class="ui items tab-body" data-tab="year">
+                                    <div class="item">
+                    <span class="sort sort-1">1</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/k8m" target="_blank" title="k8m 轻量级的 Kubernetes 仪表板"><span class="project-name">k8m</span> <span class="project-title"> - 轻量级的 Kubernetes 仪表板</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">45</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：45</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-2">2</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/kom" target="_blank" title="kom Kubernetes 操作工具"><span class="project-name">kom</span> <span class="project-title"> - Kubernetes 操作工具</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">26</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：26</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-3">3</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/goodlink" target="_blank" title="GoodLink 内网穿透工具"><span class="project-name">GoodLink</span> <span class="project-title"> - 内网穿透工具</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">21</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：21</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-4">4</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/wow" target="_blank" title="Wow 微服务开发框架"><span class="project-name">Wow</span> <span class="project-title"> - 微服务开发框架</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">18</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：18</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-5">5</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/sqltoy-orm" target="_blank" title="sqltoy-orm ORM 框架"><span class="project-name">sqltoy-orm</span> <span class="project-title"> - ORM 框架</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">17</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：17</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-6">6</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/minrag" target="_blank" title="minRAG RAG 系统"><span class="project-name">minRAG</span> <span class="project-title"> - RAG 系统</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">17</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：17</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-7">7</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/weiyu-im" target="_blank" title="微语 开源企业即时通讯 & 在线客服系统 & 大模型 AI 助手"><span class="project-name">微语</span> <span class="project-title"> - 开源企业即时通讯 & 在线客服系统 & 大模型 AI 助手</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">16</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：16</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-8">8</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/aigcpanel" target="_blank" title="AigcPanel 开源 AI 数字人系统"><span class="project-name">AigcPanel</span> <span class="project-title"> - 开源 AI 数字人系统</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">15</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：15</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-9">9</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/dante-cloud" target="_blank" title="Dante Cloud 企业级技术中台微服务架构"><span class="project-name">Dante Cloud</span> <span class="project-title"> - 企业级技术中台微服务架构</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">15</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：15</div>
+                        </div>
+                    </div>
+                </div>
+                                                <div class="item">
+                    <span class="sort sort-10">10</span>
+                    <div class="content">
+                        <a class="header" href="https://www.oschina.net/p/nocobase" target="_blank" title="NocoBase 无代码开发平台"><span class="project-name">NocoBase</span> <span class="project-title"> - 无代码开发平台</span></a>
+                    </div>
+                    <div class="right-extra">
+                        <div class="number">
+                            <span class="popup-num">13</span>
+                            <div class="ui flowing popup transition hidden popup-num-detail">更新次数：13</div>
+                        </div>
+                    </div>
+                </div>
+                        </div>
+</div>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+
+                <div id="footer" class="ui vertical footer segment mb-hide">
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="eight wide mobile three wide tablet two wide computer column">
+                <h4 class="ui header">OSCHINA 社区</h4>
+                <div class="ui link list">
+                    <a class="item" href="https://www.oschina.net/home/aboutosc" target="_blank">关于我们</a>
+                    <a class="item" href="https://www.oschina.net/help-center" target="_blank">帮助中心</a>
+                    <a class="item" href="https://www.oschina.net/home/aboutosc#partners" target="_blank">合作伙伴</a>
+                    <a class="item" href="https://www.oschina.net/openapi" target="_blank">Open API</a>
+                </div>
+            </div>
+            <div class="eight wide mobile four wide tablet three wide computer column">
+                <h4 class="ui header">在线工具</h4>
+                <div class="ui link list">
+                    <a class="item" href="https://gitee.com/?utm_source=oschina&utm_medium=link-bottom&utm_campaign=home" target="_blank">Gitee.com</a>
+                    <a class="item" href="https://gitee.com/enterprises?utm_source=oschina&utm_medium=link-bottom&utm_campaign=enterprises" target="_blank">企业研发管理</a>
+                    <a class="item" href="https://copycat.gitee.com/?utm_source=oschina&utm_medium=link-bottom&utm_campaign=copycat" target="_blank">CopyCat-代码克隆检测</a>
+                    <a class="item" href="https://tool.oschina.net" target="_blank">实用在线工具</a>
+                </div>
+            </div>
+            <div class="eight wide mobile three wide tablet two wide computer column">
+                <h4 class="ui header">攻略</h4>
+                <div class="ui link list">
+                    <a class="item" href="https://www.oschina.net/question/2918182_2319406" target="_blank">项目运营</a>
+                    <a class="item" href="https://my.oschina.net/u/4252687/blog/5568509" target="_blank">Awesome 软件（持续更新中）</a>
+                </div>
+            </div>
+<!--            <div class="center aligned eight wide mobile two wide tablet two wide computer column">-->
+<!--                <h4 class="ui header">QQ群</h4>-->
+<!--                <a href="https://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Ls5H34lyhyx3ZJevQxyowwZ7YgLWns8c&authKey=IfzYqURucBExIkBqE7xUu1Tz9Dh8O0XC%2BOVpjBhZzzbD8u5zsMgAZHJKOJpSa6yh&noverify=0&group_code=229767317" target="_blank">-->
+<!--                    <img class="qrcode" src="https://oscimg.oschina.net/oscnet/up-36e8546f6995ae8f61d6b8abe7310af0133.jpg" alt="QQ交流群"/>-->
+<!--                </a>-->
+<!--                <div class="ui link list">-->
+<!--                    <a class="item qrcode-des" href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Ls5H34lyhyx3ZJevQxyowwZ7YgLWns8c&authKey=IfzYqURucBExIkBqE7xUu1Tz9Dh8O0XC%2BOVpjBhZzzbD8u5zsMgAZHJKOJpSa6yh&noverify=0&group_code=229767317" target="_blank">229767317</a>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="center aligned eight wide mobile two wide tablet two wide computer column">
+                <h4 class="ui header">公众号</h4>
+                <img src="https://static.oschina.net/new-osc/img/wechat_qrcode.jpg?t=1484694603000" alt="微信公众号"/>
+            </div>
+            <div class="center aligned eight wide mobile two wide tablet two wide computer column">
+                <h4 class="ui header">视频号</h4>
+                <img src="https://oscimg.oschina.net/oscnet/up-7f546da372c31b5421fedc29f7c202ab2c4.JPEG" alt="视频号" style="width: 65px"/>
+            </div>
+            <div class="center aligned eight wide mobile two wide tablet two wide computer column">
+                <h4 class="ui header">问题反馈</h4>
+                <img src="https://oscimg.oschina.net/oscnet/up-51726e7d90e535ade6324bfc84e76736fa8.png" alt="问题反馈" style="width: 67px"/>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="copyright">
+    <div class="ui container">
+        <div class="ui clearing basic segment">
+            <div class="ui left floated horizontal link list">
+                <div class="item">©OSCHINA(OSChina.NET)</div>
+                <div class="item mb-hide">工信部</div>
+                <a class="item mb-hide" href="http://www.copu.org.cn/" target="_blank" title="开源软件推进联盟">开源软件推进联盟</a>
+                <div class="item mb-hide">指定官方社区</div>
+                <a class="item mb-hide" href="https://www.oschina.net/question/1_2326668" target="_blank" title="OSCHINA 社区规范">社区规范</a>
+            </div>
+            <div class="ui right floated horizontal link list">
+                <div class="item mb-hide">深圳市奥思网络科技有限公司版权所有</div>
+                <a href="http://beian.miit.gov.cn/" target="_blank" class="item">粤ICP备12009483号</a>
+            </div>
+        </div>
+    </div>
+</div>    </div>
+
+                                                                                <style>.codeBlock:hover .oscCode{display: block !important;} .codeBlock{z-index: 2;position: fixed;right: 20px;bottom: 57px; overflow: hidden; margin-bottom: 4px;padding: 8px 0 6px;width: 40px;height: auto;box-sizing: content-box;cursor: pointer;border: 1px solid #ddd;background: #f5f5f5;text-align: center;transition: background 0.4s ease;}
+@media only screen and (max-width: 767px){ .codeBlock{display: none;}}
+
+/*
+html{
+-webkit-filter: grayscale(100%);
+-moz-filter: grayscale(100%);
+-ms-filter: grayscale(100%);
+-o-filter: grayscale(100%);
+filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);
+_filter:none;
+}
+*/
+</style>
+
+    <div class="codeBlock">
+        <img class="codeIcon" src="https://oscimg.oschina.net/oscnet/up-02f2706a81344119fb5cdcdda304068f2e0.png" alt="">
+        <img class="oscCode" style="display:none;position: fixed;bottom: 62px;right: 69px;width: 120px;"
+             src="https://oscimg.oschina.net/oscnet/up-e77d060131d9b392981650ec7beb614554f.JPEG" alt="">
+    </div>
+<script>
+if(window.location.href.indexOf("www.oschina.net/group")!=-1 && window.location.href.indexOf("/admin/")!=-1){
+    document.querySelector("#mainScreen > div > div.group-admin-container > div.admin-body-box.box-card > div > div.menu-box > div > div:nth-child(4)").remove()
+}
+
+</script>
+
+                <div class="back-to-top back-to-top-toggle">
+        <div class="icon"><img src="https://static.oschina.net/new-osc/img/icon/back-to-top.svg" alt="返回顶部"></div>
+        <div class="text">顶部</div>
+    </div>
+
+        <script src="https://static.oschina.net/new-osc/js/utils/semantic-ui/semantic.min.js?t=1670405958000"></script>
+    <script src="https://static.oschina.net/new-osc/js/utils/vue.min.js?t=1670405958000"></script>
+    <script src="https://static.oschina.net/new-osc/js/utils/jweixin-1.6.0.js"></script>
+                <script type="text/javascript" src="https://static.oschina.net/new-osc/dist/js/web.c34b9c41.js"></script>                
+<script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https'){
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+<script>
+    var _hmt = _hmt || [];
+    _hmt.push(['_requirePlugin', 'UrlChangeTracker', {
+        shouldTrackUrlChange: function (newPath, oldPath) {
+            return newPath && oldPath;
+        }}
+    ]);
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?a411c4d1664dd70048ee98afe7b28f0b";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TK89C9ZD80"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-TK89C9ZD80');
+</script>
+
+<script>
+    window.goatcounter = {
+        path: function(p) { return location.host + p }
+    }
+</script>
+<script data-goatcounter="https://visit.oschina.net/count" async src="//visit.oschina.net/count.js"></script>
+
+<script async>
+    (function(){
+        var el = document.createElement("script");
+        el.src = "https://lf1-cdn-tos.bytegoofy.com/goofy/ttzz/push.js?2f2c965c87382dadf25633a3738875e5ccd132720338e03bf7e464e2ec709b9dfd9a9dcb5ced4d7780eb6f3bbd089073c2a6d54440560d63862bbf4ec01bba3a";
+        el.id = "ttzz";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(el, s);
+    })(window)
+</script>
+                
+
+    
+            </body>
+</html>
+<!-- Generated by oschina (init:1[ms],page:659[ms],ip:158.247.230.22) //-->
+<img data-src='baidu-visit' style='display:none' src='http://hm.baidu.com/hm.gif?si=a411c4d1664dd70048ee98afe7b28f0b&amp;et=0&amp;nv=1&amp;st=1&amp;lt=1743580261&amp;su=https%3A%2F%2Fwww.oschina.net%2Fproject&amp;v=wap-2-0.3&amp;rnd=1615200112'></img>
