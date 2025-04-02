@@ -3,6 +3,8 @@ import * as moment from 'moment';
 import { Client } from '@elastic/elasticsearch';
 import * as _ from 'lodash';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
+import * as path from 'path';
 
 interface TemplateMaterial {
   widgetTitle: string;
@@ -34,13 +36,18 @@ export default class Kr36Crawler {
   private readonly domain: string = 'https://www.36kr.com';
   private readonly source: string = '36kr';
   private esClient: Client;
-
   private configService: ConfigService;
+  private exportToCsv: boolean;
+  private csvPath: string;
 
-  constructor(params) {
-    const { configService } = params;
+  constructor(params: { configService: ConfigService; exportToCsv?: boolean }) {
+    const { configService, exportToCsv = false } = params;
     this.configService = configService;
     this.esClient = new Client({ node: this.configService.get('es.node') });
+    this.exportToCsv = exportToCsv;
+    const today = moment().format('YYYY-MM-DD');
+    const fileName = `36kr_${today}.csv`;
+    this.csvPath = path.join('output', 'exports', fileName);
   }
 
   async start(): Promise<void> {
@@ -77,6 +84,30 @@ export default class Kr36Crawler {
     await this.getNextQuery(pageCallback);
   }
 
+  private async saveToCsv(articles: Article[]): Promise<void> {
+    if (!this.exportToCsv || articles.length === 0) return;
+
+    const dir = path.dirname(this.csvPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const headers = Object.keys(articles[0]).join(',') + '\n';
+    const rows =
+      articles
+        .map((article) =>
+          Object.values(article)
+            .map((value) => `"${value?.toString().replace(/"/g, '""') || ''}"`)
+            .join(','),
+        )
+        .join('\n') + '\n';
+
+    if (!fs.existsSync(this.csvPath)) {
+      fs.writeFileSync(this.csvPath, headers);
+    }
+    fs.appendFileSync(this.csvPath, rows);
+  }
+
   private async itemsImport(items: KrItem[]): Promise<boolean> {
     const yesterday = moment().subtract(1, 'day').format('YYYY-MM-DD');
     const today = moment().format('YYYY-MM-DD');
@@ -85,6 +116,7 @@ export default class Kr36Crawler {
     const endTime = moment(today).endOf('d').unix();
 
     const bulk: any[] = [];
+    const articles: Article[] = [];
     let toNext = true;
 
     for (const item of items) {
@@ -134,10 +166,12 @@ export default class Kr36Crawler {
 
       bulk.push({ index: { _index: 'article' } });
       bulk.push(doc);
+      articles.push(doc);
     }
 
     if (bulk.length > 0) {
-      await this.esClient.bulk({ body: bulk });
+      // await this.esClient.bulk({ body: bulk });
+      await this.saveToCsv(articles);
     }
 
     return toNext;

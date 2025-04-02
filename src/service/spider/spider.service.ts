@@ -6,9 +6,10 @@ import Kr36DetailCrawler from './crawlers/kr36Detail.crawler';
 @Injectable()
 export class SipderService {
   constructor(private readonly configService: ConfigService) {}
-  async crwal_36kr() {
+  async crwal_36kr({ exportToCsv }) {
     const params = {
       configService: this.configService,
+      exportToCsv,
     };
     const crawler = new Kr36Crawler(params);
     await crawler.start();

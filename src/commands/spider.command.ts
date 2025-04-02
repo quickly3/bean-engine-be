@@ -10,7 +10,7 @@ export class SpiderCommand {
     command: 'crwal:36kr',
   })
   async crwal_36kr() {
-    await this.sipderService.crwal_36kr();
+    await this.sipderService.crwal_36kr({ exportToCsv: true });
   }
 
   @Command({
