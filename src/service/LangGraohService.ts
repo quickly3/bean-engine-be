@@ -129,7 +129,12 @@ export class LangGraohService {
 
   async testTavily() {
     // Define the tools for the agent to use
-    const agentTools = [new TavilySearchResults({ maxResults: 3 })];
+    const agentTools = [
+      new TavilySearchResults({
+        maxResults: 3,
+        apiKey: this.configService.get('deepseek.TAVILY_KEY'),
+      }),
+    ];
     const agentModel = new ChatDeepSeek({
       model: 'deepseek-chat',
       apiKey: this.configService.get('deepseek.DS_KEY'),
