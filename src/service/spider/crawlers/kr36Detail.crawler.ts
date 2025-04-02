@@ -1,9 +1,12 @@
 import { Client } from '@elastic/elasticsearch';
 import { ConfigService } from '@nestjs/config';
-import { chromium } from 'playwright';
+// import { chromium } from 'playwright';
+import { chromium } from 'playwright-extra';
+
 import * as cheerio from 'cheerio';
 import { ChatDeepSeek } from '@langchain/deepseek';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
+import { sleep } from 'openai/core';
 
 export default class Kr36DetailCrawler {
   private esClient: Client;
@@ -16,13 +19,20 @@ export default class Kr36DetailCrawler {
   }
 
   async crawlArticle(url) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const stealth = require('puppeteer-extra-plugin-stealth')();
+    chromium.use(stealth);
     const browser = await chromium.launch();
-    const context = await browser.newContext();
+    const context = await browser.newContext({
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+    });
     const page = await context.newPage();
 
     try {
       console.log('开始爬取文章:', url);
-      await page.goto(url, { waitUntil: 'load' });
+      const response = await page.goto(url, { waitUntil: 'load' });
+      console.log('Status code:', response.status());
       const content = await page.content();
 
       // Parse the HTML and extract the article content
@@ -43,6 +53,59 @@ export default class Kr36DetailCrawler {
     } finally {
       await browser.close();
     }
+  }
+
+  async crawlMultipleArticles(urls: string[]) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const stealth = require('puppeteer-extra-plugin-stealth')();
+    chromium.use(stealth);
+    const browser = await chromium.launch();
+    const context = await browser.newContext({
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+    });
+    const page = await context.newPage();
+
+    const results = {
+      success: [],
+      failed: [],
+    };
+    try {
+      for (const url of urls) {
+        try {
+          console.log('开始爬取文章:', url);
+          const response = await page.goto(url, { waitUntil: 'load' });
+          console.log('Status code:', response.status());
+
+          const content = await page.content();
+
+          const $ = cheerio.load(content);
+          const articleContent = $('.articleDetailContent').text().trim();
+          const articleTitle = $('.article-title').text().trim();
+
+          console.log('爬取成功,文章长度:', articleContent.length);
+          const summary = await this.parseByAi(articleContent);
+
+          results.success.push({
+            url,
+            title: articleTitle,
+            content: articleContent,
+            summary,
+          });
+          await sleep(1000);
+        } catch (error) {
+          console.error(`Error fetching article from ${url}:`, error);
+          results.failed.push({ url, error: error.message });
+        }
+      }
+    } finally {
+      await browser.close();
+    }
+
+    console.log(
+      `爬取完成，成功: ${results.success.length}，失败: ${results.failed.length}`,
+    );
+    return results;
   }
 
   async parseByAi(content) {

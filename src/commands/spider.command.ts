@@ -21,4 +21,12 @@ export class SpiderCommand {
     const resp = await this.sipderService.detail_36kr(url);
     console.log(resp);
   }
+
+  @Command({
+    command: 'crwal:36kr_batch',
+  })
+  async crawlBatch36kr() {
+    const resp = await this.sipderService.crawlBatch36kr();
+    console.log(resp);
+  }
 }
