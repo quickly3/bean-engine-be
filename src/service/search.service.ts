@@ -319,6 +319,23 @@ export class SearchService {
     return resp;
   }
 
+  async todayReport() {
+    const escn = await this.getLastDayArticleByQuery('source:escn');
+    const juejin = await this.getLastDayArticleByQuery(
+      'source:juejin && tag:news',
+    );
+    const infoq = await this.getLastDayArticleByQuery('source:infoq');
+    const oschina = await this.getLastDayArticleByQuery(
+      'source:oschina && tag:news',
+    );
+    const cnblogs = await this.getLastDayArticleByQuery(
+      'source:cnblogs && tag:news',
+    );
+    const krs = await this.getLastDayArticleByQuery('source:36kr', 300);
+
+    return _.concat(escn, juejin, infoq, oschina, cnblogs, krs);
+  }
+
   async dailyKr() {
     const today = moment().format('YYYY-MM-DD');
 

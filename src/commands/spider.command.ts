@@ -29,4 +29,29 @@ export class SpiderCommand {
     const resp = await this.sipderService.crawlBatch36kr();
     console.log(resp);
   }
+
+  @Command({
+    command: 'crwal:today_report',
+  })
+  async genTodayReport() {
+    const resp = await this.sipderService.genTodayReport();
+    console.log(resp);
+  }
+
+  @Command({
+    command: 'crwal:parseByAi',
+  })
+  async parseByAi() {
+    const content = '黄鹤楼是什么？回答100字以内';
+    const resp = await this.sipderService.parseByAi(content);
+    console.log(resp);
+  }
+
+  @Command({
+    command: 'crwal:oc_list_oc',
+  })
+  async list_oc() {
+    const url = 'https://www.oschina.net/project/lang/467/kotlin';
+    const resp = await this.sipderService.list_oc(url);
+  }
 }

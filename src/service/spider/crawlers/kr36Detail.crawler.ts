@@ -59,7 +59,18 @@ export default class Kr36DetailCrawler {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const stealth = require('puppeteer-extra-plugin-stealth')();
     chromium.use(stealth);
-    const browser = await chromium.launch();
+    const browser = await chromium.launch({
+      headless: false,
+      args: [
+        '--disable-web-security',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-infobars',
+        '--disable-dev-shm-usage',
+        '--disable-extensions',
+        '--disable-gpu',
+      ],
+    });
     const context = await browser.newContext({
       userAgent:
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
@@ -70,10 +81,14 @@ export default class Kr36DetailCrawler {
       success: [],
       failed: [],
     };
+    const total = urls.length;
+    let count = 0;
+    console.log('开始爬取文章:');
     try {
       for (const url of urls) {
+        count++;
+        console.log(`爬取进度: ${count}/${total}`, url);
         try {
-          console.log('开始爬取文章:', url);
           const response = await page.goto(url, { waitUntil: 'load' });
           console.log('Status code:', response.status());
 
@@ -92,11 +107,11 @@ export default class Kr36DetailCrawler {
             content: articleContent,
             summary,
           });
-          await sleep(1000);
         } catch (error) {
           console.error(`Error fetching article from ${url}:`, error);
           results.failed.push({ url, error: error.message });
         }
+        await sleep(3000);
       }
     } finally {
       await browser.close();

@@ -28,6 +28,7 @@
     "@langchain/core": "^0.3.41",
     "@langchain/deepseek": "^0.0.1",
     "@langchain/langgraph": "^0.2.56",
+    "@langchain/openai": "^0.5.2",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
