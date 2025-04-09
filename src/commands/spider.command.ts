@@ -54,4 +54,12 @@ export class SpiderCommand {
     const url = 'https://www.oschina.net/project/lang/467/kotlin';
     const resp = await this.sipderService.list_oc(url);
   }
+
+  @Command({
+    command: 'crawl:csdn',
+  })
+  async crawlCsdn() {
+    const resp = await this.sipderService.crawlCsdn();
+    console.log('CSDN抓取完成:', resp);
+  }
 }

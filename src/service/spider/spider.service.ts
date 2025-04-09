@@ -12,6 +12,7 @@ import OschinaCrawler from './crawlers/oschina.crawler';
 import { saveJsonFileToCsv } from 'src/utils/file';
 import * as moment from 'moment';
 import { SearchService } from '../search.service';
+import CsdnCrawler from './crawlers/csdn.crawler';
 
 @Injectable()
 export class SipderService {
@@ -192,5 +193,13 @@ export class SipderService {
     const crawler = new OschinaCrawler(params);
 
     await crawler.crawlProjects(url);
+  }
+
+  async crawlCsdn() {
+    const params = {
+      configService: this.configService,
+    };
+    const crawler = new CsdnCrawler(params);
+    return await crawler.crawlHomePage();
   }
 }
