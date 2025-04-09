@@ -336,6 +336,30 @@ export class SearchService {
     return _.concat(escn, juejin, infoq, oschina, cnblogs, krs);
   }
 
+  async weekReport() {
+    const escn = await this.getLastWeekArticleByQuery('source:escn');
+    const juejin = await this.getLastWeekArticleByQuery(
+      'source:juejin && tag:news',
+    );
+    const infoq = await this.getLastWeekArticleByQuery('source:infoq');
+    const oschina = await this.getLastWeekArticleByQuery(
+      'source:oschina && tag:news',
+    );
+    const cnblogs = await this.getLastWeekArticleByQuery(
+      'source:cnblogs && tag:news',
+    );
+    const krs = await this.getLastWeekArticleByQuery('source:36kr');
+
+    console.log('escn', escn.length);
+    console.log('juejin', juejin.length);
+    console.log('infoq', infoq.length);
+    console.log('oschina', oschina.length);
+    console.log('cnblogs', cnblogs.length);
+    console.log('krs', krs.length);
+
+    return _.concat(escn, juejin, infoq, oschina, cnblogs, krs);
+  }
+
   async dailyKr() {
     const today = moment().format('YYYY-MM-DD');
 
@@ -363,6 +387,39 @@ export class SearchService {
         },
       },
       size: size,
+      sort: [
+        {
+          created_at: {
+            order: 'desc',
+          },
+        },
+      ],
+    };
+
+    queryBuilder.setQueryBody(body);
+    const resp = await queryBuilder.search();
+    return resp.data;
+  }
+
+  async getLastWeekArticleByQuery(query_string) {
+    const queryBuilder = new EsQueryBuilder(
+      ES_INDEX.ARTICLE,
+      this.elasticsearchService,
+    );
+
+    const dateStart = moment().add('-1', 'w').startOf('w').toISOString();
+    const dateEnd = moment().add('-1', 'w').endOf('w').toISOString();
+
+    console.log('dateStart', dateStart);
+    console.log('dateEnd', dateEnd);
+
+    const body = {
+      query: {
+        query_string: {
+          query: `${query_string} && created_at:[${dateStart} TO ${dateEnd}]`,
+        },
+      },
+      size: 10000,
       sort: [
         {
           created_at: {

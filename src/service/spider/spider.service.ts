@@ -149,6 +149,65 @@ export class SipderService {
     fs.writeFileSync(`output/today_report.md`, md);
   }
 
+  async genWeekReport() {
+    const data = await this.searchService.weekReport();
+
+    let titles = data.map((d) => d.title);
+    titles = _.uniq(titles);
+
+    const idTitles = titles.map((d, i) => {
+      return { id: i + 1, title: d };
+    });
+    saveJsonFileToCsv('output/week_titles.csv', idTitles);
+    return;
+
+    const filePath = path.join('output', 'week_cate.txt');
+    console.log(idTitles.length, '标题数量');
+    const resp = await this.cateByAi(JSON.stringify(idTitles));
+    fs.writeFileSync(filePath, resp);
+
+    // const filePath = path.join('output', 'resp.txt');
+    // const resp = fs.readFileSync(filePath, 'utf-8');
+
+    // match resp 字符串里  ```josn ```中 中间的内容
+    const reg = /```json([\s\S]*?)```/g;
+    const match = reg.exec(resp);
+    let josnResp = '';
+    if (!match) {
+      return;
+    }
+    josnResp = match[1].trim();
+
+    const resp2 = JSON.parse(josnResp);
+
+    data.map((d) => {
+      d.cate = '其他';
+      resp2.map((r) => {
+        if (r.ids.includes(d.id)) {
+          d.cate = r.cate;
+        }
+      });
+    });
+
+    // 将data保存到csv文件中
+    saveJsonFileToCsv('output/today_report.csv', data);
+    const gpData = _.groupBy(data, (d) => d.cate);
+
+    // gpData to markdown file
+    const gpDataKeys = Object.keys(gpData);
+
+    const date = moment().format('YYYY-MM-DD');
+    let md = `## 互联网摸鱼日报【加量版】(${date})\n`;
+    gpDataKeys.map((key) => {
+      const _data = gpData[key];
+      md += `### ${key}\n`;
+      _data.map((d, i) => {
+        md += `${i + 1}. [${d.title}](${d.url})\n`;
+      });
+    });
+    fs.writeFileSync(`output/today_report.md`, md);
+  }
+
   async parseByAi(content) {
     console.log('开始解析文章:');
     const model = new ChatDeepSeek({

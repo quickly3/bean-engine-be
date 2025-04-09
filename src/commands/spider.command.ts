@@ -39,6 +39,14 @@ export class SpiderCommand {
   }
 
   @Command({
+    command: 'week_report',
+  })
+  async genWeekReport() {
+    const resp = await this.sipderService.genWeekReport();
+    console.log(resp);
+  }
+
+  @Command({
     command: 'crwal:parseByAi',
   })
   async parseByAi() {
