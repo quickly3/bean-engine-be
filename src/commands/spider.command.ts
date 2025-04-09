@@ -1,10 +1,14 @@
 import { Command } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
 import { SipderService } from 'src/service/spider/spider.service';
+import { RssService } from 'src/service/rss/rss.service';
 
 @Injectable()
 export class SpiderCommand {
-  constructor(private readonly sipderService: SipderService) {}
+  constructor(
+    private readonly sipderService: SipderService,
+    private readonly rssService: RssService,
+  ) {}
 
   @Command({
     command: 'crwal:36kr',
@@ -69,5 +73,13 @@ export class SpiderCommand {
   async crawlCsdn() {
     const resp = await this.sipderService.crawlCsdn();
     console.log('CSDN抓取完成:', resp);
+  }
+
+  @Command({
+    command: 'rss:resource',
+  })
+  async getRssResource() {
+    const resp = await this.rssService.parseOpml();
+    console.log('🚀 ~ resp:', resp);
   }
 }

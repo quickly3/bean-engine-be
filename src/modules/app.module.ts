@@ -27,6 +27,7 @@ import { HackerNewsService } from 'src/service/hackerNews.service';
 import { AiController } from 'src/controller/ai.controller';
 import { SipderService } from 'src/service/spider/spider.service';
 import { SpiderCommand } from 'src/commands/spider.command';
+import { RssService } from 'src/service/rss/rss.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -74,6 +75,7 @@ import { SpiderCommand } from 'src/commands/spider.command';
     HackerNewsService,
     LangGraohService,
     SipderService,
+    RssService,
   ],
 })
 export class AppModule {}
