@@ -25,3 +25,20 @@ export function fileExists(filePath) {
     return false;
   }
 }
+
+export function extractJsonFromMarkdown(md) {
+  const tokens = marked.lexer(md);
+  const code = tokens.find(t => t.type === 'code' && t.lang === 'json');
+  return code ? code.text : md;
+}
+
+export function convertMarkdownJson(md) {
+  try {
+    const jsonStr = extractJsonFromMarkdown(md);
+    const obj = JSON5.parse(jsonStr);
+    return JSON5.stringify(obj, { space: 2, quote: '' });
+  } catch (e) {
+    console.error('Conversion failed:', e);
+    return md;
+  }
+}

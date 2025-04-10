@@ -26,9 +26,12 @@ import { FeishuController } from 'src/controller/feishu.controller';
 import { HackerNewsService } from 'src/service/hackerNews.service';
 import { AiController } from 'src/controller/ai.controller';
 import { SipderService } from 'src/service/spider/spider.service';
-import { RssService } from 'src/service/rss.service';
 import { SpiderCommand } from 'src/commands/spider.command';
 import { RssCommand } from 'src/commands/rss.command';
+import { GitCommand } from 'src/commands/git.command';
+import { GitService } from 'src/service/git.service';
+import { RssService } from 'src/service/rss/rss.service';
+import { AiToolService } from 'src/service/ai/aiTool.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -71,6 +74,7 @@ import { RssCommand } from 'src/commands/rss.command';
     AiCommand,
     RssCommand,
     SpiderCommand,
+    GitCommand,
     SyncService,
     PromptsService,
     DailyReportService,
@@ -78,6 +82,8 @@ import { RssCommand } from 'src/commands/rss.command';
     LangGraohService,
     SipderService,
     RssService,
+    GitService,
+    AiToolService,
   ],
 })
 export class AppModule {}

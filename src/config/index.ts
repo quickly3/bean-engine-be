@@ -44,5 +44,8 @@ export default () => {
       DS_KEY: process.env.DS_KEY,
       TAVILY_KEY: process.env.TAVILY_KEY,
     },
+    github: {
+      GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    },
   };
 };
