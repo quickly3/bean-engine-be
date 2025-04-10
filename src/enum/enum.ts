@@ -41,3 +41,7 @@ export const source_mapping = [
     text: 'ai',
   },
 ];
+
+export enum RSS {
+  _36KR = 'https://36kr.com/feed',
+}
