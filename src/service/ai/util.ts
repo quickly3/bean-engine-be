@@ -1,6 +1,8 @@
 import * as fse from 'fs-extra';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as marked from 'marked';
+import * as JSON5 from 'json5';
 
 export function saveJsonToFile(jsonData, filePath) {
   const dirPath = path.dirname(filePath);
@@ -28,8 +30,9 @@ export function fileExists(filePath) {
 
 export function extractJsonFromMarkdown(md) {
   const tokens = marked.lexer(md);
-  const code = tokens.find(t => t.type === 'code' && t.lang === 'json');
-  return code ? code.text : md;
+  const code = tokens.find((t) => t.type === 'code' && t.lang === 'json');
+  console.log(code);
+  return code ? code : md;
 }
 
 export function convertMarkdownJson(md) {
