@@ -50,7 +50,7 @@ export class AiCommand {
   })
   async info() {
     // const resp = await this.feishu.sendToBean('holle');
-    await this.dailyReportService.sendToFs('company');
+    await this.dailyReportService.sendToFs('bean');
   }
 
   @Command({

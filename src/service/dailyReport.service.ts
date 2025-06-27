@@ -21,20 +21,27 @@ export class DailyReportService {
     const channels = resp.data;
 
     const krData = _.filter(channels, (c) => c.title === '36氪新闻');
-    const otherData = _.filter(channels, (c) => c.title !== '36氪新闻');
+    const taiData = _.filter(channels, (c) => c.title === '钛媒体');
+    const otherData = _.filter(
+      channels,
+      (c) => c.title !== '36氪新闻' && c.title !== '钛媒体',
+    );
 
     const otherDataContent = this.toFeishuFormat(otherData);
     const krDataContent = this.toFeishuFormat(krData);
+    const taiDataContent = this.toFeishuFormat(taiData);
 
     await this.feishu.set_app_access_token();
 
     if (toGroup === 'bean') {
       await this.feishu.sendToBeanPost(otherDataContent);
+      await this.feishu.sendToBeanPost(taiDataContent);
       await this.feishu.sendToBeanPost(krDataContent);
     }
 
     if (toGroup === 'company') {
       await this.feishu.sendToCompanyPost(otherDataContent);
+      await this.feishu.sendToCompanyPost(taiDataContent);
       await this.feishu.sendToCompanyPost(krDataContent);
     }
   }

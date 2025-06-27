@@ -297,9 +297,15 @@ export class SearchService {
     const oschina = await this.getLastDayArticleByQuery(
       'source:oschina && tag:news',
     );
-    const cnblogs = await this.getLastDayArticleByQuery(
-      'source:cnblogs && tag:news',
+    // const cnblogs = await this.getLastDayArticleByQuery(
+    //   'source:cnblogs && tag:news',
+    // );
+
+    const tai = await this.getLastDayArticleByQuery(
+      'source:tai && tag:news',
+      50,
     );
+
     const krs = await this.getLastDayArticleByQuery('source:36kr', 50);
 
     const escn0 = _.get(escn, '[0].summary', '');
@@ -307,8 +313,8 @@ export class SearchService {
     const resp = {
       title: `互联网摸鱼日报(${today})`,
       data: [
+        { title: '钛媒体', data: tai },
         { title: '36氪新闻', data: krs },
-        { title: '博客园新闻', data: cnblogs },
         { title: '开源中国资讯', data: oschina },
         { title: '掘金资讯', data: juejin },
         { title: escn_title, data: escn },
