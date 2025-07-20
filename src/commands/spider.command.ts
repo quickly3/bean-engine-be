@@ -79,7 +79,6 @@ export class SpiderCommand {
     command: 'rss:resource',
   })
   async getRssResource() {
-    const resp = await this.rssService.parseOpml();
-    console.log('🚀 ~ resp:', resp);
+    await this.rssService.parseOpml();
   }
 }

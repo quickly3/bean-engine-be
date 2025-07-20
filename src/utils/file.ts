@@ -28,14 +28,11 @@ export function saveJsonFile(filename, jsonData) {
   });
 }
 
-export function saveJsonFileToCsv(filename, jsonData) {
-  const csv = Papa.unparse(jsonData);
-
-  fs.writeFile(filename, csv, 'utf8', (err) => {
-    if (err) {
-      console.error('Error writing JSON file:', err);
-    } else {
-      // console.log('JSON file saved successfully.');
-    }
-  });
+export async function saveJsonFileToCsv(filepath, jsonData) {
+  const fileStr = Papa.unparse(jsonData);
+  const dir = path.dirname(filepath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  await fs.writeFileSync(filepath, fileStr, 'utf8');
 }
