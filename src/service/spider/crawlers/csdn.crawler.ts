@@ -19,7 +19,8 @@ export default class CsdnCrawler {
     chromium.use(stealth);
     const browser = await chromium.launch();
     const context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
     });
 
     try {
@@ -29,16 +30,16 @@ export default class CsdnCrawler {
 
       const articles = await this.parseHomeContent(content);
       if (articles.length > 0) {
-        const bulkBody = articles.flatMap(doc => [
+        const bulkBody = articles.flatMap((doc) => [
           { index: { _index: 'article' } },
-          doc
+          doc,
         ]);
         await this.esClient.bulk({ body: bulkBody });
       }
 
       return {
         success: articles.length,
-        articles
+        articles,
       };
     } catch (error) {
       console.error('CSDN抓取失败:', error);
@@ -56,17 +57,19 @@ export default class CsdnCrawler {
     for (const script of scripts) {
       const text = $(script).text();
       if (text.includes('__INITIAL_STATE__')) {
-        const jsonStr = text.replace('window.__INITIAL_STATE__=', '').replace(/;$/, '');
+        const jsonStr = text
+          .replace('window.__INITIAL_STATE__=', '')
+          .replace(/;$/, '');
         const data = JSON.parse(jsonStr);
         const headhots = data.pageData.data['www-headhot'] || [];
         const headlines = data.pageData.data['www-Headlines'] || [];
 
-        const items = [...headhots, ...headlines].map(item => ({
+        const items = [...headhots, ...headlines].map((item) => ({
           title: item.title,
           summary: item.description,
           url: item.url,
           source: 'csdn',
-          created_at: moment().format('YYYY-MM-DD')
+          created_at: moment().format('YYYY-MM-DD'),
         }));
 
         articles.push(...items);

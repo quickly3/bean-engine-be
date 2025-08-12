@@ -1,12 +1,12 @@
 import { Command } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
-import { SipderService } from 'src/service/spider/spider.service';
+import { SpiderService } from 'src/service/spider/spider.service';
 import { RssService } from 'src/service/rss/rss.service';
 
 @Injectable()
 export class SpiderCommand {
   constructor(
-    private readonly sipderService: SipderService,
+    private readonly spiderService: SpiderService,
     private readonly rssService: RssService,
   ) {}
 
@@ -14,7 +14,7 @@ export class SpiderCommand {
     command: 'crwal:36kr',
   })
   async crwal_36kr() {
-    await this.sipderService.crwal_36kr({ exportToCsv: true });
+    await this.spiderService.crwal_36kr({ exportToCsv: true });
   }
 
   @Command({
@@ -22,7 +22,7 @@ export class SpiderCommand {
   })
   async detail_36kr() {
     const url = 'https://36kr.com/p/3232928560070281';
-    const resp = await this.sipderService.detail_36kr(url);
+    const resp = await this.spiderService.detail_36kr(url);
     console.log(resp);
   }
 
@@ -30,7 +30,7 @@ export class SpiderCommand {
     command: 'crwal:36kr_batch',
   })
   async crawlBatch36kr() {
-    const resp = await this.sipderService.crawlBatch36kr();
+    const resp = await this.spiderService.crawlBatch36kr();
     console.log(resp);
   }
 
@@ -38,7 +38,7 @@ export class SpiderCommand {
     command: 'crwal:today_report',
   })
   async genTodayReport() {
-    const resp = await this.sipderService.genTodayReport();
+    const resp = await this.spiderService.genTodayReport();
     console.log(resp);
   }
 
@@ -46,7 +46,7 @@ export class SpiderCommand {
     command: 'week_report',
   })
   async genWeekReport() {
-    const resp = await this.sipderService.genWeekReport();
+    const resp = await this.spiderService.genWeekReport();
     console.log(resp);
   }
 
@@ -55,7 +55,7 @@ export class SpiderCommand {
   })
   async parseByAi() {
     const content = '黄鹤楼是什么？回答100字以内';
-    const resp = await this.sipderService.parseByAi(content);
+    const resp = await this.spiderService.parseByAi(content);
     console.log(resp);
   }
 
@@ -64,14 +64,14 @@ export class SpiderCommand {
   })
   async list_oc() {
     const url = 'https://www.oschina.net/project/lang/467/kotlin';
-    const resp = await this.sipderService.list_oc(url);
+    const resp = await this.spiderService.list_oc(url);
   }
 
   @Command({
     command: 'crawl:csdn',
   })
   async crawlCsdn() {
-    const resp = await this.sipderService.crawlCsdn();
+    const resp = await this.spiderService.crawlCsdn();
     console.log('CSDN抓取完成:', resp);
   }
 
@@ -80,5 +80,12 @@ export class SpiderCommand {
   })
   async getRssResource() {
     await this.rssService.parseOpml();
+  }
+
+  @Command({
+    command: 'crawl:guan',
+  })
+  async crawlGuan() {
+    await this.spiderService.crawGuanUserArticles();
   }
 }

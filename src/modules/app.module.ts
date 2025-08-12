@@ -25,7 +25,7 @@ import { CronController } from 'src/controller/cron.controller';
 import { FeishuController } from 'src/controller/feishu.controller';
 import { HackerNewsService } from 'src/service/hackerNews.service';
 import { AiController } from 'src/controller/ai.controller';
-import { SipderService } from 'src/service/spider/spider.service';
+import { SpiderService } from 'src/service/spider/spider.service';
 import { SpiderCommand } from 'src/commands/spider.command';
 import { RssCommand } from 'src/commands/rss.command';
 import { GitCommand } from 'src/commands/git.command';
@@ -80,7 +80,7 @@ import { AiToolService } from 'src/service/ai/aiTool.service';
     DailyReportService,
     HackerNewsService,
     LangGraohService,
-    SipderService,
+    SpiderService,
     RssService,
     GitService,
     AiToolService,

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Kr36Crawler from './crawlers/kr36.crawler';
+import { GuanUserArticleCrawler } from './crawlers/guan.crawler';
 import { ConfigService } from '@nestjs/config';
 import Kr36DetailCrawler from './crawlers/kr36Detail.crawler';
 import * as Papa from 'papaparse';
@@ -15,7 +16,7 @@ import { SearchService } from '../search.service';
 import CsdnCrawler from './crawlers/csdn.crawler';
 
 @Injectable()
-export class SipderService {
+export class SpiderService {
   constructor(
     private readonly configService: ConfigService,
     private readonly searchService: SearchService,
@@ -260,5 +261,13 @@ export class SipderService {
     };
     const crawler = new CsdnCrawler(params);
     return await crawler.crawlHomePage();
+  }
+
+  async crawGuanUserArticles() {
+    const params = {
+      uid: '259912'
+    };
+    const crawler = new GuanUserArticleCrawler(params);
+    const data = await crawler.crawlAllPages();
   }
 }
