@@ -70,12 +70,12 @@ export class RssService {
       //   continue;
       // }
 
-      if (
-        outline.url &&
-        outline.url.indexOf('https://plink.anyfeeder.com') > -1
-      ) {
-        continue;
-      }
+      // if (
+      //   outline.url &&
+      //   outline.url.indexOf('https://plink.anyfeeder.com') > -1
+      // ) {
+      //   continue;
+      // }
 
       const feeds = await this.rssParse(outline.url, useProxy);
       console.log(outline.title, `获取到 ${feeds.length} 条数据`);
@@ -103,9 +103,9 @@ export class RssService {
           }),
         );
       }
-      if (outline.title === 'Daring Fireball') {
-        break;
-      }
+      // if (outline.title === 'Daring Fireball') {
+      //   break;
+      // }
 
       // if (outline.title === 'BBC / Health') {
       //   break;
