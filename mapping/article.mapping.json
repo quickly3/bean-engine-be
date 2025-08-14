@@ -1,0 +1,116 @@
+PUT article_20220118
+{
+  "aliases": {
+    "article": {}
+  }, 
+  "settings" : {
+      "number_of_shards" : 1,
+      "number_of_replicas": 1
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "analyzer": "ik_smart",
+        "fielddata": true,
+        "fields": {
+          "auto_completion":{
+            "type":"completion",
+            "analyzer": "ik_max_word"
+          },
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "author": {
+        "type": "keyword"
+      },
+      "author_id": {
+        "type": "keyword"
+      },
+      "tag": {
+        "type": "keyword"
+      },
+      "category": {
+        "type": "keyword"
+      },
+      "source": {
+        "type": "keyword"
+      },
+      "source_id": {
+        "type": "keyword"
+      },
+      "sub_id": {
+        "type": "keyword"
+      },
+      "source_score": {
+        "type": "integer"
+      },
+      "stars": {
+        "type": "integer"
+      },
+      "url": {
+        "type": "keyword"
+      },
+      "author_url": {
+        "type": "keyword"
+      },      
+      "summary": {
+        "type": "text",
+        "analyzer": "ik_smart"
+      },
+      "valid":{
+        "type": "boolean"
+      },
+      "collect_count": {
+        "type": "long"
+      },
+      "comment_count": {
+        "type": "long"
+      },
+      "digg_count": {
+        "type": "long"
+      },
+      "view_count": {
+        "type": "long"
+      },
+      "hot_index": {
+        "type": "long"
+      },
+      "user_index": {
+        "type": "long"
+      },
+      "created_at": {
+          "type": "date"
+      },
+      "created_year": {
+          "type": "keyword"
+      }
+    }
+  }
+}
+
+POST _reindex
+{
+  "source": {
+    "index": "article_20211227"
+  },
+  "dest": {
+    "index": "article_20211227_b"
+  }
+}
+
+DELETE article_20211227/_aliases/article
+
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "article_20211227_b",
+        "alias": "article"
+      }
+    }
+  ]
+}

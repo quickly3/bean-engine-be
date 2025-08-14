@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ES_INDEX } from 'src/enum/enum';
+import { urlToId } from 'src/utils/es';
 import { EsQueryBuilder } from 'src/utils/EsQueryBuilder';
 
 @Injectable()
@@ -48,5 +49,18 @@ export class ArticleService {
     });
 
     return resp;
+  }
+  async bulkInsert(articles: any[]) {
+    const body = articles.flatMap((article) => [
+      { index: { _index: ES_INDEX.ARTICLE, _id: urlToId(article.url) } },
+      article,
+    ]);
+
+    const { body: response } = await this.elasticsearchService.bulk({
+      index: ES_INDEX.ARTICLE,
+      body,
+    });
+
+    return response;
   }
 }

@@ -4,10 +4,12 @@ import { XMLParser } from 'fast-xml-parser';
 import { saveJsonFileToCsv } from 'src/utils/file';
 import { parseRSS } from '../ai/rss';
 import * as _ from 'lodash';
+import * as moment from 'moment';
+import { ArticleService } from '../article.service';
 
 @Injectable()
 export class RssService {
-  constructor() {
+  constructor(private readonly articleService: ArticleService) {
     // 空构造函数
   }
 
@@ -64,12 +66,34 @@ export class RssService {
         useProxy = true;
       }
 
+      // if (outline.title !== 'BBC / Health') {
+      //   continue;
+      // }
+
+      if (
+        outline.url &&
+        outline.url.indexOf('https://plink.anyfeeder.com') > -1
+      ) {
+        continue;
+      }
+
       const feeds = await this.rssParse(outline.url, useProxy);
       console.log(outline.title, `获取到 ${feeds.length} 条数据`);
       // save to csv
 
       if (feeds.length > 0) {
         const _title = outline.title.replace('/', '-');
+
+        const formattedFeeds = feeds.map((feed) => ({
+          title: feed.title,
+          summary: feed.description || '',
+          url: feed.link || '',
+          source: 'rss',
+          author: outline.title || '',
+          created_at: moment(feed.pubDate).format('YYYY-MM-DD'),
+        }));
+
+        await this.articleService.bulkInsert(formattedFeeds);
 
         saveJsonFileToCsv(
           `output/rss/${outline.type}/${_title}.csv`,
@@ -79,6 +103,13 @@ export class RssService {
           }),
         );
       }
+      if (outline.title === 'Daring Fireball') {
+        break;
+      }
+
+      // if (outline.title === 'BBC / Health') {
+      //   break;
+      // }
     }
   }
 
