@@ -36,3 +36,9 @@ export async function saveJsonFileToCsv(filepath, jsonData) {
   }
   await fs.writeFileSync(filepath, fileStr, 'utf8');
 }
+
+export async function readCsv(filepath) {
+  const input_file = fs.readFileSync(filepath, 'utf8');
+  const data = Papa.parse(input_file, { header: true }).data;
+  return data;
+}
