@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { PROMPTS } from 'src/service/feishu/enum';
 import GeminiAi from 'src/service/ai/Gemini';
 import { HackerNewsService } from 'src/service/hackerNews.service';
+import { fetchBilibiliHome } from 'src/service/spider/crawlers/playwright-crawler';
 
 @Injectable()
 export class AiCommand {
@@ -74,5 +75,12 @@ export class AiCommand {
   })
   async syncEs() {
     await this.hackerNewsService.syncEs();
+  }
+
+  @Command({
+    command: 'fetchBilibiliHome',
+  })
+  async fetchBilibiliHome() {
+    await fetchBilibiliHome();
   }
 }

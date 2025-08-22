@@ -93,3 +93,6 @@ bean-engine-be/
 ├── script/        # 工具脚本
 └── shell/         # Shell脚本
 ```
+
+
+npm run cli rss:resource >> rss.log 2>&1 &
