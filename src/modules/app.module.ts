@@ -32,6 +32,7 @@ import { GitCommand } from 'src/commands/git.command';
 import { GitService } from 'src/service/git.service';
 import { RssService } from 'src/service/rss/rss.service';
 import { AiToolService } from 'src/service/ai/aiTool.service';
+import { DataController } from 'src/controller/data.controller';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -63,6 +64,7 @@ import { AiToolService } from 'src/service/ai/aiTool.service';
     CronController,
     FeishuController,
     AiController,
+    DataController,
   ],
   providers: [
     AppService,
