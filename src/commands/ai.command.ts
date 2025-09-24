@@ -8,7 +8,8 @@ import { ConfigService } from '@nestjs/config';
 import { PROMPTS } from 'src/service/feishu/enum';
 import GeminiAi from 'src/service/ai/Gemini';
 import { HackerNewsService } from 'src/service/hackerNews.service';
-import { fetchBilibiliHome } from 'src/service/spider/crawlers/playwright-crawler';
+import BilibiliCrawler from 'src/service/spider/crawlers/bilibili.crawler';
+import BilibiliUserCrawler from 'src/service/spider/crawlers/bilibiliUser.crawler';
 
 @Injectable()
 export class AiCommand {
@@ -81,6 +82,17 @@ export class AiCommand {
     command: 'fetchBilibiliHome',
   })
   async fetchBilibiliHome() {
-    await fetchBilibiliHome();
+    const bilibiliCrawler = new BilibiliCrawler();
+    await bilibiliCrawler.launchBrowser();
+    await bilibiliCrawler.fetchBilibiliHome();
+  }
+
+  @Command({
+    command: 'BilibiliUserCrawler',
+  })
+  async BilibiliUserCrawler() {
+    const bilibiliUserCrawler = new BilibiliUserCrawler();
+    await bilibiliUserCrawler.launchBrowser();
+    await bilibiliUserCrawler.fetchBilibiliUser(3546911659264635);
   }
 }
