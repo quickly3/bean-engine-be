@@ -42,3 +42,15 @@ export async function readCsv(filepath) {
   const data = Papa.parse(input_file, { header: true }).data;
   return data;
 }
+
+export function jsonToCsvString(jsonData) {
+  return Papa.unparse(jsonData);
+}
+
+export async function saveMd(filepath, content) {
+  const dir = path.dirname(filepath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  await fs.writeFileSync(filepath, content, 'utf8');
+}
