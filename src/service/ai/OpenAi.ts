@@ -15,9 +15,10 @@ export default class OpenAi {
     private readonly configService: ConfigService,
     aiType = 'openai',
   ) {
-    const { GPT_KEY } = this.configService.get('openai');
+    const { GPT_KEY, OPENAI_PROXY_URL } = this.configService.get('openai');
     let option: any = {
       apiKey: GPT_KEY,
+      base_url: OPENAI_PROXY_URL,
     };
 
     if (aiType && aiType === 'deepseek') {
@@ -28,8 +29,12 @@ export default class OpenAi {
       };
     }
 
-    // if (ENV == 'local') {
-    //   option.httpAgent = new HttpsProxyAgent(HTTPS_PROXY);
+    console.log('aiType', aiType);
+
+    // if (this.configService.get('env') == 'local') {
+    //   option.httpAgent = new HttpsProxyAgent(
+    //     this.configService.get('openai.GPT_PROXY'),
+    //   );
     // }
 
     this.openai = new OpenAI(option);

@@ -33,6 +33,7 @@ import { GitService } from 'src/service/git.service';
 import { RssService } from 'src/service/rss/rss.service';
 import { AiToolService } from 'src/service/ai/aiTool.service';
 import { DataController } from 'src/controller/data.controller';
+import { BiliService } from 'src/service/bili/bili.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -86,6 +87,7 @@ import { DataController } from 'src/controller/data.controller';
     RssService,
     GitService,
     AiToolService,
+    BiliService,
   ],
 })
 export class AppModule {}

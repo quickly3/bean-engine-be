@@ -47,5 +47,6 @@ export default () => {
     github: {
       GITHUB_TOKEN: process.env.GITHUB_TOKEN,
     },
+    HTTPS_PROXY: process.env.HTTPS_PROXY,
   };
 };
