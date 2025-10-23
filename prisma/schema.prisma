@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,7 +14,7 @@ datasource db {
   schemas  = ["public"]
 }
 
-model BiliUps {
+model BiliArchive {
   id                 Int      @id @default(autoincrement())
   comment            Int?
   typeid             Int?
@@ -56,5 +55,6 @@ model BiliUps {
   is_self_view       Boolean?
   view_self_type     Int?
 
+  @@index([mid])
   @@schema("public")
 }

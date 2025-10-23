@@ -35,6 +35,7 @@ import { AiToolService } from 'src/service/ai/aiTool.service';
 import { DataController } from 'src/controller/data.controller';
 import { BiliService } from 'src/service/bili/bili.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -91,6 +92,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
     GitService,
     AiToolService,
     BiliService,
+    PrismaService,
   ],
 })
 export class AppModule {}

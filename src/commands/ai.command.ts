@@ -165,4 +165,11 @@ export class AiCommand {
   async getUpsContents() {
     await this.biliService.getUpsContents();
   }
+
+  @Command({
+    command: 'bili:genFollowings',
+  })
+  async genFollowings() {
+    await this.biliService.genFollowings();
+  }
 }
