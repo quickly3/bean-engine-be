@@ -18,7 +18,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "cli": "npx nestjs-command"
+    "cli": "npx nestjs-command",
+    "prisma:push": "npx prisma db push",
+    "prisma:gen": "npx prisma generate"
+
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.17",
@@ -36,12 +39,13 @@
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^4.0.1",
+    "@prisma/client": "^6.18.0",
     "@types/fs-extra": "^11.0.4",
     "axios": "^1.4.0",
     "axios-retry": "^4.1.0",
     "cheerio": "^1.0.0",
     "dayjs": "^1.11.13",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.2.3",
     "duck-duck-scrape": "^2.2.7",
     "fast-xml-parser": "^5.2.0",
     "firebase": "^10.11.1",
@@ -63,8 +67,10 @@
     "openai": "^4.85.1",
     "papaparse": "^5.4.1",
     "pdf-parse": "^1.1.1",
+    "pg": "^8.16.3",
     "playwright": "^1.50.1",
     "playwright-extra": "^4.3.6",
+    "prisma": "^6.18.0",
     "puppeteer": "^24.26.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",

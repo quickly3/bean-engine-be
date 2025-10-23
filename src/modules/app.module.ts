@@ -34,6 +34,7 @@ import { RssService } from 'src/service/rss/rss.service';
 import { AiToolService } from 'src/service/ai/aiTool.service';
 import { DataController } from 'src/controller/data.controller';
 import { BiliService } from 'src/service/bili/bili.service';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -42,6 +43,7 @@ import { BiliService } from 'src/service/bili/bili.service';
 @Module({
   imports: [
     CommandModule,
+    PrismaModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
@@ -50,6 +52,7 @@ import { BiliService } from 'src/service/bili/bili.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         ...configService.get('es'),
       }),
     }),

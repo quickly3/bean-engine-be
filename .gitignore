@@ -49,3 +49,5 @@ script/py/**/*.ncm
 
 **/output/*
 
+
+/generated/prisma

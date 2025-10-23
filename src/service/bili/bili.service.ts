@@ -75,7 +75,9 @@ export class BiliService {
       console.log(`开始分析 ${file} 的视频标题...`);
       try {
         await this.analyseUp(file);
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
@@ -150,7 +152,7 @@ export class BiliService {
       totalPages = match ? parseInt(match[1], 10) : null;
       console.log('总页数:', totalPages);
     } catch (error) {
-      console.error('总页数:', 1);
+      console.error('总页数:', 1, error);
     }
 
     while (hasNext) {

@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public"]
+}
+
+model BiliUps {
+  id                 Int      @id @default(autoincrement())
+  comment            Int?
+  typeid             Int?
+  play               Int?
+  pic                String?
+  subtitle           String?
+  description        String?
+  copyright          String?
+  title              String?
+  review             Int?
+  author             String?
+  mid                Int?
+  created            Int?
+  length             Int?
+  video_review       Int?
+  aid                Int?
+  bvid               String?
+  hide_click         Int?
+  is_pay             Boolean?
+  is_union_video     Boolean?
+  is_steins_gate     Boolean?
+  is_live_playback   Boolean?
+  is_lesson_video    Boolean?
+  is_lesson_finished Boolean?
+  lesson_update_info String?
+  jump_url           String?
+  meta               String?
+  is_avoided         Boolean?
+  season_id          Int?
+  attribute          String?
+  is_charging_arc    Boolean?
+  elec_arc_type      String?
+  elec_arc_badge     String?
+  vt                 Boolean?
+  enable_vt          Boolean?
+  vt_display         String?
+  playback_position  Int?
+  is_self_view       Boolean?
+  view_self_type     Int?
+
+  @@schema("public")
+}
