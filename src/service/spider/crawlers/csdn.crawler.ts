@@ -2,7 +2,7 @@ import { Client } from '@elastic/elasticsearch';
 import { ConfigService } from '@nestjs/config';
 import { chromium } from 'playwright-extra';
 import * as cheerio from 'cheerio';
-import * as moment from 'moment';
+import  moment from 'moment';
 
 export default class CsdnCrawler {
   private esClient: Client;

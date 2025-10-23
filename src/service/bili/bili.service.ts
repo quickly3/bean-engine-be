@@ -11,10 +11,10 @@ import * as fs from 'fs/promises';
 import { prompts } from './prompts';
 import * as path from 'path';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
-import { ChatDeepSeek } from 'node_modules/@langchain/deepseek/dist';
 import { sleep } from 'openai/core.mjs';
 import { chromium } from 'playwright';
 import { fileExists } from '../ai/util';
+import { ChatDeepSeek } from '@langchain/deepseek';
 
 @Injectable()
 export class BiliService {
@@ -155,16 +155,30 @@ export class BiliService {
 
     while (hasNext) {
       try {
+        const currPage = await page
+          .locator('button.vui_button--active')
+          .textContent();
+
+        if (currPage === '30') {
+          throw new Error('到达30页，停止抓取');
+        }
+
         const nextBtn = await page.waitForSelector(nextBtnSelector, {
-          timeout: 1000,
+          timeout: 2000,
         });
         await page.waitForTimeout(this.waitTime);
         await nextBtn.click();
         // await page.waitForTimeout(1000);
-        await page.waitForSelector(nextBtnSelector, {
-          timeout: 1000,
-        });
-      } catch {
+        // await page.waitForSelector(nextBtnSelector, {
+        //   timeout: 1000,
+        // });
+      } catch (error) {
+        if (error.message.includes('Timeout')) {
+          console.log('没有下一页了，抓取结束');
+        } else {
+          console.log(error.message);
+        }
+
         hasNext = false;
         break;
       }

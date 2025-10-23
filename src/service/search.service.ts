@@ -5,7 +5,7 @@ import { ES_INDEX } from 'src/enum/enum';
 import { EsQueryBuilder } from 'src/utils/EsQueryBuilder';
 import { parseQueryString } from './utils';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import * as moment from 'moment';
+import  moment from 'moment';
 import { execSync } from 'child_process';
 
 @Injectable()

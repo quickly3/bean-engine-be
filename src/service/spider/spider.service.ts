@@ -11,7 +11,7 @@ import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 import { ChatDeepSeek } from '@langchain/deepseek';
 import OschinaCrawler from './crawlers/oschina.crawler';
 import { saveJsonFileToCsv } from 'src/utils/file';
-import * as moment from 'moment';
+import  moment from 'moment';
 import { SearchService } from '../search.service';
 import CsdnCrawler from './crawlers/csdn.crawler';
 

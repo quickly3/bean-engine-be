@@ -1,98 +1,98 @@
-<div align="center">
-  <h1>🚀 Bean Engine Backend</h1>
-  <p>一个强大的内容聚合和搜索引擎后端服务平台</p>
-</div>
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
 
-## ✨ 主要功能
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-### 📑 多源内容爬取
-- 支持掘金、CSDN、博客园、36氪等技术平台
-- 使用 Scrapy 和 Puppeteer 实现爬虫功能
-- 自动化数据采集和更新
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-### 🔍 搜索引擎
-- 基于 Elasticsearch 的全文搜索
-- 支持多维度内容检索
+## Description
 
-### 🕸️ 知识图谱
-- 基于 Neo4j 构建知识关系网络
-- 可视化内容之间的关联关系
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-### 🤖 AI 能力集成
-- 集成 OpenAI GPT 和 Google Gemini API
-- 提供内容分析和生成能力
-
-### ⚡ 自动化任务
-- 基于 Nest Schedule 的定时任务
-- 自动执行爬虫和数据同步
-
-### 📱 飞书集成
-- 支持飞书平台消息通知
-- 自动生成分析报告推送
-
-## 🛠️ 技术栈
-
-| 类别 | 技术 |
-|-----|------|
-| 框架 | NestJS |
-| 数据库 | Elasticsearch, Neo4j |
-| 爬虫 | Scrapy, Puppeteer |
-| AI | OpenAI API, Google Gemini API |
-| 任务调度 | Nest Schedule |
-
-## 🚀 快速开始
-
-### 1️⃣ 环境准备
-
-创建 `.env` 文件并配置以下环境变量：
-
-```env
-DATABASE_URL=your_database_url
-ELASTICSEARCH_URL=your_elasticsearch_url 
-NEO4J_URL=your_neo4j_url
-OPENAI_API_KEY=your_openai_api_key
-GEMINI_API_KEY=your_gemini_api_key
-```
-
-### 2️⃣ 安装运行
+## Project setup
 
 ```bash
-# 安装依赖
-yarn install
-
-# 开发环境
-yarn start:dev
-
-# 生产环境构建
-yarn build
-
-# 生产环境运行
-yarn start:prod
-
-# 使用 PM2 运行
-pm2 start --name bean-be ./dist/src/main.js
+$ yarn install
 ```
 
-### 3️⃣ 爬虫任务
+## Compile and run the project
 
 ```bash
-# 掘金爬虫示例
-cd scrapy/juejin
-nohup python3 -m juejin_tag_crawl >> juejin_tag_crawl.log 2>&1 &
-nohup python3 -m juejin_authors_crawl >> juejin_authors_crawl.log 2>&1 &
+# development
+$ yarn run start
+
+# watch mode
+$ yarn run start:dev
+
+# production mode
+$ yarn run start:prod
 ```
 
-## 📁 项目结构
+## Run tests
 
+```bash
+# unit tests
+$ yarn run test
+
+# e2e tests
+$ yarn run test:e2e
+
+# test coverage
+$ yarn run test:cov
 ```
-bean-engine-be/
-├── src/           # 源代码目录
-├── test/          # 测试文件
-├── scrapy/        # Scrapy爬虫
-├── puppeteer/     # Puppeteer爬虫
-├── script/        # 工具脚本
-└── shell/         # Shell脚本
+
+## Deployment
+
+When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+
+If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+
+```bash
+$ yarn install -g @nestjs/mau
+$ mau deploy
 ```
 
+With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
-npm run cli rss:resource >> rss.log 2>&1 &
+## Resources
+
+Check out a few resources that may come in handy when working with NestJS:
+
+- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
+- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
+- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
+- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
+- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
+- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
+- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
+- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+
+## Support
+
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+
+## Stay in touch
+
+- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
+
+## License
+
+Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
