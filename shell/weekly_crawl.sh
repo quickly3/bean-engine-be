@@ -1,5 +1,7 @@
 #!/bin/sh
-export PATH=$PATH:/usr/local/bin   
+export PATH=$PATH:/usr/local/bin  
+
+source venv/bin/activate
 
 cd /home/ubuntu/www/bean-engine-be/scrapy
 nohup python3 -m scrapy crawl elastic_cn >> /home/ubuntu/www/bean-engine-be/output/elastic_cn.log 2>&1

@@ -1,6 +1,8 @@
 #!/bin/sh
 export PATH=$PATH:/usr/local/bin
 
+source venv/bin/activate
+
 cd /home/ubuntu/www/bean-engine-be/scrapy
 
 nohup python3 -m scrapy crawl escn_new >> /home/ubuntu/www/bean-engine-be/output/escn_new.log 2>&1
