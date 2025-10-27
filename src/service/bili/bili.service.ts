@@ -17,6 +17,12 @@ import { fileExists } from '../ai/util';
 import { ChatDeepSeek } from '@langchain/deepseek';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+enum crawlStatus {
+  pending = 'pending',
+  completed = 'completed',
+  failed = 'failed',
+}
+
 @Injectable()
 export class BiliService {
   constructor(
@@ -194,10 +200,10 @@ export class BiliService {
   }
 
   public async getUpsContents(): Promise<any> {
-    const ups = await readCsv('output/bilibili/bilibili_followings.csv');
-
+    // const ups = await readCsv('output/bilibili/bilibili_followings.csv');
+    const ups = await this.prisma.biliUps.findMany();
     for (const up of ups) {
-      console.log(`开始获取 ${up.name} 的视频列表...`);
+      console.log(`开始获取 ${up.uname} 的视频列表...`);
       try {
         const resp = await this.getUpsArts(up);
 
@@ -214,14 +220,14 @@ export class BiliService {
     const userDataDir = process.env.CHROME_USER_DATA_DIR;
 
     const context = await chromium.launchPersistentContext(userDataDir, {
-      headless: false, // 显示浏览器窗口
+      headless: true, // 显示浏览器窗口
       channel: 'chrome', // 使用正式版 Chrome
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await context.newPage();
     await page.goto('https://www.bilibili.com/');
 
-    const results: { name: string; url: string }[] = [];
+    const results: any[] = [];
     const nextBtnSelector = 'button:has-text("下一页")';
     // const lastBtnSelector = 'button:has-text("55")';
 
@@ -240,10 +246,11 @@ export class BiliService {
           const json = await response.json();
           if (json.data && Array.isArray(json.data.list)) {
             json.data.list.forEach((item: any) => {
-              results.push({
-                name: item.uname,
-                url: item.homepage || `https://space.bilibili.com/${item.mid}`,
-              });
+              delete item.vip;
+              if (!item.tag) {
+                item.tag = [];
+              }
+              results.push(item);
             });
           }
         } catch (e) {
@@ -278,29 +285,37 @@ export class BiliService {
       hasNext = false;
     }
 
-    // while (hasNext) {
-    //   try {
-    //     const nextBtn = await page.waitForSelector(nextBtnSelector, {
-    //       timeout: 2000,
-    //     });
-    //     await nextBtn.click();
-    //     // await page.waitForTimeout(1000);
-    //     await page.waitForSelector(nextBtnSelector, {
-    //       timeout: 2000,
-    //     });
-    //   } catch {
-    //     hasNext = false;
-    //     break;
-    //   }
-    // }
+    while (hasNext) {
+      try {
+        const nextBtn = await page.waitForSelector(nextBtnSelector, {
+          timeout: 2000,
+        });
+        await nextBtn.click();
+        // await page.waitForTimeout(1000);
+        await page.waitForSelector(nextBtnSelector, {
+          timeout: 2000,
+        });
+      } catch {
+        hasNext = false;
+        break;
+      }
+    }
 
-    // await saveJsonFileToCsv(
-    //   '../../output/bilibili/bilibili_followings.csv',
-    //   results,
-    // );
     await context.close();
     await this.prisma.biliUps.createMany({
       data: results,
     });
+  }
+
+  public async login() {
+    const userDataDir = process.env.CHROME_USER_DATA_DIR;
+
+    const context = await chromium.launchPersistentContext(userDataDir, {
+      headless: false, // 显示浏览器窗口
+      channel: 'chrome', // 使用正式版 Chrome
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await context.newPage();
+    await page.goto('https://www.bilibili.com/');
   }
 }

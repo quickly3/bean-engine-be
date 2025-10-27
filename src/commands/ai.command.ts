@@ -14,6 +14,7 @@ import { SearchService } from 'src/service/search.service';
 
 import { saveJsonFileToCsv } from 'src/utils/file';
 import { BiliService } from 'src/service/bili/bili.service';
+import { exit } from 'process';
 
 @Injectable()
 export class AiCommand {
@@ -150,6 +151,7 @@ export class AiCommand {
   })
   async upsTitles() {
     await this.biliService.genUpsTitles();
+    exit(0);
   }
 
   @Command({
@@ -157,6 +159,7 @@ export class AiCommand {
   })
   async anaUps() {
     await this.biliService.analyseUps();
+    exit(0);
   }
 
   @Command({
@@ -164,6 +167,7 @@ export class AiCommand {
   })
   async getUpsContents() {
     await this.biliService.getUpsContents();
+    exit(0);
   }
 
   @Command({
@@ -171,5 +175,14 @@ export class AiCommand {
   })
   async genFollowings() {
     await this.biliService.genFollowings();
+    exit(0);
+  }
+
+  @Command({
+    command: 'bili:login',
+  })
+  async biliLogin() {
+    await this.biliService.login();
+    exit(0);
   }
 }
