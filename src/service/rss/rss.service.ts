@@ -4,7 +4,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { saveJsonFileToCsv } from 'src/utils/file';
 import { parseRSS } from '../ai/rss';
 import * as _ from 'lodash';
-import * as moment from 'moment';
+import  moment from 'moment';
 import { ArticleService } from '../article.service';
 
 @Injectable()

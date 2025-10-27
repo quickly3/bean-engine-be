@@ -11,9 +11,9 @@ import { HackerNewsService } from 'src/service/hackerNews.service';
 import BilibiliCrawler from 'src/service/spider/crawlers/bilibili.crawler';
 import BilibiliUserCrawler from 'src/service/spider/crawlers/bilibiliUser.crawler';
 import { SearchService } from 'src/service/search.service';
-import { SystemMessage, HumanMessage } from '@langchain/core/messages';
-import { ChatDeepSeek } from 'node_modules/@langchain/deepseek/dist';
-import { jsonToCsvString, saveJsonFileToCsv, saveMd } from 'src/utils/file';
+
+import { saveJsonFileToCsv } from 'src/utils/file';
+import { BiliService } from 'src/service/bili/bili.service';
 
 @Injectable()
 export class AiCommand {
@@ -24,6 +24,7 @@ export class AiCommand {
     private readonly configService: ConfigService,
     private readonly hackerNewsService: HackerNewsService,
     private readonly searchService: SearchService,
+    private readonly biliService: BiliService,
   ) {
     this.feishu = new FeishuRobot(this.configService);
   }
@@ -142,5 +143,33 @@ export class AiCommand {
     // console.log(resp.content);
     // saveMd(`output/daily/${list.title}.md`, resp.content);
     // return resp.content;
+  }
+
+  @Command({
+    command: 'bili:genUpsTitles',
+  })
+  async upsTitles() {
+    await this.biliService.genUpsTitles();
+  }
+
+  @Command({
+    command: 'bili:analyseUp',
+  })
+  async anaUps() {
+    await this.biliService.analyseUps();
+  }
+
+  @Command({
+    command: 'bili:getUpContents',
+  })
+  async getUpsContents() {
+    await this.biliService.getUpsContents();
+  }
+
+  @Command({
+    command: 'bili:genFollowings',
+  })
+  async genFollowings() {
+    await this.biliService.genFollowings();
   }
 }

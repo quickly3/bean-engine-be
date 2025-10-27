@@ -1,16 +1,19 @@
 import { chromium } from 'playwright';
-import { saveJsonFileToCsv } from '../../src/utils/file';
+import { saveJsonFileToCsv } from '../../utils/file';
+import * as dotenv from 'dotenv';
+dotenv.config({
+  path: ['.env', '../../.env'],
+});
 
 (async () => {
   // 使用已安装的 Chrome 浏览器，并读取系统中的用户信息
-  const context = await chromium.launchPersistentContext(
-    '/Users/hongbinzhou/Library/Application Support/Google/Chrome/Default',
-    {
-      headless: true, // 显示浏览器窗口
-      channel: 'chrome', // 使用正式版 Chrome
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    },
-  );
+  const userDataDir = process.env.CHROME_USER_DATA_DIR;
+
+  const context = await chromium.launchPersistentContext(userDataDir, {
+    headless: false, // 显示浏览器窗口
+    channel: 'chrome', // 使用正式版 Chrome
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
   const page = await context.newPage();
   await page.goto('https://www.bilibili.com/');
 

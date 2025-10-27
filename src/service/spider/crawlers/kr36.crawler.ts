@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Client } from '@elastic/elasticsearch';
 import * as _ from 'lodash';
 import { ConfigService } from '@nestjs/config';
@@ -202,6 +202,9 @@ export default class Kr36Crawler {
   }
 
   private async nextPageParse(resp: any, payload: any): Promise<void> {
+    if (payload) {
+      console.log(payload);
+    }
     const pageCallback = _.get(resp, 'data.pageCallback');
     const items = _.get(resp, 'data.itemList');
     const hasNextPage = _.get(resp, 'data.hasNextPage');

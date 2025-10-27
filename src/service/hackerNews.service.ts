@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
 import axios from 'axios';
-import * as moment from 'moment';
+import  moment from 'moment';
 import OpenAi from './ai/OpenAi';
 import { PROMPTS } from './feishu/enum';
 import { ConfigService } from '@nestjs/config';

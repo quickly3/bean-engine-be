@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
-import * as moment from 'moment';
+import  moment from 'moment';
 import { FeishuRobot } from './feishu/feishuRobot';
 import { SearchService } from './search.service';
 import { ConfigService } from '@nestjs/config';
