@@ -1,21 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  readCsv,
-  readFilesInDirectory,
-  saveJsonFileToCsv,
-  saveMd,
-} from 'src/utils/file';
+import { readCsv, readFilesInDirectory, saveMd } from 'src/utils/file';
 import * as _ from 'lodash';
 import * as fs from 'fs/promises';
 import { prompts } from './prompts';
 import * as path from 'path';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
-import { sleep } from 'openai/core.mjs';
 import { chromium } from 'playwright';
 import { fileExists } from '../ai/util';
 import { ChatDeepSeek } from '@langchain/deepseek';
 import { PrismaService } from 'src/prisma/prisma.service';
+import momenttz from 'moment-timezone';
+import { sleep } from 'openai/core.mjs';
 
 enum crawlStatus {
   pending = 'pending',
@@ -92,15 +88,18 @@ export class BiliService {
   }
 
   public async getUpsArts(up) {
-    const { url, name } = up;
+    const { mid } = up;
+
+    const url = `https://space.bilibili.com/${mid}/video`;
+
     const id = url.match(/space\.bilibili\.com\/(\d+)/)?.[1];
 
-    const csvFilePath = `output/bilibili/ups/${id}_${name}.csv`;
+    // const csvFilePath = `output/bilibili/ups/${id}_${name}.csv`;
 
-    if (fileExists(csvFilePath)) {
-      console.log(`${name} 的视频列表已存在，跳过...`);
-      return true;
-    }
+    // if (fileExists(csvFilePath)) {
+    //   console.log(`${name} 的视频列表已存在，跳过...`);
+    //   return true;
+    // }
 
     const listUrl = `https://space.bilibili.com/${id}/upload/video`;
 
@@ -130,7 +129,32 @@ export class BiliService {
           const pn = urlObj.searchParams.get('pn');
           console.log(`当前请求 pn 参数值: ${pn}/${totalPages}`);
           const json = await response.json();
-          const list = _.get(json, 'data.list.vlist', []);
+          let list = _.get(json, 'data.list.vlist', []);
+          list = _.map(list, (item) => {
+            return {
+              title: item.title,
+              subtitle: item.subtitle,
+              description: item.description,
+              comment: item.comment,
+              typeid: item.typeid,
+              play: item.play,
+              pic: item.pic,
+              copyright: item.copyright,
+              review: item.review,
+              author: item.author,
+              mid: BigInt(item.mid),
+              created: item.created,
+              length: item.length,
+              video_review: item.video_review,
+              aid: item.aid ? BigInt(item.aid) : undefined,
+              bvid: item.bvid,
+              season_id: item.season_id,
+              createdAt: momenttz(item.created * 1000).format(
+                'YYYY-MM-DDTHH:mm:ss[Z]',
+              ),
+            };
+          });
+
           results.push(...list);
         } catch (e) {
           console.error('解析响应失败:', e);
@@ -195,21 +219,47 @@ export class BiliService {
         break;
       }
     }
-    await saveJsonFileToCsv(csvFilePath, results);
+
+    // await saveJsonFileToCsv(csvFilePath, results);
+
+    await this.prisma.biliArchive.createMany({
+      data: results,
+    });
     await context.close();
+    return true;
   }
 
   public async getUpsContents(): Promise<any> {
     // const ups = await readCsv('output/bilibili/bilibili_followings.csv');
-    const ups = await this.prisma.biliUps.findMany();
+    const ups = await this.prisma.biliUps.findMany({
+      select: {
+        uname: true,
+        mid: true,
+        id: true,
+      },
+      where: {
+        crawlStatus: crawlStatus.pending,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
     for (const up of ups) {
       console.log(`开始获取 ${up.uname} 的视频列表...`);
       try {
         const resp = await this.getUpsArts(up);
 
+        let status = crawlStatus.failed;
         if (!resp) {
           await sleep(this.waitTime);
+        } else {
+          status = crawlStatus.completed;
         }
+
+        await this.prisma.biliUps.update({
+          where: { id: up.id },
+          data: { crawlStatus: status },
+        });
       } catch (error) {
         console.error(error);
       }

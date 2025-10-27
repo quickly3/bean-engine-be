@@ -21,7 +21,6 @@
     "cli": "npx nestjs-command",
     "prisma:push": "npx prisma db push",
     "prisma:gen": "npx prisma generate"
-
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.17",
@@ -59,6 +58,7 @@
     "lodash": "^4.17.21",
     "marked": "^15.0.8",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.6.0",
     "neo4j-driver": "^5.9.2",
     "nest-neo4j": "^0.3.1",
     "nestjs-command": "^3.1.3",
