@@ -14,7 +14,7 @@ datasource db {
   schemas  = ["public"]
 }
 
-model BiliArchive {
+model BiliUps {
   id                 Int      @id @default(autoincrement())
   comment            Int?
   typeid             Int?
