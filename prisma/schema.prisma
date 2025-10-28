@@ -15,89 +15,69 @@ datasource db {
 }
 
 model BiliArchive {
-  id                 Int      @id @default(autoincrement())
-  comment            Int?
-  typeid             Int?
-  play               Int?
-  pic                String?
-  subtitle           String?
-  description        String?
-  copyright          String?
-  title              String?
-  review             Int?
-  author             String?
-  mid                BigInt   @db.BigInt
-  created            Int?
-  length             Int?
-  video_review       Int?
-  aid                Int?
-  bvid               String?
-  hide_click         Int?
-  is_pay             Boolean?
-  is_union_video     Boolean?
-  is_steins_gate     Boolean?
-  is_live_playback   Boolean?
-  is_lesson_video    Boolean?
-  is_lesson_finished Boolean?
-  lesson_update_info String?
-  jump_url           String?
-  meta               String?
-  is_avoided         Boolean?
-  season_id          Int?
-  attribute          String?
-  is_charging_arc    Boolean?
-  elec_arc_type      String?
-  elec_arc_badge     String?
-  vt                 Boolean?
-  enable_vt          Boolean?
-  vt_display         String?
-  playback_position  Int?
-  is_self_view       Boolean?
-  view_self_type     Int?
+  id          Int     @id @default(autoincrement())
+  title       String?
+  subtitle    String?
+  description String?
+  comment     Int?
+  typeid      Int?
+  play        Int?
+  pic         String?
+  copyright    String?
+  review       Int?
+  author       String?
+  mid          BigInt   @db.BigInt
+  created      Int?
+  length       String?
+  video_review Int?
+  aid          BigInt?
+  bvid         String?
+  season_id    Int?
+  createdAt    DateTime?
 
   @@index([mid])
   @@schema("public")
 }
 
 model BiliUps {
-  id          Int     @id @default(autoincrement())
-  mid         BigInt? @db.BigInt
-  attribute   Int     @default(0)
-  mtime       BigInt  @db.BigInt
-  tag         Int[]   @default([])
-  special     Int     @default(0)
-  uname       String
-  face        String
-  sign        String
-  face_nft    Int     @default(0)
-  name_render Json?   @db.Json
-  contract_info   Json? @db.Json
-  official_verify Json? @db.Json
-  nft_icon    String? @default("")
-  rec_reason  String? @default("")
-  track_id    String? @default("")
-  follow_time String? @default("")
-  crawlStatus String? @default("pending")
+  id              Int     @id @default(autoincrement())
+  mid             BigInt? @db.BigInt
+  attribute       Int     @default(0)
+  mtime           BigInt  @db.BigInt
+  tag             Int[]   @default([])
+  special         Int     @default(0)
+  uname           String
+  face            String
+  sign            String
+  face_nft        Int     @default(0)
+  name_render     Json?   @db.Json
+  contract_info   Json?   @db.Json
+  official_verify Json?   @db.Json
+  nft_icon        String? @default("")
+  rec_reason      String? @default("")
+  track_id        String? @default("")
+  follow_time     String? @default("")
+  crawlStatus     String? @default("pending")
 
   @@index([mid])
   @@schema("public")
 }
 
 model Article {
-  id           Int     @id @default(autoincrement())
-  title        String?
-  summary      String?
-  author       String?
-  author_id    String?
-  tag          String?
-  category     String?
-  source       String?
-  source_id    String?
-  sub_id       String?
-  source_score Int?
-  stars        Int?
-  url          String?
-  author_url   String?
+  id            Int       @id @default(autoincrement())
+  title         String?
+  summary       String?
+  author        String?
+  author_id     String?
+  tag           String?
+  category      String?
+  source        String?
+  source_id     String?
+  sub_id        String?
+  source_score  Int?
+  stars         Int?
+  url           String?
+  author_url    String?
   valid         Boolean?
   collect_count BigInt?   @default(0)
   comment_count BigInt?   @default(0)

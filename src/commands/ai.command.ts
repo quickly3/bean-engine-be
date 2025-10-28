@@ -183,6 +183,5 @@ export class AiCommand {
   })
   async biliLogin() {
     await this.biliService.login();
-    exit(0);
   }
 }
