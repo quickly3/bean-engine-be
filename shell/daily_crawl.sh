@@ -1,7 +1,7 @@
 #!/bin/sh
 export PATH=$PATH:/usr/local/bin
 
-source venv/bin/activate
+source /home/ubuntu/venv/bin/activate
 
 cd /home/ubuntu/www/bean-engine-be/scrapy
 
