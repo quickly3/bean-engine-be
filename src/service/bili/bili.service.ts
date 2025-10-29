@@ -137,7 +137,7 @@ export class BiliService {
               description: item.description,
               comment: item.comment,
               typeid: item.typeid,
-              play: item.play,
+              play: parseInt(item.play),
               pic: item.pic,
               copyright: item.copyright,
               review: item.review,
@@ -222,9 +222,16 @@ export class BiliService {
 
     // await saveJsonFileToCsv(csvFilePath, results);
 
-    await this.prisma.biliArchive.createMany({
-      data: results,
-    });
+    try {
+      await this.prisma.biliArchive.createMany({
+        data: results,
+      });
+    } catch (error) {
+      console.error(error);
+      await context.close();
+      return false;
+    }
+
     await context.close();
     return true;
   }
