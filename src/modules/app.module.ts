@@ -36,6 +36,7 @@ import { DataController } from 'src/controller/data.controller';
 import { BiliService } from 'src/service/bili/bili.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { BiliController } from 'src/controller/bili.controller';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -70,6 +71,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
     FeishuController,
     AiController,
     DataController,
+    BiliController,
   ],
   providers: [
     AppService,

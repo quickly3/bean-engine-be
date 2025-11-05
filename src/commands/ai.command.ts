@@ -1,4 +1,4 @@
-import { Command } from 'nestjs-command';
+import { Command, Positional } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
 import { PromptsService } from 'src/service/ai/prompts.service';
 import { FeishuRobot } from 'src/service/feishu/feishuRobot';
@@ -155,10 +155,17 @@ export class AiCommand {
   }
 
   @Command({
-    command: 'bili:analyseUp',
+    command: 'bili:analyseUp <mid>',
   })
-  async anaUps() {
-    await this.biliService.analyseUps();
+  async anaUps(
+    @Positional({
+      name: 'mid',
+      describe: 'container mid',
+      type: 'number',
+    })
+    mid: number,
+  ) {
+    await this.biliService.analyseUp(mid);
     exit(0);
   }
 

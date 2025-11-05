@@ -15,18 +15,18 @@ datasource db {
 }
 
 model BiliArchive {
-  id          Int     @id @default(autoincrement())
-  title       String?
-  subtitle    String?
-  description String?
-  comment     Int?
-  typeid      Int?
-  play        Int?
-  pic         String?
+  id           Int       @id @default(autoincrement())
+  title        String?
+  subtitle     String?
+  description  String?
+  comment      Int?
+  typeid       Int?
+  play         Int?
+  pic          String?
   copyright    String?
   review       Int?
   author       String?
-  mid          BigInt   @db.BigInt
+  mid          BigInt    @db.BigInt
   created      Int?
   length       String?
   video_review Int?
@@ -58,6 +58,16 @@ model BiliUps {
   track_id        String? @default("")
   follow_time     String? @default("")
   crawlStatus     String? @default("pending")
+
+  @@index([mid])
+  @@schema("public")
+}
+
+model BiliUpAnalyze {
+  id      Int     @id @default(autoincrement())
+  mid     BigInt? @db.BigInt
+  type    String?
+  content String?
 
   @@index([mid])
   @@schema("public")

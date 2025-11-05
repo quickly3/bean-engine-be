@@ -1,14 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
-import GeminiAi from 'src/service/ai/Gemini';
-import OpenAi from 'src/service/ai/OpenAi';
-import { PROMPTS } from 'src/service/feishu/enum';
-import * as http from 'http';
-import { HttpsProxyAgent } from 'https-proxy-agent';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GEMINI_MODEL, OPENAI_MODEL } from 'src/service/ai/enum';
-import * as fs from 'fs';
 
 @Controller('ai')
 export class AiController {
@@ -37,7 +31,7 @@ export class AiController {
   }
 
   @Post('deepseek')
-  async deepseek(@Body() payload) {
+  async deepseek() {
     const { DS_KEY } = this.configService.get('deepseek');
     const openai = new OpenAI({
       baseURL: 'https://api.deepseek.com',

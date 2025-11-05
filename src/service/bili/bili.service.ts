@@ -2,12 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { readCsv, readFilesInDirectory, saveMd } from 'src/utils/file';
 import * as _ from 'lodash';
-import * as fs from 'fs/promises';
 import { prompts } from './prompts';
 import * as path from 'path';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 import { chromium } from 'playwright';
-import { fileExists } from '../ai/util';
 import { ChatDeepSeek } from '@langchain/deepseek';
 import { PrismaService } from 'src/prisma/prisma.service';
 import momenttz from 'moment-timezone';
@@ -44,48 +42,89 @@ export class BiliService {
       await this.genUpTitles(file);
     }
   }
-  public async analyseUp(file): Promise<any> {
-    const fileName = path.basename(file, path.extname(file));
-    const respFile = `output/bilibili/ups_resp/${fileName}.md`;
+  public async analyseUp(mid): Promise<any> {
+    const biliUp = await this.prisma.biliUps.findFirst({
+      where: {
+        mid: mid,
+      },
+    });
 
-    if (fileExists(respFile)) {
-      console.log(`${fileName} 的分析结果已存在，跳过...`);
+    if (!biliUp) {
+      return false;
+    }
+
+    const arts = await this.prisma.biliArchive.findMany({
+      where: {
+        mid: mid,
+      },
+    });
+
+    if (arts.length === 0) {
+      console.log(`${biliUp.uname} 没有视频，跳过...`);
       return true;
     }
 
-    const fileStr = await fs.readFile(file, 'utf-8');
+    const prompt = prompts[2].replace('{upName}', biliUp.uname);
+    const titlesStr = arts.map((a) => a.title).join('\n');
 
+    const messages = [new SystemMessage(prompt), new HumanMessage(titlesStr)];
     const model = new ChatDeepSeek({
       apiKey: this.configService.get('deepseek.DS_KEY'),
       model: 'deepseek-chat',
     });
-
-    const upName = fileName.split('_')[1];
-    const prompt = prompts[2].replace('{upName}', upName);
-
-    const messages = [new SystemMessage(prompt), new HumanMessage(fileStr)];
-
     const resp = await model.invoke(messages);
 
-    saveMd(respFile, resp.content);
-  }
-
-  public async analyseUps(): Promise<any> {
-    const files = readFilesInDirectory('output/bilibili/ups_titles');
-
-    // const file = _.find(files, (f) => {
-    //   return f.includes('小约翰可汗');
-    // });
-
-    for (const file of files) {
-      console.log(`开始分析 ${file} 的视频标题...`);
-      try {
-        await this.analyseUp(file);
-      } catch (error) {
-        console.error(error);
-      }
+    let respContent: string;
+    if (typeof resp.content === 'string') {
+      respContent = resp.content;
+    } else if (Array.isArray(resp.content)) {
+      respContent = resp.content
+        .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
+        .join('\n');
+    } else {
+      respContent = '';
     }
+
+    await this.prisma.biliUpAnalyze.deleteMany({
+      where: {
+        mid: mid,
+        type: 'title_analysis',
+      },
+    });
+
+    await this.prisma.biliUpAnalyze.create({
+      data: {
+        mid: mid,
+        content: respContent,
+        type: 'title_analysis',
+      },
+    });
+    console.log(`分析 ${biliUp.uname} 完成`);
+    return true;
   }
+
+  // public async analyseUps(mid): Promise<any> {
+  //   const articles = await this.prisma.biliArchive.findMany({
+  //     where: {
+  //       mid: mid,
+  //     },
+  //   });
+
+  //   const files = readFilesInDirectory('output/bilibili/ups_titles');
+
+  //   // const file = _.find(files, (f) => {
+  //   //   return f.includes('小约翰可汗');
+  //   // });
+
+  //   for (const file of files) {
+  //     console.log(`开始分析 ${file} 的视频标题...`);
+  //     try {
+  //       await this.analyseUp(file);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  // }
 
   public async getUpsArts(up) {
     const { mid } = up;
