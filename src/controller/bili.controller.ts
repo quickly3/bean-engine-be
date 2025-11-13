@@ -18,7 +18,13 @@ export class BiliController {
       take: pageSize,
       orderBy: { id: 'asc' },
     });
-    return convertBigIntToNumberInArray(ups);
+    // ups.map((u: any) => {
+    //   u.spaceUrl = BiliUrl.space.replace('{mid}', u.mid.toString());
+    // });
+    return {
+      ...payload,
+      data: convertBigIntToNumberInArray(ups),
+    };
   }
 
   @Post('getUpVideos')
@@ -30,6 +36,9 @@ export class BiliController {
       take: pageSize,
       orderBy: { id: 'asc' },
     });
-    return convertBigIntToNumberInArray(videos);
+    return {
+      ...payload,
+      data: convertBigIntToNumberInArray(videos),
+    };
   }
 }
