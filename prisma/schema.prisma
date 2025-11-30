@@ -58,6 +58,7 @@ model BiliUps {
   track_id        String? @default("")
   follow_time     String? @default("")
   crawlStatus     String? @default("pending")
+  updateTime      DateTime? @default(now())
 
   @@index([mid])
   @@schema("public")
