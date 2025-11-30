@@ -26,7 +26,7 @@ export class BiliController {
     const sql = Prisma.sql`
       SELECT b.*,count(1) "totalVideos",max(ba.created) "lastPublish"
         FROM "BiliUps" b 
-        LEFT JOIN "BiliArchive" ba on ba.mid = b.mid
+        LEFT JOIN "BiliVideos" ba on ba.mid = b.mid
         ${whereStr}
         GROUP BY b.id
         ORDER BY b.id asc
@@ -46,14 +46,14 @@ export class BiliController {
   @Post('getUpVideos')
   async getUpVideos(@Body() payload: any) {
     const { page, pageSize, mid } = payload;
-    const videos = await this.prisma.biliArchive.findMany({
+    const videos = await this.prisma.biliVideos.findMany({
       where: { mid },
       skip: (page - 1) * pageSize,
       take: pageSize,
       orderBy: { id: 'asc' },
     });
 
-    const total = await this.prisma.biliArchive.count();
+    const total = await this.prisma.biliVideos.count();
 
     return {
       ...payload,

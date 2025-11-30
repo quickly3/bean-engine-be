@@ -191,4 +191,11 @@ export class AiCommand {
   async biliLogin() {
     await this.biliService.login();
   }
+
+  @Command({
+    command: 'bili:videoPage',
+  })
+  async videoPage() {
+    await this.biliService.videoPage();
+  }
 }

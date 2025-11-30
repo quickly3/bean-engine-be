@@ -53,7 +53,7 @@ export class BiliService {
       return false;
     }
 
-    const arts = await this.prisma.biliArchive.findMany({
+    const arts = await this.prisma.biliVideos.findMany({
       where: {
         mid: mid,
       },
@@ -104,7 +104,7 @@ export class BiliService {
   }
 
   // public async analyseUps(mid): Promise<any> {
-  //   const articles = await this.prisma.biliArchive.findMany({
+  //   const articles = await this.prisma.biliVideos.findMany({
   //     where: {
   //       mid: mid,
   //     },
@@ -152,10 +152,17 @@ export class BiliService {
     const page = await context.newPage();
 
     const results: any[] = [];
+
     const nextBtnSelector = 'button:has-text("下一页")';
     // const lastBtnSelector = 'button:has-text("55")';
 
     let totalPages: number | null = null;
+
+    let follower = 0;
+    let following = 0;
+    let likes = 0;
+    let view = 0;
+    let totalVideos = 0;
 
     page.on('response', async (response) => {
       if (
@@ -192,12 +199,44 @@ export class BiliService {
                 'YYYY-MM-DDTHH:mm:ss[Z]',
               ),
             };
+
+            totalVideos = _.get(json, 'data.page.total', 0);
           });
 
           results.push(...list);
         } catch (e) {
-          console.error('解析响应失败:', e);
+          console.error('解析search响应失败:', e);
           process.exit(1);
+        }
+      }
+
+      if (
+        response.url().startsWith('https://api.bilibili.com/x/relation/stat')
+      ) {
+        if (!follower || follower === 0) {
+          try {
+            const json = await response.json();
+            const data = _.get(json, 'data');
+            follower = data.follower || 0;
+            following = data.following || 0;
+          } catch (e) {
+            console.error('解析stat响应失败:', e);
+          }
+        }
+      }
+
+      if (
+        response.url().startsWith('https://api.bilibili.com/x/space/upstat')
+      ) {
+        if (!likes || likes === 0) {
+          try {
+            const json = await response.json();
+            const data = _.get(json, 'data');
+            likes = data.likes || 0;
+            view = _.get(data, 'archive.view') || 0;
+          } catch (e) {
+            console.error('解析upstat响应失败:', e);
+          }
         }
       }
     });
@@ -235,7 +274,7 @@ export class BiliService {
           .textContent();
 
         if (currPage === '30') {
-          throw new Error('到达30页，停止抓取');
+          throw new Error(`到达${currPage}页，停止抓取`);
         }
 
         const nextBtn = await page.waitForSelector(nextBtnSelector, {
@@ -262,7 +301,10 @@ export class BiliService {
     // await saveJsonFileToCsv(csvFilePath, results);
 
     try {
-      await this.prisma.biliArchive.createMany({
+      await this.prisma.biliVideos.deleteMany({
+        where: { mid: mid },
+      });
+      await this.prisma.biliVideos.createMany({
         data: results,
       });
     } catch (error) {
@@ -272,7 +314,15 @@ export class BiliService {
     }
 
     await context.close();
-    return true;
+    return {
+      data: {
+        follower: BigInt(follower),
+        following: BigInt(following),
+        likes: BigInt(likes),
+        view: BigInt(view),
+        totalVideos,
+      },
+    };
   }
 
   public async getUpsContents(): Promise<any> {
@@ -285,29 +335,35 @@ export class BiliService {
       },
       where: {
         crawlStatus: crawlStatus.pending,
+        // mid: 13736113,
       },
       orderBy: {
         id: 'asc',
       },
     });
     for (const up of ups) {
-      console.log(`开始获取 ${up.uname} 的视频列表...`);
+      console.log(`开始获取 ${up.uname} ${up.mid} 的视频列表...`);
       try {
         const resp = await this.getUpsArts(up);
 
-        let status = crawlStatus.failed;
+        let updateData: any = {
+          crawlStatus: crawlStatus.failed,
+        };
         if (!resp) {
           await sleep(this.waitTime);
         } else {
-          status = crawlStatus.completed;
+          updateData = {
+            crawlStatus: crawlStatus.completed,
+            ...resp.data,
+          };
         }
-
         await this.prisma.biliUps.update({
           where: { id: up.id },
-          data: { crawlStatus: status },
+          data: updateData,
         });
       } catch (error) {
         console.error(error);
+        process.exit(1);
       }
     }
   }
@@ -413,5 +469,31 @@ export class BiliService {
     });
     const page = await context.newPage();
     await page.goto('https://www.bilibili.com/');
+  }
+
+  public async videoPage() {
+    const bvid = 'BV17GBMYHEbb';
+    const url = `https://www.bilibili.com/video/${bvid}`;
+
+    const userDataDir = process.env.CHROME_USER_DATA_DIR;
+
+    const context = await chromium.launchPersistentContext(userDataDir, {
+      headless: true, // 显示浏览器窗口
+      channel: 'chrome', // 使用正式版 Chrome
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await context.newPage();
+    await page.goto(url);
+
+    // wait for html page loading compeleted
+    await page.waitForLoadState('domcontentloaded');
+
+    // Get window._playinfo from the page context
+    const videoData = await page.evaluate(
+      () => (window as any).__INITIAL_STATE__.videoData,
+    );
+    console.log(videoData);
+
+    await context.close();
   }
 }
