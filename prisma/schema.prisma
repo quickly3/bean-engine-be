@@ -14,32 +14,6 @@ datasource db {
   schemas  = ["public"]
 }
 
-model BiliVideos {
-  id           Int      @id @default(autoincrement())
-  title        String?
-  subtitle     String?
-  description  String?
-  comment      Int?
-  typeid       Int?
-  play         Int?
-  pic          String?
-  copyright    String?
-  review       Int?
-  author       String?
-  mid          BigInt   @db.BigInt
-  created      Int?
-  length       String?
-  video_review Int?
-  aid          BigInt?
-  bvid         String?
-  season_id    Int?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-
-  @@index([mid])
-  @@schema("public")
-}
-
 model BiliUps {
   id              Int       @id @default(autoincrement())
   mid             BigInt?   @db.BigInt
@@ -69,6 +43,80 @@ model BiliUps {
   updatedAt       DateTime? @default(now()) @updatedAt
 
   @@index([mid])
+  @@schema("public")
+}
+
+model BiliVideos {
+  id           Int      @id @default(autoincrement())
+  title        String?
+  subtitle     String?
+  description  String?
+  tname        String?
+  tname_v2     String?
+  comment      Int?
+  typeid       Int?
+  play         Int?
+  pic          String?
+  copyright    String?
+  review       Int?
+  author       String?
+  mid          BigInt   @db.BigInt
+  created      Int?
+  length       String?
+  video_review Int?
+  aid          BigInt?
+  bvid         String?
+  season_id    Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  @@index([mid])
+  @@index([bvid])
+  @@index([aid])
+  @@schema("public")
+}
+
+model BiliVideoStat {
+  id         Int      @id @default(autoincrement())
+  mid        BigInt   @db.BigInt
+  bvid       String?
+  aid        BigInt   @db.BigInt
+  view       BigInt?  @default(0) @db.BigInt
+  danmaku    Int?     @default(0)
+  reply      Int?     @default(0)
+  favorite   Int?     @default(0)
+  coin       Int?     @default(0)
+  share      Int?     @default(0)
+  now_rank   Int?     @default(0)
+  his_rank   Int?     @default(0)
+  like       BigInt?  @default(0) @db.BigInt
+  dislike    Int?     @default(0)
+  evaluation String?  @default("")
+  vt         Int?     @default(0)
+  viewseo    BigInt?  @default(0) @db.BigInt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@index([mid])
+  @@index([bvid])
+  @@index([aid])
+  @@schema("public")
+}
+
+model VideoHonors {
+  id                   Int      @id @default(autoincrement())
+  mid                  BigInt   @db.BigInt
+  bvid                 String?
+  aid                  BigInt   @db.BigInt
+  type                 Int?
+  desc                 String?
+  weekly_recommend_num Int?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now()) @updatedAt
+
+  @@index([mid])
+  @@index([bvid])
+  @@index([aid])
   @@schema("public")
 }
 

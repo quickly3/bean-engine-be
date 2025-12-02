@@ -325,7 +325,7 @@ export class BiliService {
     };
   }
 
-  public async getUpsContents(): Promise<any> {
+  public async getUpsContents(mid): Promise<any> {
     // const ups = await readCsv('output/bilibili/bilibili_followings.csv');
     const ups = await this.prisma.biliUps.findMany({
       select: {
@@ -335,6 +335,7 @@ export class BiliService {
       },
       where: {
         crawlStatus: crawlStatus.pending,
+        mid,
         // mid: 13736113,
       },
       orderBy: {
@@ -471,8 +472,7 @@ export class BiliService {
     await page.goto('https://www.bilibili.com/');
   }
 
-  public async videoPage() {
-    const bvid = 'BV17GBMYHEbb';
+  public async videoPage(bvid) {
     const url = `https://www.bilibili.com/video/${bvid}`;
 
     const userDataDir = process.env.CHROME_USER_DATA_DIR;
@@ -492,8 +492,124 @@ export class BiliService {
     const videoData = await page.evaluate(
       () => (window as any).__INITIAL_STATE__.videoData,
     );
-    console.log(videoData);
+    const { tname, tname_v2, desc, stat } = videoData;
+    const mid = _.get(videoData, 'owner.mid', BigInt(0));
 
+    await this.prisma.biliVideos.updateMany({
+      where: { bvid: bvid },
+      data: { tname, tname_v2, description: desc },
+    });
+
+    await await this.prisma.biliVideoStat.deleteMany({
+      where: { bvid: bvid },
+    });
+
+    await this.prisma.biliVideoStat.create({
+      data: {
+        mid: mid,
+        bvid: bvid,
+        ...stat,
+      },
+    });
+
+    const honors = _.get(videoData, 'honor_reply.honor', []);
+
+    await await this.prisma.videoHonors.deleteMany({
+      where: { bvid: bvid },
+    });
+
+    if (honors.length > 0) {
+      const datas = honors.map((h: any) => {
+        return {
+          mid: mid,
+          bvid: bvid,
+          ...h,
+        };
+      });
+      await this.prisma.videoHonors.createMany({
+        data: datas,
+      });
+    }
+
+    await context.close();
+  }
+
+  public async upVideoPages(mid) {
+    const videos = await this.prisma.biliVideos.findMany({
+      where: {
+        mid: mid,
+      },
+    });
+
+    const userDataDir = process.env.CHROME_USER_DATA_DIR;
+
+    const context = await chromium.launchPersistentContext(userDataDir, {
+      headless: true, // 显示浏览器窗口
+      channel: 'chrome', // 使用正式版 Chrome
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await context.newPage();
+
+    const total = videos.length;
+    let curr = 0;
+
+    for (const video of videos) {
+      curr += 1;
+      console.log(
+        `正在处理视频 ${curr}/${total} ${video.title} ${video.bvid} ...`,
+      );
+
+      const bvid = video.bvid;
+      const url = `https://www.bilibili.com/video/${bvid}`;
+
+      await page.goto(url);
+
+      // wait for html page loading compeleted
+      await page.waitForLoadState('domcontentloaded');
+
+      // Get window._playinfo from the page context
+      const videoData = await page.evaluate(
+        () => (window as any).__INITIAL_STATE__.videoData,
+      );
+      const { tname, tname_v2, desc, stat } = videoData;
+      const mid = _.get(videoData, 'owner.mid', BigInt(0));
+
+      await this.prisma.biliVideos.updateMany({
+        where: { bvid: bvid },
+        data: { tname, tname_v2, description: desc },
+      });
+
+      await await this.prisma.biliVideoStat.deleteMany({
+        where: { bvid: bvid },
+      });
+
+      await this.prisma.biliVideoStat.create({
+        data: {
+          mid: mid,
+          bvid: bvid,
+          ...stat,
+        },
+      });
+
+      const honors = _.get(videoData, 'honor_reply.honor', []);
+
+      await await this.prisma.videoHonors.deleteMany({
+        where: { bvid: bvid },
+      });
+
+      if (honors.length > 0) {
+        const datas = honors.map((h: any) => {
+          return {
+            mid: mid,
+            bvid: bvid,
+            ...h,
+          };
+        });
+        await this.prisma.videoHonors.createMany({
+          data: datas,
+        });
+      }
+    }
     await context.close();
   }
 }

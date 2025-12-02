@@ -173,7 +173,8 @@ export class AiCommand {
     command: 'bili:getUpContents',
   })
   async getUpsContents() {
-    await this.biliService.getUpsContents();
+    const mid = 23947287;
+    await this.biliService.getUpsContents(mid);
     exit(0);
   }
 
@@ -196,6 +197,15 @@ export class AiCommand {
     command: 'bili:videoPage',
   })
   async videoPage() {
-    await this.biliService.videoPage();
+    const bvid = 'BV14myuB7EPv';
+    await this.biliService.videoPage(bvid);
+  }
+
+  @Command({
+    command: 'bili:upVideoPages',
+  })
+  async upVideoPages() {
+    const mid = 23947287;
+    await this.biliService.upVideoPages(mid);
   }
 }
