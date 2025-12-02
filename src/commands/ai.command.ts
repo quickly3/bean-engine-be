@@ -155,7 +155,7 @@ export class AiCommand {
   }
 
   @Command({
-    command: 'bili:analyseUp <mid>',
+    command: 'bili:analyzeUp <mid>',
   })
   async anaUps(
     @Positional({
@@ -165,7 +165,7 @@ export class AiCommand {
     })
     mid: number,
   ) {
-    await this.biliService.analyseUp(mid);
+    await this.biliService.analyzeUp(mid);
     exit(0);
   }
 

@@ -3,7 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import _ from 'lodash';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { convertBigIntToNumberInArray } from 'src/service/bili/bili-util';
+import {
+  convertBigIntToNumberInArray,
+  convertBigIntToNumberInObject,
+} from 'src/service/bili/bili-util';
 
 @Controller('bili')
 export class BiliController {
@@ -25,11 +28,12 @@ export class BiliController {
     }
 
     const sql = Prisma.sql`
-      SELECT b.*,count(1) "totalVideos",max(ba.created) "lastPublish"
+      SELECT b.*,count(1) "totalVideos",bua.id as "analysisId" ,max(ba.created) "lastPublish"
         FROM "BiliUps" b 
+        LEFT JOIN "BiliUpAnalysis" bua on bua.mid = b.mid
         LEFT JOIN "BiliVideos" ba on ba.mid = b.mid
         ${whereStr}
-        GROUP BY b.id
+        GROUP BY b.id,bua.id
         ORDER BY b.id asc
         LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize};
     `;
@@ -74,5 +78,18 @@ export class BiliController {
       data: convertBigIntToNumberInArray(videos),
       total,
     };
+  }
+
+  @Post('getUpAnalysis')
+  async getUpAnalysis(@Body() payload: any) {
+    const { analysisId } = payload;
+    console.log('analysisId', analysisId);
+    let ana = await this.prisma.biliUpAnalysis.findFirst({
+      where: { id: analysisId },
+    });
+    if (ana) {
+      ana = convertBigIntToNumberInObject(ana);
+    }
+    return ana;
   }
 }

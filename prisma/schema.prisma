@@ -105,7 +105,7 @@ model VideoHonors {
   @@schema("public")
 }
 
-model BiliUpAnalyze {
+model BiliUpAnalysis {
   id      Int     @id @default(autoincrement())
   mid     BigInt? @db.BigInt
   type    String?

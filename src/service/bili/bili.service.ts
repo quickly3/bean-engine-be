@@ -42,7 +42,7 @@ export class BiliService {
       await this.genUpTitles(file);
     }
   }
-  public async analyseUp(mid): Promise<any> {
+  public async analyzeUp(mid): Promise<any> {
     const biliUp = await this.prisma.biliUps.findFirst({
       where: {
         mid: mid,
@@ -85,14 +85,14 @@ export class BiliService {
       respContent = '';
     }
 
-    await this.prisma.biliUpAnalyze.deleteMany({
+    await this.prisma.biliUpAnalysis.deleteMany({
       where: {
         mid: mid,
         type: 'title_analysis',
       },
     });
 
-    await this.prisma.biliUpAnalyze.create({
+    await this.prisma.biliUpAnalysis.create({
       data: {
         mid: mid,
         content: respContent,
@@ -520,7 +520,7 @@ export class BiliService {
 
     const honors = _.get(videoData, 'honor_reply.honor', []);
 
-    await await this.prisma.videoHonors.deleteMany({
+    await this.prisma.videoHonors.deleteMany({
       where: { bvid: bvid },
     });
 
@@ -605,7 +605,7 @@ export class BiliService {
 
       const honors = _.get(videoData, 'honor_reply.honor', []);
 
-      await await this.prisma.videoHonors.deleteMany({
+      await this.prisma.videoHonors.deleteMany({
         where: { bvid: bvid },
       });
 

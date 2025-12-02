@@ -30,3 +30,12 @@ function convertBigIntToNumber(obj: any): any {
   }
   return obj;
 }
+
+/**
+ * 将单个对象中的 BigInt 字段转换为 number（对外导出）
+ * @param obj 输入对象
+ * @returns 转换后的对象
+ */
+export function convertBigIntToNumberInObject(obj: any): any {
+  return convertBigIntToNumber(obj);
+}
