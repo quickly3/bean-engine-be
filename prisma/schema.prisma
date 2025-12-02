@@ -67,35 +67,20 @@ model BiliVideos {
   aid          BigInt?
   bvid         String?
   season_id    Int?
+  danmaku      Int?     @default(0)
+  favorite     Int?     @default(0)
+  coin         Int?     @default(0)
+  share        Int?     @default(0)
+  now_rank     Int?     @default(0)
+  his_rank     Int?     @default(0)
+  like         BigInt?  @default(0) @db.BigInt
+  dislike      Int?     @default(0)
+  evaluation   String?  @default("")
+  vt           Int?     @default(0)
+  viewseo      BigInt?  @default(0) @db.BigInt
+  state        String?  @default("init")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
-
-  @@index([mid])
-  @@index([bvid])
-  @@index([aid])
-  @@schema("public")
-}
-
-model BiliVideoStat {
-  id         Int      @id @default(autoincrement())
-  mid        BigInt   @db.BigInt
-  bvid       String?
-  aid        BigInt   @db.BigInt
-  view       BigInt?  @default(0) @db.BigInt
-  danmaku    Int?     @default(0)
-  reply      Int?     @default(0)
-  favorite   Int?     @default(0)
-  coin       Int?     @default(0)
-  share      Int?     @default(0)
-  now_rank   Int?     @default(0)
-  his_rank   Int?     @default(0)
-  like       BigInt?  @default(0) @db.BigInt
-  dislike    Int?     @default(0)
-  evaluation String?  @default("")
-  vt         Int?     @default(0)
-  viewseo    BigInt?  @default(0) @db.BigInt
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
 
   @@index([mid])
   @@index([bvid])

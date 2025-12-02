@@ -497,18 +497,24 @@ export class BiliService {
 
     await this.prisma.biliVideos.updateMany({
       where: { bvid: bvid },
-      data: { tname, tname_v2, description: desc },
-    });
-
-    await await this.prisma.biliVideoStat.deleteMany({
-      where: { bvid: bvid },
-    });
-
-    await this.prisma.biliVideoStat.create({
       data: {
-        mid: mid,
-        bvid: bvid,
-        ...stat,
+        tname,
+        tname_v2,
+        description: desc,
+        play: stat.view,
+        danmaku: stat.danmaku,
+        comment: stat.reply,
+        favorite: stat.favorite,
+        coin: stat.coin,
+        share: stat.share,
+        now_rank: stat.now_rank,
+        his_rank: stat.his_rank,
+        like: stat.like,
+        dislike: stat.dislike,
+        evaluation: stat.evaluation,
+        vt: stat.vt,
+        viewseo: stat.viewseo,
+        state: 'updated',
       },
     });
 
@@ -576,18 +582,24 @@ export class BiliService {
 
       await this.prisma.biliVideos.updateMany({
         where: { bvid: bvid },
-        data: { tname, tname_v2, description: desc },
-      });
-
-      await await this.prisma.biliVideoStat.deleteMany({
-        where: { bvid: bvid },
-      });
-
-      await this.prisma.biliVideoStat.create({
         data: {
-          mid: mid,
-          bvid: bvid,
-          ...stat,
+          tname,
+          tname_v2,
+          description: desc,
+          play: stat.view,
+          danmaku: stat.danmaku,
+          comment: stat.reply,
+          favorite: stat.favorite,
+          coin: stat.coin,
+          share: stat.share,
+          now_rank: stat.now_rank,
+          his_rank: stat.his_rank,
+          like: stat.like,
+          dislike: stat.dislike,
+          evaluation: stat.evaluation,
+          vt: stat.vt,
+          viewseo: stat.viewseo,
+          state: 'updated',
         },
       });
 

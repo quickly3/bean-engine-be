@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
+import _ from 'lodash';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { convertBigIntToNumberInArray } from 'src/service/bili/bili-util';
 
@@ -46,14 +47,27 @@ export class BiliController {
   @Post('getUpVideos')
   async getUpVideos(@Body() payload: any) {
     const { page, pageSize, mid } = payload;
+
+    const where = { mid };
     const videos = await this.prisma.biliVideos.findMany({
-      where: { mid },
+      where,
       skip: (page - 1) * pageSize,
       take: pageSize,
-      orderBy: { id: 'asc' },
+      orderBy: { createdAt: 'desc' },
     });
 
-    const total = await this.prisma.biliVideos.count();
+    const total = await this.prisma.biliVideos.count({ where });
+
+    const aids = videos.map((v) => v.aid);
+
+    if (aids.length > 0) {
+      const honors = await this.prisma.videoHonors.findMany({
+        where: { aid: { in: aids } },
+      });
+      videos.map((v: any) => {
+        v.honors = _.filter(honors, (h) => h.aid === v.aid);
+      });
+    }
 
     return {
       ...payload,

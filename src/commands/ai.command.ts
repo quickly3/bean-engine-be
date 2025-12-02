@@ -197,7 +197,7 @@ export class AiCommand {
     command: 'bili:videoPage',
   })
   async videoPage() {
-    const bvid = 'BV14myuB7EPv';
+    const bvid = 'BV1L11vBBEsW';
     await this.biliService.videoPage(bvid);
   }
 
