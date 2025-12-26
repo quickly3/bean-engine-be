@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DailyReportService } from 'src/service/dailyReport.service';
+import { HackerNewsService } from 'src/service/hackerNews.service';
 import { RssService } from 'src/service/rss/rss.service';
 import { SearchService } from 'src/service/search.service';
 
@@ -10,6 +11,7 @@ export class CronController {
     private readonly dailyReportService: DailyReportService,
     private readonly searchService: SearchService,
     private readonly rssService: RssService,
+    private readonly hackerNewsService: HackerNewsService,
   ) {}
   @Cron(CronExpression.EVERY_DAY_AT_7AM)
   async dayCron() {
@@ -24,5 +26,12 @@ export class CronController {
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async rssCrawl() {
     await this.rssService.parseOpml();
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async getNewStories() {
+    await this.hackerNewsService.getNewStories2();
+    // await this.hackerNewsService.transRecords();
+    // await this.hackerNewsService.cateRecords();
   }
 }

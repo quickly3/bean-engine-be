@@ -17,7 +17,7 @@ export class BiliController {
 
   @Post('getUps')
   async getUps(@Body() payload: any) {
-    const { page, pageSize, keywords } = payload;
+    const { page, pageSize, keywords, sortBy } = payload;
 
     const where: any = {};
     let whereStr = Prisma.sql``;
@@ -34,7 +34,7 @@ export class BiliController {
         LEFT JOIN "BiliVideos" ba on ba.mid = b.mid
         ${whereStr}
         GROUP BY b.id,bua.id
-        ORDER BY b.id asc
+        ORDER BY ${Prisma.raw(sortBy)} desc
         LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize};
     `;
 

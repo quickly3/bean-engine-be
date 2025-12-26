@@ -1,9 +1,7 @@
-import { HttpsProxyAgent } from 'https-proxy-agent';
 import OpenAI from 'openai';
 import * as _ from 'lodash';
 import { ConfigService } from '@nestjs/config';
 import { OPENAI_MODEL } from './enum';
-import * as http from 'http';
 
 export default class OpenAi {
   openai;

@@ -455,6 +455,12 @@ export class BiliService {
     }
 
     await context.close();
+
+    await this.prisma.biliUps.deleteMany({
+      where: {
+        crawlStatus: crawlStatus.pending,
+      },
+    });
     await this.prisma.biliUps.createMany({
       data: results,
     });

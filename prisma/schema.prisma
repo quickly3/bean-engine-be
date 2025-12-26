@@ -114,3 +114,26 @@ model BiliUpAnalysis {
   @@index([mid])
   @@schema("public")
 }
+
+model HackNews {
+  id          Int      @id
+  state       String?
+  by          String?
+  descendants Int?     @default(0)
+  score       Int?     @default(0)
+  time        Int?
+  title       String?
+  subTitle    String?
+  title_cn    String?
+  category    String?
+  text        String?
+  text_cn     String?
+  type        String?
+  url         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@index([type])
+  @@index([time])
+  @@schema("public")
+}

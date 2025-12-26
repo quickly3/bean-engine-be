@@ -75,7 +75,23 @@ export class AiCommand {
     command: 'getTopStories',
   })
   async getTopStories() {
-    await this.hackerNewsService.getNewStoriesParsed();
+    await this.hackerNewsService.getNewStories2();
+  }
+
+  @Command({
+    command: 'transRecords',
+  })
+  async transRecords() {
+    await this.hackerNewsService.transRecords();
+    exit(0);
+  }
+
+  @Command({
+    command: 'cateRecords',
+  })
+  async cateRecords() {
+    await this.hackerNewsService.cateRecords();
+    exit(0);
   }
 
   @Command({
