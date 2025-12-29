@@ -157,13 +157,22 @@ export class HackerNewsService {
     await this.prismaService.hackNews.createMany({
       data: datas,
     });
+    return ids;
   }
 
-  async transRecords() {
-    const allRecords = await this.prismaService.hackNews.findMany({
-      where: {
-        state: recordStatus.PENDING,
+  async transRecords(ids = []) {
+    const where = {
+      state: recordStatus.PENDING,
+      title: {
+        not: null,
       },
+    };
+
+    if (ids.length > 0) {
+      where['id'] = { in: ids };
+    }
+    const allRecords = await this.prismaService.hackNews.findMany({
+      where,
     });
     const total = allRecords.length;
     let current = 0;
@@ -210,11 +219,20 @@ export class HackerNewsService {
     }
   }
 
-  async cateRecords() {
-    const allRecords = await this.prismaService.hackNews.findMany({
-      where: {
-        state: recordStatus.TRANSLATED,
+  async cateRecords(ids = []) {
+    const where = {
+      state: recordStatus.TRANSLATED,
+      title_cn: {
+        not: null,
       },
+    };
+
+    if (ids.length > 0) {
+      where['id'] = { in: ids };
+    }
+
+    const allRecords = await this.prismaService.hackNews.findMany({
+      where,
     });
     const total = allRecords.length;
     let current = 0;
@@ -264,7 +282,7 @@ export class HackerNewsService {
   async gptTrans(titles) {
     console.log(
       moment().format('YYYY-MM-DD HH:mm:ss'),
-      'Translating titles via GPT',
+      'Translating titles via DeepSeek',
     );
     const titles_string = JSON.stringify(titles);
 

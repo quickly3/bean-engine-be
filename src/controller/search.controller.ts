@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { SearchService } from '../service/search.service';
 
 @Controller('search')
@@ -54,5 +54,10 @@ export class SearchController {
   async getWordsCloud(@Query() params) {
     const resp = await this.searchService.getWordsCloud(params);
     return resp.data;
+  }
+
+  @Post('getHackerNews')
+  async getHackerNews(@Body() payload) {
+    return this.searchService.getHackerNews(payload);
   }
 }

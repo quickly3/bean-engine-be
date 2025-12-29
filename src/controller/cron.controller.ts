@@ -30,8 +30,8 @@ export class CronController {
 
   @Cron(CronExpression.EVERY_HOUR)
   async getNewStories() {
-    await this.hackerNewsService.getNewStories2();
-    // await this.hackerNewsService.transRecords();
-    // await this.hackerNewsService.cateRecords();
+    const ids = await this.hackerNewsService.getNewStories2();
+    await this.hackerNewsService.transRecords(ids);
+    await this.hackerNewsService.cateRecords(ids);
   }
 }

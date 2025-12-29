@@ -5,12 +5,16 @@ import { ES_INDEX } from 'src/enum/enum';
 import { EsQueryBuilder } from 'src/utils/EsQueryBuilder';
 import { parseQueryString } from './utils';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import  moment from 'moment';
+import moment from 'moment';
 import { execSync } from 'child_process';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class SearchService {
-  constructor(private readonly elasticsearchService: ElasticsearchService) {}
+  constructor(
+    private readonly elasticsearchService: ElasticsearchService,
+    private readonly prismaService: PrismaService,
+  ) {}
   async getAll(payload) {
     const queryBuilder = new EsQueryBuilder(
       ES_INDEX.ARTICLE,
@@ -653,5 +657,27 @@ export class SearchService {
       }
       console.log(`${current}/${count}`);
     }
+  }
+
+  async getHackerNews(payload) {
+    const { page, size } = payload;
+    const take = size || 20;
+    const skip = (page - 1) * take;
+
+    const total = await this.prismaService.hackNews.count();
+    const data = await this.prismaService.hackNews.findMany({
+      take,
+      skip,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return {
+      total,
+      data,
+      page,
+      size: take,
+    };
   }
 }
