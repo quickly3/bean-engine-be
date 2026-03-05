@@ -660,7 +660,7 @@ export class SearchService {
   }
 
   async getHackerNews(payload) {
-    const { page, size, category, searchKeyword } = payload;
+    const { page, size, category, searchKeyword, level } = payload;
     const take = size || 20;
     const skip = (page - 1) * take;
 
@@ -685,6 +685,9 @@ export class SearchService {
         },
       ];
     }
+    if (level) {
+      where.level = level;
+    }
 
     const total = await this.prismaService.hackNews.count({
       where,
@@ -693,7 +696,7 @@ export class SearchService {
       take,
       skip,
       orderBy: {
-        createdAt: 'desc',
+        id: 'desc',
       },
       where,
     });

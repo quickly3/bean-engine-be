@@ -23,7 +23,12 @@ export class SearchController {
 
   @Get('getTags')
   @ApiOperation({ summary: '获取标签列表' })
-  @ApiQuery({ name: 'keyword', required: false, type: String, description: '搜索关键词' })
+  @ApiQuery({
+    name: 'keyword',
+    required: false,
+    type: String,
+    description: '搜索关键词',
+  })
   @ApiOkResponse({ description: '标签列表' })
   async getTags(@Query() params) {
     return this.searchService.getTags(params);
@@ -31,7 +36,12 @@ export class SearchController {
 
   @Get('getCategories')
   @ApiOperation({ summary: '获取分类列表' })
-  @ApiQuery({ name: 'keyword', required: false, type: String, description: '搜索关键词' })
+  @ApiQuery({
+    name: 'keyword',
+    required: false,
+    type: String,
+    description: '搜索关键词',
+  })
   @ApiOkResponse({ description: '分类列表' })
   async getCategories(@Query() params) {
     return this.searchService.getCategories(params);
@@ -39,7 +49,12 @@ export class SearchController {
 
   @Get('autoComplete')
   @ApiOperation({ summary: '自动补全' })
-  @ApiQuery({ name: 'keyword', required: false, type: String, description: '补全关键词' })
+  @ApiQuery({
+    name: 'keyword',
+    required: false,
+    type: String,
+    description: '补全关键词',
+  })
   @ApiOkResponse({ description: '自动补全结果' })
   async autoComplete(@Query() params) {
     return this.searchService.autoComplete(params);
@@ -87,7 +102,12 @@ export class SearchController {
 
   @Get('getWordsCloud')
   @ApiOperation({ summary: '获取词云' })
-  @ApiQuery({ name: 'keyword', required: false, type: String, description: '可选关键词' })
+  @ApiQuery({
+    name: 'keyword',
+    required: false,
+    type: String,
+    description: '可选关键词',
+  })
   @ApiOkResponse({ description: '词云结果' })
   async getWordsCloud(@Query() params) {
     const resp = await this.searchService.getWordsCloud(params);
