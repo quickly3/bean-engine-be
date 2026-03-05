@@ -48,13 +48,13 @@ export class DailyReportService {
     }
   }
 
-  async sendToFs(toGroup = 'bean') {
+  async getHackNewsContent(category) {
     const news = await this.prisma.hackNews.findMany({
       where: {
         createdAt: {
           gte: moment().subtract(1, 'day').startOf('day').toDate(),
         },
-        category: HACKNEWS_CATEGORY.AI_APPLICATION,
+        category,
         level: {
           in: [4, 5],
         },
@@ -71,15 +71,28 @@ export class DailyReportService {
         data: news,
       },
     ]);
+    return content;
+  }
 
+  async sendToFs(toGroup = 'bean') {
     await this.feishu.set_app_access_token();
 
-    if (toGroup === 'bean') {
-      await this.feishu.sendToBeanPost(content);
-    }
+    const cates = [
+      // HACKNEWS_CATEGORY.BACKEND_DATABASE_DATA_ENGINEERING,
+      // HACKNEWS_CATEGORY.OPEN_SOURCE_COMMUNITY,
+      // HACKNEWS_CATEGORY.DEV_TOOLS_ECOSYSTEM,
+      HACKNEWS_CATEGORY.AI_APPLICATION,
+    ];
 
-    if (toGroup === 'company') {
-      await this.feishu.sendToCompanyPost(content);
+    for (const cate of cates) {
+      const content = await this.getHackNewsContent(cate);
+      if (toGroup === 'bean') {
+        await this.feishu.sendToBeanPost(content);
+      }
+
+      if (toGroup === 'company') {
+        await this.feishu.sendToCompanyPost(content);
+      }
     }
   }
 
