@@ -115,7 +115,7 @@ export class DailyReportService {
     const yesterday = moment().subtract(1, 'day').format('YYYY-MM-DD');
     const postContent = {
       zh_cn: {
-        title: `Hack News for developers（${yesterday}）`,
+        title: `Hack news for developers（${yesterday}）`,
         content,
       },
     };
