@@ -11,7 +11,9 @@ import { ChatDeepSeek } from '@langchain/deepseek';
 export enum recordStatus {
   PENDING = 'pending',
   TRANSLATED = 'translated',
+  TRANSLATED_FAILED = 'translated_failed',
   CATEGORIZED = 'categorized',
+  CATEGORIZED_FAILED = 'categorized_failed',
 }
 
 @Injectable()
@@ -186,7 +188,27 @@ export class HackerNewsService {
       const promises = _records.map(async (recs) => {
         const ids = recs.map((record) => record.id);
         const titles = recs.map((record) => record.title);
-        const titles_cn = await this.gptTrans(titles);
+
+        let titles_cn = '';
+        try {
+          titles_cn = await this.gptTrans(titles);
+        } catch (error) {
+          console.error('Error translating records:', error);
+          await this.prismaService.hackNews.updateMany({
+            where: {
+              id: { in: ids },
+            },
+            data: {
+              state: recordStatus.TRANSLATED,
+            },
+          });
+          return ids.map((id) => ({
+            id,
+            title_cn: null,
+            state: recordStatus.TRANSLATED_FAILED,
+          }));
+        }
+
         const resultArray = Array.isArray(titles_cn) ? titles_cn : [titles_cn];
         return resultArray.map((d: string, i: number) => {
           return {
@@ -246,7 +268,28 @@ export class HackerNewsService {
       const promises = _records.map(async (recs) => {
         const ids = recs.map((record) => record.id);
         const titles_cn = recs.map((record) => record.title_cn);
-        const cates = await this.aiCate(titles_cn);
+
+        let cates = '';
+        try {
+          cates = await this.aiCate(titles_cn);
+        } catch (error) {
+          console.error('Error categorizing records:', error);
+          await this.prismaService.hackNews.updateMany({
+            where: {
+              id: { in: ids },
+            },
+            data: {
+              state: recordStatus.CATEGORIZED_FAILED,
+            },
+          });
+          return ids.map((id) => ({
+            id,
+            category: null,
+            state: recordStatus.CATEGORIZED_FAILED,
+          }));
+        }
+        // const cates = await this.aiCate(titles_cn);
+
         const resultArray = Array.isArray(cates) ? cates : [cates];
         return resultArray.map((d: string, i: number) => {
           return {
@@ -306,7 +349,6 @@ export class HackerNewsService {
     } else {
       respContent = '';
     }
-
     const titles_cn = JSON.parse(respContent);
     return titles_cn;
   }
