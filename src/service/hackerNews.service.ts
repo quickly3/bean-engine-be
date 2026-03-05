@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
 import axios from 'axios';
 import moment from 'moment';
-import { TRANSLATE_TITLES_PROMPT, CAT_TITLES_PROMPT } from './feishu/enum';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SystemMessage } from '@langchain/core/messages';
 import { ChatDeepSeek } from '@langchain/deepseek';
+import { CAT_TITLES_PROMPT } from 'src/prompts/cat-titles.prompt';
+import { TRANSLATE_TITLES_PROMPT } from 'src/prompts/translate-titles.prompt';
 
 export enum recordStatus {
   PENDING = 'pending',
