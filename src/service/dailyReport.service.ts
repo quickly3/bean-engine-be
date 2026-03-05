@@ -61,6 +61,7 @@ export class DailyReportService {
         url: {
           not: null,
         },
+        subTitle: null,
       },
       take: 50,
     });
