@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 import _ from 'lodash';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -8,6 +9,7 @@ import {
   convertBigIntToNumberInObject,
 } from 'src/service/bili/bili-util';
 
+@ApiTags('bili')
 @Controller('bili')
 export class BiliController {
   constructor(
@@ -16,6 +18,20 @@ export class BiliController {
   ) {}
 
   @Post('getUps')
+  @ApiOperation({ summary: '获取 B 站 UP 主列表' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        page: { type: 'number', example: 1 },
+        pageSize: { type: 'number', example: 20 },
+        keywords: { type: 'string' },
+        sortBy: { type: 'string', example: 'lastPublish' },
+      },
+      required: ['page', 'pageSize', 'sortBy'],
+    },
+  })
+  @ApiOkResponse({ description: 'UP 主分页数据' })
   async getUps(@Body() payload: any) {
     const { page, pageSize, keywords, sortBy } = payload;
 
@@ -49,6 +65,19 @@ export class BiliController {
   }
 
   @Post('getUpVideos')
+  @ApiOperation({ summary: '获取 UP 主视频列表' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        page: { type: 'number', example: 1 },
+        pageSize: { type: 'number', example: 20 },
+        mid: { type: 'string', description: 'UP 主 mid' },
+      },
+      required: ['page', 'pageSize', 'mid'],
+    },
+  })
+  @ApiOkResponse({ description: 'UP 主视频分页数据' })
   async getUpVideos(@Body() payload: any) {
     const { page, pageSize, mid } = payload;
 
@@ -81,6 +110,17 @@ export class BiliController {
   }
 
   @Post('getUpAnalysis')
+  @ApiOperation({ summary: '获取 UP 主分析数据' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        analysisId: { type: 'number', description: '分析记录 ID' },
+      },
+      required: ['analysisId'],
+    },
+  })
+  @ApiOkResponse({ description: 'UP 主分析结果' })
   async getUpAnalysis(@Body() payload: any) {
     const { analysisId } = payload;
     console.log('analysisId', analysisId);

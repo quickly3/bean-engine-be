@@ -1,8 +1,10 @@
 import { Controller } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { ApiTags } from '@nestjs/swagger';
 import { execSync } from 'child_process';
 import { SearchService } from 'src/service/search.service';
 
+@ApiTags('spider')
 @Controller('spider')
 export class SpiderController {
   constructor(private readonly searchService: SearchService) {}

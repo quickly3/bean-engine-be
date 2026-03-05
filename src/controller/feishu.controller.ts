@@ -1,9 +1,11 @@
-import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AI_TYPE } from 'src/service/ai/enum';
 import { ArticleService } from 'src/service/article.service';
 import { MessageHandleService } from 'src/service/feishu/messageHandle.service';
 
+@ApiTags('feishu')
 @Controller('feishu')
 export class FeishuController {
   constructor(
@@ -13,6 +15,9 @@ export class FeishuController {
 
   @Post('event/openai')
   @HttpCode(200)
+  @ApiOperation({ summary: '接收飞书 OpenAI 事件回调' })
+  @ApiBody({ schema: { type: 'object', additionalProperties: true } })
+  @ApiOkResponse({ description: '处理成功返回 true' })
   async event(@Body() payload) {
     try {
       const messageHandleService = new MessageHandleService(
@@ -29,6 +34,9 @@ export class FeishuController {
 
   @Post('event/gemini')
   @HttpCode(200)
+  @ApiOperation({ summary: '接收飞书 Gemini 事件回调' })
+  @ApiBody({ schema: { type: 'object', additionalProperties: true } })
+  @ApiOkResponse({ description: '处理成功返回 true' })
   async eventGemini(@Body() payload) {
     try {
       const messageHandleService = new MessageHandleService(

@@ -20,7 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "cli": "npx nestjs-command",
     "prisma:push": "npx prisma db push",
-    "prisma:gen": "npx prisma generate"
+    "prisma:gen": "npx prisma generate",
+    "postman:sync": "ts-node -r tsconfig-paths/register script/sync-postman.ts"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.17",
@@ -34,6 +35,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
     "@nestjs/elasticsearch": "^9.0.0",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^11.0.1",
@@ -79,6 +81,7 @@
     "rss-parser": "^3.13.0",
     "rxjs": "^7.8.1",
     "simple-cookie": "^1.0.15",
+    "swagger-ui-express": "^5.0.1",
     "tslab": "^1.0.22",
     "user-agents": "^1.0.1444",
     "yargs": "^17.7.2",
@@ -111,6 +114,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
+    "openapi-to-postmanv2": "^5.1.9",
     "typescript-eslint": "^8.46.2"
   },
   "jest": {

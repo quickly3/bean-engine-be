@@ -1,10 +1,12 @@
 import { Controller } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { ApiTags } from '@nestjs/swagger';
 import { DailyReportService } from 'src/service/dailyReport.service';
 import { HackerNewsService } from 'src/service/hackerNews.service';
 import { RssService } from 'src/service/rss/rss.service';
 import { SearchService } from 'src/service/search.service';
 
+@ApiTags('cron')
 @Controller('cron')
 export class CronController {
   constructor(
