@@ -175,6 +175,9 @@ export class HackerNewsService {
     }
     const allRecords = await this.prismaService.hackNews.findMany({
       where,
+      orderBy: {
+        id: 'desc',
+      },
     });
     const total = allRecords.length;
     let current = 0;
@@ -255,6 +258,9 @@ export class HackerNewsService {
 
     const allRecords = await this.prismaService.hackNews.findMany({
       where,
+      orderBy: {
+        id: 'desc',
+      },
     });
     const total = allRecords.length;
     let current = 0;
@@ -286,6 +292,7 @@ export class HackerNewsService {
             id,
             category: null,
             state: recordStatus.CATEGORIZED_FAILED,
+            level: null,
           }));
         }
         // const cates = await this.aiCate(titles_cn);
@@ -313,6 +320,7 @@ export class HackerNewsService {
               data: {
                 category: record.category,
                 state: record.state,
+                level: record.level,
               },
             });
           }
