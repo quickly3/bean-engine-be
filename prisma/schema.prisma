@@ -126,6 +126,7 @@ model HackNews {
   subTitle    String?
   title_cn    String?
   category    String?
+  level       Int?
   text        String?
   text_cn     String?
   type        String?

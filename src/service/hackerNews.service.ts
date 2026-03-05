@@ -251,7 +251,8 @@ export class HackerNewsService {
         return resultArray.map((d: string, i: number) => {
           return {
             id: ids[i],
-            category: cates[i],
+            level: cates[i][0],
+            category: cates[i][1],
             state: recordStatus.CATEGORIZED,
           };
         });
