@@ -59,6 +59,7 @@ export class AiCommand {
   })
   async info() {
     // const resp = await this.feishu.sendToBean('holle');
+    // await this.dailyReportService.sendToFs('bean');
     await this.dailyReportService.sendToFs('bean');
   }
 

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
-import  moment from 'moment';
+import moment from 'moment';
 import { FeishuRobot } from './feishu/feishuRobot';
 import { SearchService } from './search.service';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { HACKNEWS_CATEGORY } from 'src/enum/enum';
 
 @Injectable()
 export class DailyReportService {
@@ -11,11 +13,12 @@ export class DailyReportService {
   constructor(
     private readonly searchService: SearchService,
     private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
   ) {
     this.feishu = new FeishuRobot(this.configService);
   }
 
-  async sendToFs(toGroup = 'bean') {
+  async sendToFs2(toGroup = 'bean') {
     const resp = await this.searchService.dailyMd();
 
     const channels = resp.data;
@@ -30,7 +33,6 @@ export class DailyReportService {
     const otherDataContent = this.toFeishuFormat(otherData);
     const krDataContent = this.toFeishuFormat(krData);
     const taiDataContent = this.toFeishuFormat(taiData);
-
     await this.feishu.set_app_access_token();
 
     if (toGroup === 'bean') {
@@ -44,6 +46,67 @@ export class DailyReportService {
       await this.feishu.sendToCompanyPost(taiDataContent);
       await this.feishu.sendToCompanyPost(krDataContent);
     }
+  }
+
+  async sendToFs(toGroup = 'bean') {
+    const news = await this.prisma.hackNews.findMany({
+      where: {
+        createdAt: {
+          gte: moment().subtract(1, 'day').startOf('day').toDate(),
+        },
+        category: HACKNEWS_CATEGORY.AI_APPLICATION,
+        level: {
+          in: [4, 5],
+        },
+        url: {
+          not: null,
+        },
+      },
+      take: 50,
+    });
+
+    const content = this.hackNewsToFeishuFormat([
+      {
+        title: HACKNEWS_CATEGORY.AI_APPLICATION,
+        data: news,
+      },
+    ]);
+
+    await this.feishu.set_app_access_token();
+
+    if (toGroup === 'bean') {
+      await this.feishu.sendToBeanPost(content);
+    }
+
+    if (toGroup === 'company') {
+      await this.feishu.sendToCompanyPost(content);
+    }
+  }
+
+  hackNewsToFeishuFormat(channels) {
+    const content: any = [];
+    for (const channel of channels) {
+      const { title, data } = channel;
+      if (data.length === 0) {
+        continue;
+      }
+      content.push([{ tag: 'text', text: title }]);
+
+      for (const i in data) {
+        const a = data[i];
+        content.push([
+          { tag: 'a', href: a.url, text: `${parseInt(i) + 1}.${a.title_cn}` },
+        ]);
+      }
+    }
+    const yesterday = moment().subtract(1, 'day').format('YYYY-MM-DD');
+    const postContent = {
+      zh_cn: {
+        title: `Hack News（${yesterday}）`,
+        content,
+      },
+    };
+    return postContent;
   }
 
   toFeishuFormat(channels) {
