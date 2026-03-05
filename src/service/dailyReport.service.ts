@@ -67,7 +67,7 @@ export class DailyReportService {
 
     const content = this.hackNewsToFeishuFormat([
       {
-        title: HACKNEWS_CATEGORY.AI_APPLICATION,
+        title: category,
         data: news,
       },
     ]);
@@ -115,7 +115,7 @@ export class DailyReportService {
     const yesterday = moment().subtract(1, 'day').format('YYYY-MM-DD');
     const postContent = {
       zh_cn: {
-        title: `Hack News（${yesterday}）`,
+        title: `Hack News for developers（${yesterday}）`,
         content,
       },
     };
