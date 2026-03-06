@@ -1,7 +1,7 @@
 {
   "item": [
     {
-      "id": "2cf1f7c8-e3b2-4141-86fb-bd3ef6bce202",
+      "id": "051d0cc0-d1f9-4c59-b5aa-d3c63cf6a9c4",
       "name": "getAll",
       "request": {
         "name": "getAll",
@@ -26,7 +26,7 @@
         "auth": null,
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"key_0\": false\n}",
+          "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -36,7 +36,7 @@
       },
       "response": [
         {
-          "id": "1ff66ac5-509d-4a33-9843-55f13f1b6da5",
+          "id": "d84b09f5-8878-4422-acc1-fc18783d5b6b",
           "name": "搜索结果",
           "originalRequest": {
             "url": {
@@ -52,7 +52,7 @@
             "method": "POST",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+              "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -79,11 +79,11 @@
       }
     },
     {
-      "id": "9cebf2ad-0210-41c0-b783-fa1c4051694a",
+      "id": "62e52242-49ba-4e7f-b14d-20373c50c4af",
       "name": "search",
       "item": [
         {
-          "id": "0fe5ef20-d292-4bc0-b051-459029f7b2f9",
+          "id": "a53e1458-4cd5-49c5-8029-900a342501f7",
           "name": "search/getAll",
           "request": {
             "name": "search/getAll",
@@ -109,7 +109,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -119,7 +119,7 @@
           },
           "response": [
             {
-              "id": "51f0884c-9732-4c46-a3e5-8f1d7790971e",
+              "id": "123e45e0-c5ac-4f60-acb2-2a71887f363e",
               "name": "综合检索结果",
               "originalRequest": {
                 "url": {
@@ -136,7 +136,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -163,7 +163,7 @@
           }
         },
         {
-          "id": "8bbad201-dd11-492e-9c82-ceb0515b5cb1",
+          "id": "3010dbda-1186-4ced-ba2a-359a41ca970a",
           "name": "search/getTags",
           "request": {
             "name": "search/getTags",
@@ -191,7 +191,7 @@
           },
           "response": [
             {
-              "id": "8e6cb1a0-8fc9-4d89-a42b-29e76426adde",
+              "id": "f07338aa-fa74-4add-8ac5-14d09e3f1bcb",
               "name": "标签列表",
               "originalRequest": {
                 "url": {
@@ -232,7 +232,7 @@
           }
         },
         {
-          "id": "071c6c39-c36d-49c5-9f19-eee52c83a946",
+          "id": "58ed7b6b-f4ff-494a-b84e-38bb992d7212",
           "name": "search/getCategories",
           "request": {
             "name": "search/getCategories",
@@ -260,7 +260,7 @@
           },
           "response": [
             {
-              "id": "8e8f9726-8f0f-4766-a841-34a57fb0b189",
+              "id": "0e77b9d7-4201-4411-bbfc-295104b671b7",
               "name": "分类列表",
               "originalRequest": {
                 "url": {
@@ -301,7 +301,7 @@
           }
         },
         {
-          "id": "3b858a9f-32ca-458b-be43-2e9de93bf363",
+          "id": "eacdc3b5-2295-4089-b852-551997cd11af",
           "name": "search/autoComplete",
           "request": {
             "name": "search/autoComplete",
@@ -329,7 +329,7 @@
           },
           "response": [
             {
-              "id": "8ef7b6d0-69ef-4fea-8984-3ec6963fd6b0",
+              "id": "a9603ef9-8ac9-4193-94c3-3f88eac64cb1",
               "name": "自动补全结果",
               "originalRequest": {
                 "url": {
@@ -370,7 +370,7 @@
           }
         },
         {
-          "id": "ca6e18ed-6759-4028-8fc0-796d7585595a",
+          "id": "95e7a246-c432-476e-a4d9-ab525cee315c",
           "name": "search/getArticleHistogram",
           "request": {
             "name": "search/getArticleHistogram",
@@ -396,7 +396,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -406,7 +406,7 @@
           },
           "response": [
             {
-              "id": "e876dadb-c1bf-4042-a77c-49225bd924ac",
+              "id": "f1393291-b6bb-4120-8fdb-16b132d6c5a2",
               "name": "文章趋势直方图",
               "originalRequest": {
                 "url": {
@@ -423,7 +423,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -450,7 +450,7 @@
           }
         },
         {
-          "id": "01ede779-c23a-42f4-b2ab-062ea08ce00e",
+          "id": "56539b51-9dfe-4257-bcff-260faf7e73b6",
           "name": "search/getWordsCloudByQueryBuilder",
           "request": {
             "name": "search/getWordsCloudByQueryBuilder",
@@ -476,7 +476,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -486,7 +486,7 @@
           },
           "response": [
             {
-              "id": "842fd4b4-ac5d-4f4f-9003-1b0622e2dafc",
+              "id": "c133b2af-48ff-417e-81da-4ffa1b49820a",
               "name": "词云结果",
               "originalRequest": {
                 "url": {
@@ -503,7 +503,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -530,7 +530,7 @@
           }
         },
         {
-          "id": "d6fbf538-ed84-4285-a184-ec47735e976d",
+          "id": "e1c73920-8903-4fb2-9346-c0075ef6dad5",
           "name": "search/getAuthorTermsAgg",
           "request": {
             "name": "search/getAuthorTermsAgg",
@@ -556,7 +556,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -566,7 +566,7 @@
           },
           "response": [
             {
-              "id": "a0c6a6b6-d151-487a-a1e1-0938e3733d4a",
+              "id": "42b6cf19-7d44-471e-bd52-d8dcf704ab94",
               "name": "作者词项聚合结果",
               "originalRequest": {
                 "url": {
@@ -583,7 +583,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -610,7 +610,7 @@
           }
         },
         {
-          "id": "22f7fd90-cfcf-4235-ad1a-759c47a648a7",
+          "id": "70778918-a13e-406e-b62b-d69f6d87641e",
           "name": "search/getTagsTermsAgg",
           "request": {
             "name": "search/getTagsTermsAgg",
@@ -636,7 +636,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -646,7 +646,7 @@
           },
           "response": [
             {
-              "id": "f875653f-bc47-4c17-807f-c72e9dee1f4e",
+              "id": "85b1e2e3-9c2c-47eb-babf-d4132c35cb87",
               "name": "标签词项聚合结果",
               "originalRequest": {
                 "url": {
@@ -663,7 +663,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -690,7 +690,7 @@
           }
         },
         {
-          "id": "71888fb6-b7ba-4f3b-8fa3-387581020588",
+          "id": "da25615c-1632-49f8-9646-b2d6fb42fd6f",
           "name": "search/getCatesTermsAgg",
           "request": {
             "name": "search/getCatesTermsAgg",
@@ -716,7 +716,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -726,7 +726,7 @@
           },
           "response": [
             {
-              "id": "41f13627-102e-4a66-92d7-61960dd2e8e8",
+              "id": "2ad0e2ab-10a4-4b68-a91b-b6b64c441823",
               "name": "分类词项聚合结果",
               "originalRequest": {
                 "url": {
@@ -743,7 +743,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -770,7 +770,7 @@
           }
         },
         {
-          "id": "c73e2317-877b-474a-b726-08d8c22d3936",
+          "id": "2ebaa473-6eca-4f10-9731-9e42885705b2",
           "name": "search/getWordsCloud",
           "request": {
             "name": "search/getWordsCloud",
@@ -798,7 +798,7 @@
           },
           "response": [
             {
-              "id": "da8a0a31-7597-4ca2-bb02-e4cb9c9d4079",
+              "id": "2c4e395f-0a65-4174-88cd-5af8be70e513",
               "name": "词云结果",
               "originalRequest": {
                 "url": {
@@ -839,7 +839,7 @@
           }
         },
         {
-          "id": "8bdd7e4d-0513-4769-a847-3bb443077a69",
+          "id": "6aa60287-6e22-4c6e-a3bc-a196508aa2eb",
           "name": "search/getHackerNews",
           "request": {
             "name": "search/getHackerNews",
@@ -865,7 +865,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -875,7 +875,7 @@
           },
           "response": [
             {
-              "id": "c93ba173-0039-46a1-960e-74d57ecbccf3",
+              "id": "596d44ae-3976-4f77-be34-4cfff279a78f",
               "name": "Hacker News 查询结果",
               "originalRequest": {
                 "url": {
@@ -892,7 +892,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -922,7 +922,7 @@
       "event": []
     },
     {
-      "id": "66c2d7fc-95ef-46ca-9d26-39897a6e8d74",
+      "id": "b0b938b3-3594-493f-9441-311a1b91ee10",
       "name": "author/getAuthors",
       "request": {
         "name": "author/getAuthors",
@@ -948,7 +948,7 @@
         "auth": null,
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"key_0\": false\n}",
+          "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -958,7 +958,7 @@
       },
       "response": [
         {
-          "id": "ac1e0d32-cabd-4fb9-8b72-e3ddfb869f12",
+          "id": "655dcbe7-942c-4da6-91d9-ed54e272564b",
           "name": "作者列表结果",
           "originalRequest": {
             "url": {
@@ -975,7 +975,7 @@
             "method": "POST",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+              "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1002,11 +1002,11 @@
       }
     },
     {
-      "id": "81fefe74-e9aa-4b9f-861c-d6729126180c",
+      "id": "d5dc3d99-846a-4a5e-b03f-cbf6e4f8a472",
       "name": "article",
       "item": [
         {
-          "id": "c350bba2-4314-4581-b1b1-1101c937551b",
+          "id": "c8e32ca9-fced-415d-82d5-8e0a8933af4d",
           "name": "article/getHistogram",
           "request": {
             "name": "article/getHistogram",
@@ -1042,7 +1042,7 @@
           },
           "response": [
             {
-              "id": "7fc80879-338d-4705-bede-ed4fa4689260",
+              "id": "b182f6ee-7bc0-4a62-b57c-9a16ded811e7",
               "name": "文章直方图结果",
               "originalRequest": {
                 "url": {
@@ -1086,7 +1086,7 @@
           }
         },
         {
-          "id": "b5aa031a-cf6e-4875-a60a-98c9d3752c21",
+          "id": "86c1ee1e-a445-4902-a802-b38f9551119e",
           "name": "article/getAuthorTermsAgg",
           "request": {
             "name": "article/getAuthorTermsAgg",
@@ -1112,7 +1112,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1122,7 +1122,7 @@
           },
           "response": [
             {
-              "id": "d35b4c57-6fa5-4cb0-a4cf-2389995c40c9",
+              "id": "57f4f22b-b911-4b3f-b661-2f1cfac083b7",
               "name": "作者聚合结果",
               "originalRequest": {
                 "url": {
@@ -1139,7 +1139,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1169,11 +1169,11 @@
       "event": []
     },
     {
-      "id": "0ae42670-ba4b-45b5-8e45-528432b5522e",
+      "id": "ba25c096-4d2d-4547-b6ac-131ba11b5515",
       "name": "graph",
       "item": [
         {
-          "id": "165bde79-79d8-421e-aa2c-ab746bec842b",
+          "id": "c06fe2d5-89e3-4802-9841-cef649285eab",
           "name": "graph/getTotalGraph",
           "request": {
             "name": "graph/getTotalGraph",
@@ -1194,7 +1194,7 @@
           },
           "response": [
             {
-              "id": "e5ea190e-f21b-404b-8509-39a1939c1fa6",
+              "id": "b093bc5b-5b23-4149-9f9e-8b0ca5fa4384",
               "name": "全量图谱数据",
               "originalRequest": {
                 "url": {
@@ -1230,7 +1230,7 @@
           }
         },
         {
-          "id": "d6952835-9c23-465b-a12a-bf3be75169d4",
+          "id": "ac1be5b5-438e-4359-8a92-970d49617fcd",
           "name": "graph/getLastDayData",
           "request": {
             "name": "graph/getLastDayData",
@@ -1251,7 +1251,7 @@
           },
           "response": [
             {
-              "id": "7d9b02ab-1197-4afa-855b-a72735b1d5b5",
+              "id": "9b3fd89c-465d-4120-9e01-21b6bb0f19b9",
               "name": "最近一天图谱数据",
               "originalRequest": {
                 "url": {
@@ -1287,7 +1287,7 @@
           }
         },
         {
-          "id": "acc87cc3-c23d-48da-9b93-4e3262435942",
+          "id": "29f0fc5f-0567-49a1-9e95-e66105fb51dc",
           "name": "graph/getTagsAgg",
           "request": {
             "name": "graph/getTagsAgg",
@@ -1313,7 +1313,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1323,7 +1323,7 @@
           },
           "response": [
             {
-              "id": "d1747c97-341c-4310-950e-f8848e418d86",
+              "id": "4d4daf0d-7b94-4537-9dad-252b3bfef10e",
               "name": "标签聚合结果",
               "originalRequest": {
                 "url": {
@@ -1340,7 +1340,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1367,7 +1367,7 @@
           }
         },
         {
-          "id": "abd15412-8eea-484a-bd02-81626bd0bf51",
+          "id": "0b2ef659-85ce-47ec-b7ba-c51f8ba2029b",
           "name": "graph/dailyMd",
           "request": {
             "name": "graph/dailyMd",
@@ -1388,7 +1388,7 @@
           },
           "response": [
             {
-              "id": "34d8453f-0a50-47b6-a602-56c911a4365a",
+              "id": "76bbbd61-c7ff-44a6-9641-d16540b9ac52",
               "name": "日报 Markdown 文本",
               "originalRequest": {
                 "url": {
@@ -1424,7 +1424,7 @@
           }
         },
         {
-          "id": "972a9293-f4d8-48b3-827a-9dc0b93c6644",
+          "id": "b925c384-379e-4002-b40c-73ee2fff17ef",
           "name": "graph/dailyKr",
           "request": {
             "name": "graph/dailyKr",
@@ -1445,7 +1445,7 @@
           },
           "response": [
             {
-              "id": "06155c6d-93fa-4785-823d-27294e147ca5",
+              "id": "6b622fc2-c7b4-4cab-a012-9ce2ff0a354b",
               "name": "36Kr 日报数据",
               "originalRequest": {
                 "url": {
@@ -1481,7 +1481,7 @@
           }
         },
         {
-          "id": "90f602ad-36c6-4055-b48e-727d4a66e493",
+          "id": "56777929-187a-4344-95cd-f6f6bf3149bd",
           "name": "graph/dailyGitHub",
           "request": {
             "name": "graph/dailyGitHub",
@@ -1509,7 +1509,7 @@
           },
           "response": [
             {
-              "id": "a0568739-7597-4bd5-ab0d-01990af74731",
+              "id": "a3becdd1-5704-4106-863e-5c54378a2368",
               "name": "GitHub 日报数据",
               "originalRequest": {
                 "url": {
@@ -1553,11 +1553,81 @@
       "event": []
     },
     {
-      "id": "9ba1e810-582b-4021-bba9-4b51fd2915cd",
+      "id": "23a61806-7684-4d74-87e1-ad8a4ae5581f",
+      "name": "cron/hacknews/ai-daily-report",
+      "request": {
+        "name": "cron/hacknews/ai-daily-report",
+        "description": {},
+        "url": {
+          "path": [
+            "cron",
+            "hacknews",
+            "ai-daily-report"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [
+            {
+              "disabled": false,
+              "key": "date",
+              "value": "<string>",
+              "description": "日期，格式 YYYY-MM-DD，默认今天"
+            }
+          ],
+          "variable": []
+        },
+        "method": "GET",
+        "auth": null
+      },
+      "response": [
+        {
+          "id": "d939057f-a266-41f3-8dbf-9f6c88194ae8",
+          "originalRequest": {
+            "url": {
+              "path": [
+                "cron",
+                "hacknews",
+                "ai-daily-report"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "<string>"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "body": {}
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "body": "",
+          "cookie": [],
+          "_postman_previewlanguage": "text"
+        }
+      ],
+      "event": [],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      }
+    },
+    {
+      "id": "81afd8e1-8f88-4975-b93e-99cc3e699f4a",
       "name": "feishu/event",
       "item": [
         {
-          "id": "d52fa755-7821-4672-b9a1-e6cea19c719d",
+          "id": "00ca2d21-889f-4bb6-871d-aa128249d7ac",
           "name": "feishu/event/openai",
           "request": {
             "name": "feishu/event/openai",
@@ -1584,7 +1654,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1594,7 +1664,7 @@
           },
           "response": [
             {
-              "id": "82feb1d4-c237-401a-9eea-7ddba95bb25e",
+              "id": "5f5f26a5-731c-45e1-b4cc-53c42447110e",
               "name": "处理成功返回 true",
               "originalRequest": {
                 "url": {
@@ -1612,7 +1682,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1639,7 +1709,7 @@
           }
         },
         {
-          "id": "3bf33503-6eb7-46aa-bcb8-326e88dd1097",
+          "id": "9205b034-24b1-4f6a-8100-243b51f7f414",
           "name": "feishu/event/gemini",
           "request": {
             "name": "feishu/event/gemini",
@@ -1666,7 +1736,7 @@
             "auth": null,
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": false\n}",
+              "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1676,7 +1746,7 @@
           },
           "response": [
             {
-              "id": "fe01eafe-fe9f-4934-bc7d-efbcdbf65826",
+              "id": "db59a21c-6176-4104-9c3d-6151b59a9d0b",
               "name": "处理成功返回 true",
               "originalRequest": {
                 "url": {
@@ -1694,7 +1764,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+                  "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1724,11 +1794,11 @@
       "event": []
     },
     {
-      "id": "553ef177-4421-46a2-869c-af08e1de58f3",
+      "id": "a2fc4942-213c-4e2b-8956-d459ca8c036f",
       "name": "ai",
       "item": [
         {
-          "id": "3254b533-5d66-49a5-827e-91780d818d68",
+          "id": "68348813-c80a-4ba7-91f3-5f65a08eafca",
           "name": "ai/openai",
           "request": {
             "name": "ai/openai",
@@ -1764,7 +1834,7 @@
           },
           "response": [
             {
-              "id": "2748a36e-00b3-429a-9a61-4187fb1567a4",
+              "id": "d2bfb06a-4d5d-4de9-8832-b51de98ec472",
               "name": "OpenAI 返回结果",
               "originalRequest": {
                 "url": {
@@ -1808,7 +1878,7 @@
           }
         },
         {
-          "id": "85b5ed1b-efd2-495c-b4f5-c732d832f628",
+          "id": "a326b5c4-87a2-4ec5-85d0-f13b2071f9d9",
           "name": "ai/deepseek",
           "request": {
             "name": "ai/deepseek",
@@ -1829,7 +1899,7 @@
           },
           "response": [
             {
-              "id": "b2959dcb-a3b1-4951-87a0-751f16b47953",
+              "id": "931bd63d-6ae9-4ebd-9c23-28fee4758330",
               "name": "DeepSeek 返回结果",
               "originalRequest": {
                 "url": {
@@ -1865,7 +1935,7 @@
           }
         },
         {
-          "id": "a61173c5-1d82-42c9-84a8-fcdbe85d57b1",
+          "id": "a618e4f0-0ac8-4a72-9f32-7d8af4d528e3",
           "name": "ai/gemini",
           "request": {
             "name": "ai/gemini",
@@ -1901,7 +1971,7 @@
           },
           "response": [
             {
-              "id": "8f891e21-24b7-4de0-98dd-eecae868b240",
+              "id": "83dd3d19-7789-4395-8327-c52652e54660",
               "name": "Gemini 返回结果",
               "originalRequest": {
                 "url": {
@@ -1948,7 +2018,7 @@
       "event": []
     },
     {
-      "id": "d329e228-0c55-49c5-99b5-9e29e781897b",
+      "id": "98373781-9ea9-4566-bffe-f8df487cef33",
       "name": "data/getGdpData",
       "request": {
         "name": "data/getGdpData",
@@ -1974,7 +2044,7 @@
         "auth": null,
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"key_0\": false\n}",
+          "raw": "{\n  \"key_0\": 7522.093129001086,\n  \"key_1\": false\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -1984,7 +2054,7 @@
       },
       "response": [
         {
-          "id": "b68b7110-5f57-4ef2-8114-153d7ceed3fc",
+          "id": "7ce8bb07-42a5-40d5-8344-347297a18b24",
           "name": "GDP 数据列表",
           "originalRequest": {
             "url": {
@@ -2001,7 +2071,7 @@
             "method": "POST",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key_0\": \"string\",\n  \"key_1\": \"string\",\n  \"key_2\": false\n}",
+              "raw": "{\n  \"key_0\": 9456.40778678413,\n  \"key_1\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2028,11 +2098,11 @@
       }
     },
     {
-      "id": "f44c8c74-21c3-4957-bd46-eff720fd565a",
+      "id": "544aeaf2-3e2e-4222-99f9-c47397b86752",
       "name": "bili",
       "item": [
         {
-          "id": "6c8f44b8-40f2-4757-af79-03d210d461fc",
+          "id": "d9314514-5887-4d69-a60e-3438633ab1f1",
           "name": "bili/getUps",
           "request": {
             "name": "bili/getUps",
@@ -2068,7 +2138,7 @@
           },
           "response": [
             {
-              "id": "41948518-4ebe-442d-8e0d-396ff0b258b5",
+              "id": "a091bca6-b20c-4d32-9abb-7180c46b43e6",
               "name": "UP 主分页数据",
               "originalRequest": {
                 "url": {
@@ -2112,7 +2182,7 @@
           }
         },
         {
-          "id": "16d367c4-5550-4823-9fa1-3afbe0c91e37",
+          "id": "6c0be257-c518-4fc3-a32c-900562f17807",
           "name": "bili/getUpVideos",
           "request": {
             "name": "bili/getUpVideos",
@@ -2148,7 +2218,7 @@
           },
           "response": [
             {
-              "id": "cf38db12-2628-4120-9503-2aa021fde3ef",
+              "id": "687e96db-93aa-411d-b072-962ccdd118bc",
               "name": "UP 主视频分页数据",
               "originalRequest": {
                 "url": {
@@ -2192,7 +2262,7 @@
           }
         },
         {
-          "id": "7f1ad0e8-7d22-4392-adfa-9e08ffc45d10",
+          "id": "f8446463-5b68-4e58-9830-67fab9c46c75",
           "name": "bili/getUpAnalysis",
           "request": {
             "name": "bili/getUpAnalysis",
@@ -2228,7 +2298,7 @@
           },
           "response": [
             {
-              "id": "ab8b33ad-684f-42b2-aa38-b73c4727372f",
+              "id": "4ea1cf72-75c9-4638-a69d-93e50635ed43",
               "name": "UP 主分析结果",
               "originalRequest": {
                 "url": {
@@ -2284,7 +2354,7 @@
     }
   ],
   "info": {
-    "_postman_id": "26f1d514-f0a4-4c84-b8af-c97c6abe15e1",
+    "_postman_id": "6900010e-b5c9-40a2-acd6-1376b70f8737",
     "name": "Bean Engine API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

@@ -1,6 +1,6 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { DailyReportService } from 'src/service/dailyReport.service';
 import { HackerNewsService } from 'src/service/hackerNews.service';
 import { RssService } from 'src/service/rss/rss.service';
@@ -15,6 +15,17 @@ export class CronController {
     private readonly rssService: RssService,
     private readonly hackerNewsService: HackerNewsService,
   ) {}
+  @Get('hacknews/ai-daily-report')
+  @ApiOperation({ summary: '查询当天 HackerNews AI 新闻并生成日报' })
+  @ApiQuery({
+    name: 'date',
+    required: false,
+    description: '日期，格式 YYYY-MM-DD，默认今天',
+  })
+  async getAiDailyReport(@Query('date') date?: string) {
+    return this.hackerNewsService.generateAiDailyReport(date);
+  }
+
   @Cron(CronExpression.EVERY_DAY_AT_7AM)
   async dayCron() {
     if (process.env.NODE_ENV === 'location') return;

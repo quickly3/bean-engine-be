@@ -8,6 +8,8 @@ import { SystemMessage } from '@langchain/core/messages';
 import { ChatDeepSeek } from '@langchain/deepseek';
 import { CAT_TITLES_PROMPT } from 'src/prompts/cat-titles.prompt';
 import { TRANSLATE_TITLES_PROMPT } from 'src/prompts/translate-titles.prompt';
+import { AI_DAILY_REPORT_PROMPT } from 'src/prompts/ai-daily-report.prompt';
+import { HACKNEWS_CATEGORY } from 'src/enum/enum';
 
 export enum recordStatus {
   PENDING = 'pending',
@@ -391,6 +393,76 @@ export class HackerNewsService {
 
     const titles_cn = JSON.parse(respContent);
     return titles_cn;
+  }
+
+  async getAiNewsByDate(date?: string) {
+    const targetDate = date
+      ? moment(date, 'YYYY-MM-DD')
+      : moment().startOf('day');
+
+    const news = await this.prismaService.hackNews.findMany({
+      where: {
+        createdAt: {
+          gte: targetDate.startOf('day').toDate(),
+          lte: targetDate.endOf('day').toDate(),
+        },
+        category: HACKNEWS_CATEGORY.AI_APPLICATION,
+        title_cn: { not: null },
+        url: { not: null },
+      },
+      orderBy: { score: 'desc' },
+      take: 50,
+    });
+
+    return news;
+  }
+
+  async generateAiDailyReport(date?: string) {
+    const news = await this.getAiNewsByDate(date);
+
+    if (news.length === 0) {
+      return {
+        date: date || moment().format('YYYY-MM-DD'),
+        total: 0,
+        summary: '当天暂无 AI 相关新闻',
+        categories: [],
+        highlights: [],
+        news: [],
+      };
+    }
+
+    const input = news.map((n) => ({ title_cn: n.title_cn, url: n.url }));
+    const prompt = `${AI_DAILY_REPORT_PROMPT}${JSON.stringify(input)}`;
+    const messages = [new SystemMessage(prompt)];
+
+    const model = new ChatDeepSeek({
+      apiKey: this.configService.get('deepseek.DS_KEY'),
+      model: 'deepseek-chat',
+    });
+
+    const resp = await model.invoke(messages);
+
+    let respContent: string;
+    if (typeof resp.content === 'string') {
+      respContent = resp.content;
+    } else if (Array.isArray(resp.content)) {
+      respContent = resp.content
+        .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
+        .join('\n');
+    } else {
+      respContent = '';
+    }
+
+    // Strip markdown code fences if present
+    const cleaned = respContent.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    const report = JSON.parse(cleaned);
+
+    return {
+      date: date || moment().format('YYYY-MM-DD'),
+      total: news.length,
+      ...report,
+      news,
+    };
   }
 
   async syncEs() {
