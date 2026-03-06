@@ -53,4 +53,4 @@ script/py/**/*.ncm
 /generated/prisma
 package-lock.json
 yarn.lock
-.postman/**/*
+/.postman
