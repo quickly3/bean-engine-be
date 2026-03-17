@@ -1,5 +1,3 @@
-import { Command, Positional } from 'nestjs-command';
-import { Injectable } from '@nestjs/common';
 import { PromptsService } from 'src/service/ai/prompts.service';
 import { FeishuRobot } from 'src/service/feishu/feishuRobot';
 import { DailyReportService } from 'src/service/dailyReport.service';
@@ -11,13 +9,17 @@ import { HackerNewsService } from 'src/service/hackerNews.service';
 import BilibiliCrawler from 'src/service/spider/crawlers/bilibili.crawler';
 import BilibiliUserCrawler from 'src/service/spider/crawlers/bilibiliUser.crawler';
 import { SearchService } from 'src/service/search.service';
+import { Command, CommandRunner, Option } from 'nest-commander';
 
-// import { saveJsonFileToCsv } from 'src/utils/file';
 import { BiliService } from 'src/service/bili/bili.service';
 import { exit } from 'process';
 
-@Injectable()
-export class AiCommand {
+@Command({
+  name: 'ai',
+  description:
+    'AI 相关命令入口。使用 `npm run cli -- ai --help` 查看帮助，使用 `npm run cli -- ai -c <command>` 执行具体子命令。',
+})
+export class AiCommand extends CommandRunner {
   feishu: FeishuRobot;
   constructor(
     private readonly promptsService: PromptsService,
@@ -27,18 +29,135 @@ export class AiCommand {
     private readonly searchService: SearchService,
     private readonly biliService: BiliService,
   ) {
+    super();
     this.feishu = new FeishuRobot(this.configService);
   }
-  @Command({
-    command: 'ai:prompts-cn',
+
+  async run(passedParam: string[], options?: any): Promise<void> {
+    if (!options?.command) {
+      this.printRuntimeGuide();
+      return;
+    }
+
+    switch (options.command) {
+      case 'syncPromptCn':
+        await this.syncPromptCn();
+        break;
+      case 'gpt':
+        await this.gpt();
+        break;
+      case 'gemini':
+        await this.gemini();
+        break;
+      case 'info':
+        await this.info();
+        break;
+      case 'getTopStories':
+        await this.getTopStories();
+        break;
+      case 'transRecords':
+        await this.transRecords();
+        break;
+      case 'cateRecords':
+        await this.cateRecords();
+        break;
+      case 'syncEs':
+        await this.syncEs();
+        break;
+      case 'fetchBilibiliHome':
+        await this.fetchBilibiliHome();
+        break;
+      case 'BilibiliUserCrawler':
+        await this.BilibiliUserCrawler();
+        break;
+      case 'dailyMd':
+        await this.dailyMd();
+        break;
+      case 'upsTitles':
+        await this.upsTitles();
+        break;
+      case 'anaUps':
+        await this.anaUps(options);
+        break;
+      case 'getUpsContents':
+        await this.getUpsContents();
+        break;
+      case 'genFollowings':
+        await this.genFollowings();
+        break;
+      case 'biliLogin':
+        await this.biliLogin();
+        break;
+      case 'videoPage':
+        await this.videoPage();
+        break;
+      case 'upVideoPages':
+        await this.upVideoPages();
+        break;
+      default:
+        console.log(`未找到子命令: ${options.command}`);
+        this.printRuntimeGuide();
+        break;
+    }
+  }
+
+  @Option({
+    flags: '-c, --command [command]',
+    description:
+      '要执行的子命令，例如 syncPromptCn、gpt、gemini、getTopStories、anaUps',
   })
+  getSubCommand(val: string): string {
+    return val;
+  }
+
+  private printRuntimeGuide() {
+    console.log('AiCommand 运行说明:');
+    console.log('for linux npm run cli ai -- -c <command> [--mid <mid>]');
+    console.log('for windows  npm run cli -- ai -- -c <command> [--mid <mid>]');
+    console.log('');
+    console.log('可用子命令:');
+
+    for (const item of this.getCommandDescriptions()) {
+      console.log(`  ${item.name.padEnd(20, ' ')}${item.description}`);
+    }
+
+    console.log('');
+    console.log('示例:');
+    console.log('  npm run cli ai -- -c gpt');
+    console.log('  npm run cli ai -- -c getTopStories');
+    console.log('  npm run cli ai -- -c anaUps --mid 23947287');
+  }
+
+  private getCommandDescriptions() {
+    return [
+      { name: 'syncPromptCn', description: '同步中文提示词' },
+      { name: 'gpt', description: '调用 OpenAI 测试翻译能力' },
+      { name: 'gemini', description: '调用 Gemini 进行简单对话测试' },
+      { name: 'info', description: '生成并发送日报到飞书' },
+      { name: 'getTopStories', description: '抓取 Hacker News 热门内容' },
+      { name: 'transRecords', description: '翻译 Hacker News 记录' },
+      { name: 'cateRecords', description: '为 Hacker News 记录分类' },
+      { name: 'syncEs', description: '将数据同步到 Elasticsearch' },
+      { name: 'fetchBilibiliHome', description: '抓取 Bilibili 首页' },
+      {
+        name: 'BilibiliUserCrawler',
+        description: '抓取指定 Bilibili 用户信息',
+      },
+      { name: 'dailyMd', description: '生成日报 Markdown 内容' },
+      { name: 'upsTitles', description: '生成关注 UP 主标题列表' },
+      { name: 'anaUps', description: '分析指定 UP 主，需配合 --mid 使用' },
+      { name: 'getUpsContents', description: '拉取默认 UP 主内容' },
+      { name: 'genFollowings', description: '生成当前关注列表' },
+      { name: 'biliLogin', description: '执行 Bilibili 登录流程' },
+      { name: 'videoPage', description: '抓取默认视频页面信息' },
+      { name: 'upVideoPages', description: '抓取默认 UP 主视频列表页' },
+    ];
+  }
+
   async syncPromptCn() {
     await this.promptsService.syncPromptCn();
   }
 
-  @Command({
-    command: 'gpt',
-  })
   async gpt() {
     const aiTools = new OpenAi(this.configService);
 
@@ -54,66 +173,40 @@ export class AiCommand {
     console.log(resp.content);
   }
 
-  @Command({
-    command: 'info',
-  })
   async info() {
-    // const resp = await this.feishu.sendToBean('holle');
-    // await this.dailyReportService.sendToFs('bean');
     await this.dailyReportService.sendToFs('bean');
   }
 
-  @Command({
-    command: 'gemini',
-  })
   async gemini() {
     const messages = '你是谁？';
     const genAi = new GeminiAi(this.configService);
     await genAi.simpleCompl(messages);
   }
 
-  @Command({
-    command: 'getTopStories',
-  })
   async getTopStories() {
     await this.hackerNewsService.getNewStories2();
   }
 
-  @Command({
-    command: 'transRecords',
-  })
   async transRecords() {
     await this.hackerNewsService.transRecords();
     exit(0);
   }
 
-  @Command({
-    command: 'cateRecords',
-  })
   async cateRecords() {
     await this.hackerNewsService.cateRecords();
     exit(0);
   }
 
-  @Command({
-    command: 'sync es',
-  })
   async syncEs() {
     await this.hackerNewsService.syncEs();
   }
 
-  @Command({
-    command: 'fetchBilibiliHome',
-  })
   async fetchBilibiliHome() {
     const bilibiliCrawler = new BilibiliCrawler();
     await bilibiliCrawler.launchBrowser();
     await bilibiliCrawler.fetchBilibiliHome();
   }
 
-  @Command({
-    command: 'BilibiliUserCrawler',
-  })
   async BilibiliUserCrawler() {
     const bilibiliUserCrawler = new BilibiliUserCrawler();
     await bilibiliUserCrawler.launchBrowser();
@@ -126,9 +219,6 @@ export class AiCommand {
   // 4.markdown 内容以“## {当前文件名(不要后缀)}”为标题开头
   // 5.保存为同目录下{当前文件名}.md 文件
 
-  @Command({
-    command: 'dailyMd',
-  })
   async dailyMd() {
     // const list = await this.searchService.dailyMd();
     // const content = list.data
@@ -157,64 +247,37 @@ export class AiCommand {
     // return resp.content;
   }
 
-  @Command({
-    command: 'bili:genUpsTitles',
-  })
   async upsTitles() {
     await this.biliService.genUpsTitles();
     exit(0);
   }
 
-  @Command({
-    command: 'bili:analyzeUp <mid>',
-  })
-  async anaUps(
-    @Positional({
-      name: 'mid',
-      describe: 'container mid',
-      type: 'number',
-    })
-    mid: number,
-  ) {
+  async anaUps(options) {
+    const mid = options.mid;
     await this.biliService.analyzeUp(mid);
     exit(0);
   }
 
-  @Command({
-    command: 'bili:getUpContents',
-  })
   async getUpsContents() {
     const mid = 23947287;
     await this.biliService.getUpsContents(mid);
     exit(0);
   }
 
-  @Command({
-    command: 'bili:genFollowings',
-  })
   async genFollowings() {
     await this.biliService.genFollowings();
     exit(0);
   }
 
-  @Command({
-    command: 'bili:login',
-  })
   async biliLogin() {
     await this.biliService.login();
   }
 
-  @Command({
-    command: 'bili:videoPage',
-  })
   async videoPage() {
     const bvid = 'BV1L11vBBEsW';
     await this.biliService.videoPage(bvid);
   }
 
-  @Command({
-    command: 'bili:upVideoPages',
-  })
   async upVideoPages() {
     const mid = 23947287;
     await this.biliService.upVideoPages(mid);
