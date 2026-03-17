@@ -64,7 +64,7 @@ export class SpiderCommand {
   })
   async list_oc() {
     const url = 'https://www.oschina.net/project/lang/467/kotlin';
-    const resp = await this.spiderService.list_oc(url);
+    await this.spiderService.list_oc(url);
   }
 
   @Command({

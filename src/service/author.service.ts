@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ES_INDEX } from 'src/enum/enum';
-import { EsQueryBuilder } from 'src/utils/EsQueryBuilder';
+import {
+  EsQueryBuilder,
+  getEsResponseValue,
+} from 'src/utils/EsQueryBuilder';
 import * as _ from 'lodash';
 import { parseAuthorQueryString } from './utils';
 
@@ -124,7 +127,11 @@ export class AuthorService {
     };
     queryBuilder.setQueryBody(body);
     const resp = await queryBuilder.rawSearch();
-    const buckets = _.get(resp, 'body.aggregations.author_terms.buckets');
+    const buckets = getEsResponseValue(
+      resp,
+      'aggregations.author_terms.buckets',
+      [],
+    );
 
     const items = {};
 
@@ -177,7 +184,11 @@ export class AuthorService {
 
     queryBuilder.setQueryBody(body);
     const resp = await queryBuilder.rawSearch();
-    const buckets = _.get(resp, 'body.aggregations.author_terms.buckets');
+    const buckets = getEsResponseValue(
+      resp,
+      'aggregations.author_terms.buckets',
+      [],
+    );
 
     const items = {};
 

@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
 import * as _ from 'lodash';
-import { ES_INDEX } from 'src/enum/enum';
-import { EsQueryBuilder } from 'src/utils/EsQueryBuilder';
+import { ES_INDEX, HACKNEWS_CATEGORY } from 'src/enum/enum';
+import { EsQueryBuilder, getEsResponseValue } from 'src/utils/EsQueryBuilder';
 import { parseQueryString } from './utils';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import moment from 'moment';
 import { execSync } from 'child_process';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { HackerNewsService } from './hackerNews.service';
 
 @Injectable()
 export class SearchService {
   constructor(
     private readonly elasticsearchService: ElasticsearchService,
     private readonly prismaService: PrismaService,
+    private readonly hackerNewsService: HackerNewsService,
   ) {}
   async getAll(payload) {
     const queryBuilder = new EsQueryBuilder(
@@ -115,6 +117,7 @@ export class SearchService {
     queryBuilder.setOrderBy(orders);
 
     const resp = await queryBuilder.search();
+    console.log('resp', resp);
 
     const { data } = resp;
     if (data.length > 0) {
@@ -171,7 +174,7 @@ export class SearchService {
     queryBuilder.setQueryBody(body);
 
     const resp = await queryBuilder.aggs();
-    const tags = _.get(resp, 'body.aggregations.tags.buckets');
+    const tags = getEsResponseValue(resp, 'aggregations.tags.buckets', []);
     return tags;
   }
 
@@ -205,7 +208,11 @@ export class SearchService {
     queryBuilder.setQueryBody(body);
 
     const resp = await queryBuilder.aggs();
-    const categories = _.get(resp, 'body.aggregations.categories.buckets');
+    const categories = getEsResponseValue(
+      resp,
+      'aggregations.categories.buckets',
+      [],
+    );
     return categories;
   }
 
@@ -290,41 +297,51 @@ export class SearchService {
   }
 
   async dailyMd() {
-    const yesterday = moment().add('-1', 'days').format('YYYY-MM-DD');
-    const today = moment().format('YYYY-MM-DD');
+    // const yesterday = moment().add('-1', 'days').format('YYYY-MM-DD');
+    const today = moment().format('YYYYMMDD');
 
-    const escn = await this.getLastDayArticleByQuery('source:escn');
-    const juejin = await this.getLastDayArticleByQuery(
-      'source:juejin && tag:news',
-    );
-    const infoq = await this.getLastDayArticleByQuery('source:infoq');
-    const oschina = await this.getLastDayArticleByQuery(
-      'source:oschina && tag:news',
-    );
+    // const escn = await this.getLastDayArticleByQuery('source:escn');
+    // const juejin = await this.getLastDayArticleByQuery(
+    //   'source:juejin && tag:news',
+    // );
+    // const infoq = await this.getLastDayArticleByQuery('source:infoq');
+    // const oschina = await this.getLastDayArticleByQuery(
+    //   'source:oschina && tag:news',
+    // );
     // const cnblogs = await this.getLastDayArticleByQuery(
     //   'source:cnblogs && tag:news',
     // );
 
-    const tai = await this.getLastDayArticleByQuery(
-      'source:tai && tag:news',
-      50,
-    );
+    // const tai = await this.getLastDayArticleByQuery(
+    //   'source:tai && tag:news',
+    //   50,
+    // );
 
-    const krs = await this.getLastDayArticleByQuery('source:36kr', 50);
+    // const krs = await this.getLastDayArticleByQuery('source:36kr', 50);
 
-    const escn0 = _.get(escn, '[0].summary', '');
-    const escn_title = escn0.replace(`(${yesterday})`, '');
     const resp = {
-      title: `互联网摸鱼日报(${today})`,
-      data: [
-        { title: '钛媒体', data: tai },
-        { title: '36氪新闻', data: krs },
-        { title: '开源中国资讯', data: oschina },
-        { title: '掘金资讯', data: juejin },
-        { title: escn_title, data: escn },
-        { title: 'InfoQ 热门话题', data: infoq },
-      ],
+      title: `𝗛𝗔𝗖𝗞𝗘𝗥 𝗡𝗘𝗪𝗦 | ${today}`,
+      data: [],
     };
+
+    const cates = [
+      HACKNEWS_CATEGORY.AI_APPLICATION,
+      // HACKNEWS_CATEGORY.OPEN_SOURCE_COMMUNITY,
+      // HACKNEWS_CATEGORY.DEV_TOOLS_ECOSYSTEM,
+      // HACKNEWS_CATEGORY.BACKEND_DATABASE_DATA_ENGINEERING,
+      // HACKNEWS_CATEGORY.SECURITY_VULNERABILITY_PRIVACY,
+      // HACKNEWS_CATEGORY.PRODUCT_COMPANY_BUSINESS,
+    ];
+
+    for (const cate of cates) {
+      const hns = await this.hackerNewsService.getHackNewsContentDaily(cate);
+      if (hns.length > 0) {
+        resp.data.push({
+          title: ` ${cate}`,
+          data: hns,
+        });
+      }
+    }
 
     return resp;
   }
@@ -484,7 +501,7 @@ export class SearchService {
     const del_ids: any[] = [];
     const lastDay = moment().subtract(1, 'days').format('YYYY-MM-DD');
 
-    const params = {
+    const params: any = {
       index: 'article',
       scroll: '30s', // how long between scroll requests. should be small!
       size: 100,
@@ -500,8 +517,8 @@ export class SearchService {
 
     const response = await this.elasticsearchService.search(params);
 
-    let hits: any[] = _.get(response, 'body.hits.hits');
-    let scroll_id = _.get(response, 'body._scroll_id');
+    let hits: any[] = getEsResponseValue(response, 'hits.hits', []);
+    let scroll_id = getEsResponseValue(response, '_scroll_id');
 
     while (hits && hits.length > 0) {
       for (const value of hits) {
@@ -523,8 +540,8 @@ export class SearchService {
         scroll: '30s',
       });
 
-      hits = _.get(response, 'body.hits.hits');
-      scroll_id = _.get(response, 'body._scroll_id');
+      hits = getEsResponseValue(response, 'hits.hits', []);
+      scroll_id = getEsResponseValue(response, '_scroll_id');
     }
 
     const count = Object.keys(del_ids).length;
@@ -535,7 +552,7 @@ export class SearchService {
       current++;
       if (ids.length > 0) {
         const _id = ids[0];
-        const p = {
+        const p: any = {
           index: 'article',
           body: {
             query: {
@@ -592,7 +609,7 @@ export class SearchService {
       query_string = `source:${source} && -source:chatgpt`;
     }
 
-    const params = {
+    const params: any = {
       index: 'article',
       scroll: '30s', // how long between scroll requests. should be small!
       size: 100,
@@ -608,8 +625,8 @@ export class SearchService {
 
     const response = await this.elasticsearchService.search(params);
 
-    let hits: any[] = _.get(response, 'body.hits.hits');
-    let scroll_id = _.get(response, 'body._scroll_id');
+    let hits: any[] = getEsResponseValue(response, 'hits.hits', []);
+    let scroll_id = getEsResponseValue(response, '_scroll_id');
 
     while (hits && hits.length > 0) {
       for (const value of hits) {
@@ -631,8 +648,8 @@ export class SearchService {
         scroll: '30s',
       });
 
-      hits = _.get(response, 'body.hits.hits');
-      scroll_id = _.get(response, 'body._scroll_id');
+      hits = getEsResponseValue(response, 'hits.hits', []);
+      scroll_id = getEsResponseValue(response, '_scroll_id');
     }
 
     const count = Object.keys(del_ids).length;
@@ -643,7 +660,7 @@ export class SearchService {
       current++;
       if (ids.length > 0) {
         const _id = ids[0];
-        const p = {
+        const p: any = {
           index: 'article',
           body: {
             query: {

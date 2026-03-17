@@ -6,6 +6,7 @@ import { SearchService } from './search.service';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { HACKNEWS_CATEGORY } from 'src/enum/enum';
+import { HackerNewsService } from './hackerNews.service';
 
 @Injectable()
 export class DailyReportService {
@@ -14,6 +15,7 @@ export class DailyReportService {
     private readonly searchService: SearchService,
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
+    private readonly hackerNewsService: HackerNewsService,
   ) {
     this.feishu = new FeishuRobot(this.configService);
   }
@@ -48,33 +50,6 @@ export class DailyReportService {
     }
   }
 
-  async getHackNewsContent(category) {
-    const news = await this.prisma.hackNews.findMany({
-      where: {
-        createdAt: {
-          gte: moment().subtract(1, 'day').startOf('day').toDate(),
-        },
-        category,
-        level: {
-          in: [4, 5],
-        },
-        url: {
-          not: null,
-        },
-        subTitle: null,
-      },
-      take: 50,
-    });
-
-    const content = this.hackNewsToFeishuFormat([
-      {
-        title: category,
-        data: news,
-      },
-    ]);
-    return content;
-  }
-
   async sendToFs(toGroup = 'bean') {
     await this.feishu.set_app_access_token();
 
@@ -86,7 +61,7 @@ export class DailyReportService {
     ];
 
     for (const cate of cates) {
-      const content = await this.getHackNewsContent(cate);
+      const content = await this.hackerNewsService.getHackNewsContent(cate);
       if (toGroup === 'bean') {
         await this.feishu.sendToBeanPost(content);
       }

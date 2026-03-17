@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from '../controller/app.controller';
-import { LangGraohService } from '../service/LangGraohService';
 import { AppService } from '../service/app.service';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -14,7 +13,6 @@ import { ArticleController } from 'src/controller/article.controller';
 import { GraphController } from 'src/controller/graph.controller';
 import { GraphService } from 'src/service/graph.service';
 import { CommandModule } from 'nestjs-command';
-import { EsCommand } from 'src/commands/es.command';
 import { SyncService } from 'src/service/sync.sevice';
 import { PromptsService } from 'src/service/ai/prompts.service';
 import { AiCommand } from 'src/commands/ai.command';
@@ -79,7 +77,6 @@ import { BiliController } from 'src/controller/bili.controller';
     AuthorService,
     ArticleService,
     GraphService,
-    EsCommand,
     AiCommand,
     RssCommand,
     SpiderCommand,
@@ -88,7 +85,6 @@ import { BiliController } from 'src/controller/bili.controller';
     PromptsService,
     DailyReportService,
     HackerNewsService,
-    LangGraohService,
     SpiderService,
     RssService,
     GitService,

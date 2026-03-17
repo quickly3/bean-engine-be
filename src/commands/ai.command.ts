@@ -12,7 +12,7 @@ import BilibiliCrawler from 'src/service/spider/crawlers/bilibili.crawler';
 import BilibiliUserCrawler from 'src/service/spider/crawlers/bilibiliUser.crawler';
 import { SearchService } from 'src/service/search.service';
 
-import { saveJsonFileToCsv } from 'src/utils/file';
+// import { saveJsonFileToCsv } from 'src/utils/file';
 import { BiliService } from 'src/service/bili/bili.service';
 import { exit } from 'process';
 
@@ -130,33 +130,27 @@ export class AiCommand {
     command: 'dailyMd',
   })
   async dailyMd() {
-    const list = await this.searchService.dailyMd();
-
-    const content = list.data
-      .map((i) => i.data)
-      .flat()
-      .map((i) => {
-        return {
-          title: i.title,
-          url: i.url,
-        };
-      });
-
-    // const csv = jsonToCsvString(content);
-    saveJsonFileToCsv(`output/daily/${list.title}.csv`, content);
-
+    // const list = await this.searchService.dailyMd();
+    // const content = list.data
+    //   .map((i) => i.data)
+    //   .flat()
+    //   .map((i) => {
+    //     return {
+    //       title: i.title,
+    //       url: i.url,
+    //     };
+    //   });
+    // // const csv = jsonToCsvString(content);
+    // saveJsonFileToCsv(`output/daily/${list.title}.csv`, content);
     // const model = new ChatDeepSeek({
     //   apiKey: this.configService.get('deepseek.DS_KEY'),
     //   model: 'deepseek-chat',
     // });
-
     // const prompt = `1.将上面的新闻去重，精简，按照内容分类，
     //    2.返回markdown的raw格式
     //    3.每个分类下来使用有序列表，并使用[title](url)的格式展示
     //    4.markdown 内容以“## ${list.title}”为标题开头`;
-
     // const messages = [new SystemMessage(prompt), new HumanMessage(csv)];
-
     // const resp = await model.invoke(messages);
     // console.log(resp.content);
     // saveMd(`output/daily/${list.title}.md`, resp.content);

@@ -2,6 +2,23 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 
+export const getEsResponseBody = <T = any>(response: any): T => {
+  if (!response) {
+    return {} as T;
+  }
+
+  return _.get(response, 'body', response) as T;
+};
+
+export const getEsResponseValue = <T = any>(
+  response: any,
+  path: string,
+  defaultValue?: T,
+): T => {
+  const body = getEsResponseBody(response);
+  return _.get(body, path, defaultValue) as T;
+};
+
 export class EsQueryBuilder {
   index: string;
   body: any = {};
@@ -26,6 +43,10 @@ export class EsQueryBuilder {
     this.index = index;
     this.client = client;
   }
+
+  private getRespBody = () => {
+    return getEsResponseBody(this.resp);
+  };
 
   setQuery(query) {
     this.query = query;
@@ -86,7 +107,7 @@ export class EsQueryBuilder {
 
   getIdRes = () => {
     const list = [];
-    const hits = _.get(this.resp, 'body.hits.hits');
+    const hits = _.get(this.getRespBody(), 'hits.hits');
     if (hits && hits.length > 0) {
       for (const item of hits) {
         const source = item._source;
@@ -111,19 +132,20 @@ export class EsQueryBuilder {
     if (this.scroll) {
       searchParams.scroll = this.scroll;
     }
-
     this.resp = await this.client.search(searchParams);
     return this.searchRespParser();
   };
 
   searchRespParser = () => {
-    const total: number = _.get(this.resp, 'body.hits.total.value', 0);
+    const respBody = this.getRespBody();
+    const total: number =
+      _.get(respBody, 'hits.total.value') ?? _.get(respBody, 'hits.total', 0);
     const query_string = _.get(this.query, 'query_string');
     const current_page = _.get(this.paginate, 'page', 1);
     const last_page = total / this.paginate.size;
-    const took = _.get(this.resp, 'body.took');
+    const took = _.get(respBody, 'took');
     const data = this.getIdRes();
-    const scroll_id = _.get(this.resp, 'body._scroll_id');
+    const scroll_id = _.get(respBody, '_scroll_id');
 
     const from = this.from || 0;
     const to = from + _.min([this.size, data.length]);
@@ -189,7 +211,10 @@ export class EsQueryBuilder {
     });
     let respFormated = [];
 
-    const options: any = _.get(resp, 'body.suggest._suggest[0].options');
+    const options: any = getEsResponseValue(
+      resp,
+      'suggest._suggest[0].options',
+    );
 
     if (options) {
       respFormated = options.map((item) => item.text);
@@ -218,11 +243,12 @@ export class EsQueryBuilder {
       body: this.body,
     });
 
-    const buckets = _.get(
-      resp,
-      'body.aggregations.source_date_histogram.buckets',
+    const buckets: any = _.get(
+      getEsResponseBody(resp),
+      'aggregations.source_date_histogram.buckets',
     );
-    const data = buckets.map((item) => {
+
+    const data: any = buckets.map((item) => {
       return {
         date: item['key_as_string'],
         count: item['doc_count'],
@@ -253,9 +279,9 @@ export class EsQueryBuilder {
       body: this.body,
     });
 
-    let cloud_words = _.get(
-      resp,
-      'body.aggregations.title_words_cloud.buckets',
+    let cloud_words: any = _.get(
+      getEsResponseBody(resp),
+      'aggregations.title_words_cloud.buckets',
     );
 
     const data = fs.readFileSync('src/utils/stopwords.txt').toString();
@@ -291,7 +317,7 @@ export class EsQueryBuilder {
     this.setQueryBody(body);
 
     const resp = await this.aggs();
-    const datas = _.get(resp, `body.aggregations.${agg_name}.buckets`);
+    const datas = getEsResponseValue(resp, `aggregations.${agg_name}.buckets`);
     return datas;
   };
 }

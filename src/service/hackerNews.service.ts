@@ -23,7 +23,7 @@ export enum recordStatus {
 export class HackerNewsService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly prismaService: PrismaService,
+    private readonly prisma: PrismaService,
   ) {}
   headers = {
     'User-Agent':
@@ -104,7 +104,7 @@ export class HackerNewsService {
     const titles = [];
     const datas = [];
 
-    const records = await this.prismaService.hackNews.findMany({
+    const records = await this.prisma.hackNews.findMany({
       where: {
         id: {
           in: ids,
@@ -159,7 +159,7 @@ export class HackerNewsService {
       }
     }
 
-    await this.prismaService.hackNews.createMany({
+    await this.prisma.hackNews.createMany({
       data: datas,
     });
     return ids;
@@ -176,7 +176,7 @@ export class HackerNewsService {
     if (ids.length > 0) {
       where['id'] = { in: ids };
     }
-    const allRecords = await this.prismaService.hackNews.findMany({
+    const allRecords = await this.prisma.hackNews.findMany({
       where,
       orderBy: {
         id: 'desc',
@@ -200,7 +200,7 @@ export class HackerNewsService {
           titles_cn = await this.gptTrans(titles);
         } catch (error) {
           console.error('Error translating records:', error);
-          await this.prismaService.hackNews.updateMany({
+          await this.prisma.hackNews.updateMany({
             where: {
               id: { in: ids },
             },
@@ -230,7 +230,7 @@ export class HackerNewsService {
         if (res.status === 'fulfilled') {
           const recordsToUpdate = res.value;
           for (const record of recordsToUpdate) {
-            await this.prismaService.hackNews.update({
+            await this.prisma.hackNews.update({
               where: {
                 id: record.id,
               },
@@ -259,7 +259,7 @@ export class HackerNewsService {
       where['id'] = { in: ids };
     }
 
-    const allRecords = await this.prismaService.hackNews.findMany({
+    const allRecords = await this.prisma.hackNews.findMany({
       where,
       orderBy: {
         id: 'desc',
@@ -283,7 +283,7 @@ export class HackerNewsService {
           cates = await this.aiCate(titles_cn);
         } catch (error) {
           console.error('Error categorizing records:', error);
-          await this.prismaService.hackNews.updateMany({
+          await this.prisma.hackNews.updateMany({
             where: {
               id: { in: ids },
             },
@@ -316,7 +316,7 @@ export class HackerNewsService {
         if (res.status === 'fulfilled') {
           const recordsToUpdate = res.value;
           for (const record of recordsToUpdate) {
-            await this.prismaService.hackNews.update({
+            await this.prisma.hackNews.update({
               where: {
                 id: record.id,
               },
@@ -400,7 +400,7 @@ export class HackerNewsService {
       ? moment(date, 'YYYY-MM-DD')
       : moment().startOf('day');
 
-    const news = await this.prismaService.hackNews.findMany({
+    const news = await this.prisma.hackNews.findMany({
       where: {
         createdAt: {
           gte: targetDate.startOf('day').toDate(),
@@ -454,7 +454,10 @@ export class HackerNewsService {
     }
 
     // Strip markdown code fences if present
-    const cleaned = respContent.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    const cleaned = respContent
+      .replace(/^```(?:json)?\n?/, '')
+      .replace(/\n?```$/, '')
+      .trim();
     const report = JSON.parse(cleaned);
 
     return {
@@ -475,5 +478,85 @@ export class HackerNewsService {
       },
     ];
     return records;
+  }
+
+  async getHackNewsContent(category) {
+    const news = await this.prisma.hackNews.findMany({
+      where: {
+        createdAt: {
+          gte: moment().subtract(1, 'day').startOf('day').toDate(),
+        },
+        category,
+        level: {
+          in: [4, 5],
+        },
+        url: {
+          not: null,
+        },
+        subTitle: null,
+      },
+      take: 50,
+    });
+
+    const content = this.hackNewsToFeishuFormat([
+      {
+        title: category,
+        data: news,
+      },
+    ]);
+    return content;
+  }
+
+  async getHackNewsContentDaily(category) {
+    const news = await this.prisma.hackNews.findMany({
+      select: {
+        title_cn: true,
+        url: true,
+      },
+      where: {
+        createdAt: {
+          gte: moment().subtract(1, 'day').startOf('day').toDate(),
+        },
+        category,
+        url: {
+          not: null,
+        },
+        subTitle: null,
+      },
+      take: 50,
+      orderBy: { level: 'desc' },
+    });
+
+    news.map((n: any) => {
+      n.title = n.title_cn;
+      delete n.title_cn;
+    });
+    return news;
+  }
+
+  hackNewsToFeishuFormat(channels) {
+    const content: any = [];
+    for (const channel of channels) {
+      const { title, data } = channel;
+      if (data.length === 0) {
+        continue;
+      }
+      content.push([{ tag: 'text', text: title }]);
+
+      for (const i in data) {
+        const a = data[i];
+        content.push([
+          { tag: 'a', href: a.url, text: `${parseInt(i) + 1}.${a.title_cn}` },
+        ]);
+      }
+    }
+    const yesterday = moment().subtract(1, 'day').format('YYYY-MM-DD');
+    const postContent = {
+      zh_cn: {
+        title: `Hack news for developers（${yesterday}）`,
+        content,
+      },
+    };
+    return postContent;
   }
 }

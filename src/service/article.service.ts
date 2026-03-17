@@ -57,11 +57,9 @@ export class ArticleService {
     try {
       return await this.elasticsearchService.search({
         index: ES_INDEX.ARTICLE,
-        body: {
-          aggs: {
-            authors: {
-              terms: { field: 'author.keyword', size: 10 },
-            },
+        aggs: {
+          authors: {
+            terms: { field: 'author.keyword', size: 10 },
           },
         },
       });
@@ -80,7 +78,7 @@ export class ArticleService {
         article,
       ]);
 
-      const { body: response } = await this.elasticsearchService.bulk({
+      const response = await this.elasticsearchService.bulk({
         index: ES_INDEX.ARTICLE,
         body: operations,
       });
