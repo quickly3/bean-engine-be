@@ -94,6 +94,12 @@ export class AiCommand extends CommandRunner {
       case 'upVideoPages':
         await this.upVideoPages();
         break;
+      case 'genSubCategories':
+        await this.genSubCategories();
+        break;
+      case 'refineSubCategories':
+        await this.refineSubCategories(options.minCount, options.maxCount);
+        break;
       default:
         console.log(`未找到子命令: ${options.command}`);
         this.printRuntimeGuide();
@@ -108,6 +114,22 @@ export class AiCommand extends CommandRunner {
   })
   getSubCommand(val: string): string {
     return val;
+  }
+
+  @Option({
+    flags: '--min-count [minCount]',
+    description: '精炼后每个大分类子分类的最小数量（默认 5）',
+  })
+  getMinCount(val: string): number {
+    return parseInt(val, 10) || 5;
+  }
+
+  @Option({
+    flags: '--max-count [maxCount]',
+    description: '精炼后每个大分类子分类的最大数量（默认 8）',
+  })
+  getMaxCount(val: string): number {
+    return parseInt(val, 10) || 8;
   }
 
   private printRuntimeGuide() {
@@ -151,6 +173,15 @@ export class AiCommand extends CommandRunner {
       { name: 'biliLogin', description: '执行 Bilibili 登录流程' },
       { name: 'videoPage', description: '抓取默认视频页面信息' },
       { name: 'upVideoPages', description: '抓取默认 UP 主视频列表页' },
+      {
+        name: 'genSubCategories',
+        description: '从 HackerNews 各大分类中归纳子分类',
+      },
+      {
+        name: 'refineSubCategories',
+        description:
+          '归并精炼已生成的子分类，可通过 --min-count（默认 5）和 --max-count（默认 8）指定数量范围',
+      },
     ];
   }
 
@@ -281,5 +312,16 @@ export class AiCommand extends CommandRunner {
   async upVideoPages() {
     const mid = 23947287;
     await this.biliService.upVideoPages(mid);
+  }
+
+  async genSubCategories() {
+    await this.hackerNewsService.genSubCategories();
+  }
+
+  async refineSubCategories(minCount?: number, maxCount?: number) {
+    await this.hackerNewsService.refineSubCategories(
+      minCount ?? 5,
+      maxCount ?? 8,
+    );
   }
 }

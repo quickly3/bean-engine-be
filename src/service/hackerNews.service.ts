@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
+import * as fs from 'fs';
+import * as path from 'path';
 import axios from 'axios';
 import moment from 'moment';
 import { ConfigService } from '@nestjs/config';
@@ -9,7 +11,9 @@ import { ChatDeepSeek } from '@langchain/deepseek';
 import { CAT_TITLES_PROMPT } from 'src/prompts/cat-titles.prompt';
 import { TRANSLATE_TITLES_PROMPT } from 'src/prompts/translate-titles.prompt';
 import { AI_DAILY_REPORT_PROMPT } from 'src/prompts/ai-daily-report.prompt';
+import { REFINE_SUBCATEGORIES_PROMPT } from 'src/prompts/refine-subcategories.prompt';
 import { HACKNEWS_CATEGORY } from 'src/enum/enum';
+import { GEN_SUBCATEGORIES_PROMPT } from 'src/prompts/gen-subcategories.prompt';
 
 export enum recordStatus {
   PENDING = 'pending',
@@ -558,5 +562,253 @@ export class HackerNewsService {
       },
     };
     return postContent;
+  }
+
+  async genSubCategories() {
+    // const categories = Object.values(HACKNEWS_CATEGORY);
+    const categories = [HACKNEWS_CATEGORY.TOOLS_SCRIPT_CLI];
+    const PAGE_SIZE = 1000;
+
+    const outputDir = path.join(
+      process.cwd(),
+      'output',
+      'hacknews_subcategories',
+    );
+
+    fs.mkdirSync(outputDir, { recursive: true });
+    console.log(`结果将写入目录: ${outputDir}`);
+
+    const jumpCate = [];
+
+    for (const category of categories) {
+      if (jumpCate.includes(category)) {
+        console.log(`跳过分类: ${category}`);
+        continue;
+      }
+      console.log(`\n正在处理分类: ${category}`);
+
+      const safeFileName = category.replace(/[\\/\s]/g, '_') + '.jsonl';
+      const outputFile = path.join(outputDir, safeFileName);
+
+      let skip = 0;
+      let pageIndex = 1;
+      let hasMore = true;
+
+      const count = await this.prisma.hackNews.count({
+        where: {
+          category,
+          title_cn: { not: null },
+        },
+      });
+      console.log(`  分类 [${category}] 共 ${count} 条记录`);
+
+      let processedCount = 0;
+      while (hasMore) {
+        // if (pageIndex === 2) {
+        //   break; // 测试时只处理前两页
+        // }
+        const records = await this.prisma.hackNews.findMany({
+          select: { title_cn: true },
+          where: {
+            category,
+            title_cn: { not: null },
+          },
+          orderBy: { id: 'desc' },
+          skip,
+          take: PAGE_SIZE,
+        });
+        console.log(
+          `  已处理 ${processedCount} 条，当前页 ${pageIndex}，本页 ${records.length} 条`,
+        );
+        processedCount += records.length;
+        if (records.length === 0) {
+          if (pageIndex === 1) {
+            console.log(`  分类 [${category}] 暂无数据，跳过`);
+          }
+          hasMore = false;
+          break;
+        }
+
+        console.log(
+          `  第 ${pageIndex} 页，共 ${records.length} 条，正在调用 DeepSeek 分析...`,
+        );
+
+        const titles = records.map((r) => r.title_cn);
+        const prompt =
+          GEN_SUBCATEGORIES_PROMPT.replace('{{category}}', category) +
+          JSON.stringify(titles);
+
+        const messages = [new SystemMessage(prompt)];
+        const model = new ChatDeepSeek({
+          apiKey: this.configService.get('deepseek.DS_KEY'),
+          model: 'deepseek-chat',
+        });
+
+        try {
+          const resp = await model.invoke(messages);
+
+          let respContent: string;
+          if (typeof resp.content === 'string') {
+            respContent = resp.content;
+          } else if (Array.isArray(resp.content)) {
+            respContent = resp.content
+              .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
+              .join('\n');
+          } else {
+            respContent = '';
+          }
+
+          const cleaned = respContent
+            .replace(/^```(?:json)?\n?/, '')
+            .replace(/\n?```$/, '')
+            .trim();
+
+          const subCates = JSON.parse(cleaned);
+
+          subCates.page = pageIndex;
+
+          console.log(
+            `  分析完成，归纳出 ${subCates.sub_categories?.length ?? 0} 个子分类：`,
+          );
+          for (const sc of subCates.sub_categories ?? []) {
+            console.log(`    - ${sc.name}：${sc.description}`);
+          }
+
+          fs.appendFileSync(
+            outputFile,
+            JSON.stringify(subCates) + '\n',
+            'utf-8',
+          );
+          console.log(`  已追加写入文件（第 ${pageIndex} 页）`);
+        } catch (error) {
+          console.error(
+            `  分类 [${category}] 第 ${pageIndex} 页分析失败:`,
+            error.message,
+          );
+          const errorEntry = {
+            category,
+            page: pageIndex,
+            error: error.message,
+          };
+          fs.appendFileSync(
+            outputFile,
+            JSON.stringify(errorEntry) + '\n',
+            'utf-8',
+          );
+        }
+
+        hasMore = records.length === PAGE_SIZE;
+        skip += PAGE_SIZE;
+        pageIndex++;
+      }
+    }
+
+    console.log(
+      `\n\n========== 全部分类处理完成，结果已写入 ${outputDir} ==========`,
+    );
+  }
+
+  async refineSubCategories(minTargetCount = 5, maxTargetCount = 8) {
+    const inputDir = path.join(
+      process.cwd(),
+      'output',
+      'hacknews_subcategories',
+    );
+    const outputDir = path.join(
+      process.cwd(),
+      'output',
+      'hacknews_subcategories_refined',
+    );
+    fs.mkdirSync(outputDir, { recursive: true });
+
+    const files = fs.readdirSync(inputDir).filter((f) => f.endsWith('.jsonl'));
+
+    console.log(
+      `共发现 ${files.length} 个分类文件，子分类数量范围：${minTargetCount}～${maxTargetCount}\n`,
+    );
+
+    const model = new ChatDeepSeek({
+      apiKey: this.configService.get('deepseek.DS_KEY'),
+      model: 'deepseek-chat',
+    });
+
+    for (const file of files) {
+      // 从文件名还原大分类名称（___→ /，_ → 空格）
+      const category = file
+        .replace(/\.jsonl$/, '')
+        .replace(/___/g, ' / ')
+        .replace(/_/g, ' ');
+
+      console.log(`正在精炼分类：${category}`);
+
+      const filePath = path.join(inputDir, file);
+      const lines = fs
+        .readFileSync(filePath, 'utf-8')
+        .split('\n')
+        .filter((l) => l.trim());
+
+      // 收集所有子分类（含重复）
+      const allSubCates: string[] = [];
+      for (const line of lines) {
+        try {
+          const parsed = JSON.parse(line);
+          if (Array.isArray(parsed)) {
+            allSubCates.push(...parsed.filter((s) => typeof s === 'string'));
+          }
+        } catch {
+          // 跳过解析失败的行
+        }
+      }
+
+      if (allSubCates.length === 0) {
+        console.log(`  [${category}] 无有效子分类，跳过\n`);
+        continue;
+      }
+
+      console.log(`  原始子分类共 ${allSubCates.length} 条（含重复）`);
+
+      const prompt =
+        REFINE_SUBCATEGORIES_PROMPT.replace(/{{category}}/g, category)
+          .replace(/{{minTargetCount}}/g, String(minTargetCount))
+          .replace(/{{maxTargetCount}}/g, String(maxTargetCount)) +
+        JSON.stringify(allSubCates);
+
+      try {
+        const resp = await model.invoke([new SystemMessage(prompt)]);
+
+        let respContent: string;
+        if (typeof resp.content === 'string') {
+          respContent = resp.content;
+        } else if (Array.isArray(resp.content)) {
+          respContent = resp.content
+            .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
+            .join('\n');
+        } else {
+          respContent = '';
+        }
+
+        const cleaned = respContent
+          .replace(/^```(?:json)?\n?/, '')
+          .replace(/\n?```$/, '')
+          .trim();
+
+        const refined: string[] = JSON.parse(cleaned);
+        console.log(
+          `  精炼后子分类（${refined.length} 个）：${refined.join('、')}`,
+        );
+
+        const outFile = path.join(outputDir, file.replace(/\.jsonl$/, '.json'));
+        fs.writeFileSync(
+          outFile,
+          JSON.stringify({ category, subCategories: refined }, null, 2),
+          'utf-8',
+        );
+        console.log(`  已写入：${outFile}\n`);
+      } catch (error) {
+        console.error(`  [${category}] 精炼失败：${error.message}\n`);
+      }
+    }
+
+    console.log(`\n========== 精炼完成，结果已写入 ${outputDir} ==========`);
   }
 }

@@ -116,23 +116,24 @@ model BiliUpAnalysis {
 }
 
 model HackNews {
-  id          Int      @id
-  state       String?
-  by          String?
-  descendants Int?     @default(0)
-  score       Int?     @default(0)
-  time        Int?
-  title       String?
-  subTitle    String?
-  title_cn    String?
-  category    String?
-  level       Int?
-  text        String?
-  text_cn     String?
-  type        String?
-  url         String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  id           Int      @id
+  state        String?
+  by           String?
+  descendants  Int?     @default(0)
+  score        Int?     @default(0)
+  time         Int?
+  title        String?
+  subTitle     String?
+  title_cn     String?
+  category     String?
+  sub_category String?
+  level        Int?
+  text         String?
+  text_cn      String?
+  type         String?
+  url          String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
 
   @@index([type])
   @@index([time])

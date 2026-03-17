@@ -36,12 +36,18 @@ npm run format          # Prettier 格式化
 npm run prisma:push     # 推送 schema 到数据库
 npm run prisma:gen      # 重新生成 Prisma client
 
-# CLI 命令（via nestjs-command）
-npm run cli spider      # 爬取文章
-npm run cli rss         # 处理 RSS 订阅
-npm run cli git         # GitHub 数据同步
-npm run cli ai          # AI 处理任务
-npm run cli es          # Elasticsearch 操作
+# CLI 命令（via nest-commander）
+# Linux
+npm run cli spider -- -c <subcommand>   # 爬取文章
+npm run cli rss -- -c <subcommand>      # 处理 RSS 订阅
+npm run cli git -- -c <subcommand>      # GitHub 数据同步
+npm run cli ai -- -c <subcommand>       # AI 处理任务
+npm run cli es -- -c <subcommand>       # Elasticsearch 操作
+# Windows
+npm run cli -- spider -- -c <subcommand>
+
+# Postman
+npm run postman:async   # 从 Swagger 生成 Postman Collection
 ```
 
 ## 架构说明
@@ -92,7 +98,9 @@ import { ArticleService } from '../service/article.service';   // ✗
 每个 LLM 提供商在 `src/service/ai/` 下有独立文件，由 `AiToolService` 统一组合调用。新 AI 功能应作为方法添加到对应提供商的 service 或 `AiToolService` 上。
 
 ### CLI 命令
-命令使用 `nestjs-command` 的 `@Command()` 装饰器，在 `AppModule` providers 中注册，并在 `src/commands/` 下创建命令文件。
+命令使用 `nest-commander` 的 `@Command()` / `CommandRunner` 模式，在 `src/modules/cli.module.ts` 中注册（providers 数组），命令文件放在 `src/commands/` 下。CLI 入口为 `src/cli.ts`，通过 `CommandFactory.run(CliModule)` 启动。
+
+复合命令通过 `-c` 参数分发子命令，Windows 执行格式：`npm run cli -- <command> -- -c <subcommand>`。
 
 ### 环境变量
 所有环境变量在 `src/config/index.ts` 中加载，只通过 `ConfigService` 访问，禁止在 service 中直接使用 `process.env`。
