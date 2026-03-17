@@ -14,6 +14,7 @@ import { AI_DAILY_REPORT_PROMPT } from 'src/prompts/ai-daily-report.prompt';
 import { REFINE_SUBCATEGORIES_PROMPT } from 'src/prompts/refine-subcategories.prompt';
 import { HACKNEWS_CATEGORY } from 'src/enum/enum';
 import { GEN_SUBCATEGORIES_PROMPT } from 'src/prompts/gen-subcategories.prompt';
+import { SUB_CATES } from 'src/enum/sub_cate';
 
 export enum recordStatus {
   PENDING = 'pending',
@@ -22,6 +23,17 @@ export enum recordStatus {
   CATEGORIZED = 'categorized',
   CATEGORIZED_FAILED = 'categorized_failed',
 }
+
+const SUB_CATES_BY_CATEGORY_LABEL: Record<string, string[]> = Object.entries(
+  HACKNEWS_CATEGORY,
+).reduce(
+  (acc, [categoryKey, categoryLabel]) => {
+    acc[categoryLabel] =
+      SUB_CATES[categoryKey as keyof typeof HACKNEWS_CATEGORY] ?? [];
+    return acc;
+  },
+  {} as Record<string, string[]>,
+);
 
 @Injectable()
 export class HackerNewsService {
@@ -298,6 +310,7 @@ export class HackerNewsService {
           return ids.map((id) => ({
             id,
             category: null,
+            sub_category: null,
             state: recordStatus.CATEGORIZED_FAILED,
             level: null,
           }));
@@ -305,11 +318,25 @@ export class HackerNewsService {
         // const cates = await this.aiCate(titles_cn);
 
         const resultArray = Array.isArray(cates) ? cates : [cates];
-        return resultArray.map((d: string, i: number) => {
+        return resultArray.map((d: any, i: number) => {
+          const category = Array.isArray(d) ? d[1] : null;
+          const rawSubCategory = Array.isArray(d) ? d[2] : null;
+          const subCategoryCandidates = category
+            ? (SUB_CATES_BY_CATEGORY_LABEL[category] ?? [])
+            : [];
+          const subCategory =
+            typeof rawSubCategory === 'string' &&
+            subCategoryCandidates.includes(rawSubCategory)
+              ? rawSubCategory
+              : category === HACKNEWS_CATEGORY.OTHER
+                ? '其他'
+                : null;
+
           return {
             id: ids[i],
-            level: cates[i][0],
-            category: cates[i][1],
+            level: Array.isArray(d) ? d[0] : null,
+            category,
+            sub_category: subCategory,
             state: recordStatus.CATEGORIZED,
           };
         });
@@ -326,6 +353,7 @@ export class HackerNewsService {
               },
               data: {
                 category: record.category,
+                sub_category: record.sub_category,
                 state: record.state,
                 level: record.level,
               },
@@ -375,7 +403,11 @@ export class HackerNewsService {
     );
     const titles_string = JSON.stringify(titles);
 
-    const prompt = `${CAT_TITLES_PROMPT}\n${titles_string}`;
+    const promptTemplate = CAT_TITLES_PROMPT.replace(
+      '{{SUB_CATEGORY_MAP}}',
+      JSON.stringify(SUB_CATES_BY_CATEGORY_LABEL, null, 2),
+    );
+    const prompt = `${promptTemplate}\n${titles_string}`;
 
     const messages = [new SystemMessage(prompt)];
     const model = new ChatDeepSeek({
@@ -395,7 +427,11 @@ export class HackerNewsService {
       respContent = '';
     }
 
-    const titles_cn = JSON.parse(respContent);
+    const cleaned = respContent
+      .replace(/^```(?:json)?\n?/, '')
+      .replace(/\n?```$/, '')
+      .trim();
+    const titles_cn = JSON.parse(cleaned);
     return titles_cn;
   }
 
