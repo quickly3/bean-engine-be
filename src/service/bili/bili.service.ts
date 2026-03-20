@@ -9,7 +9,8 @@ import { chromium } from 'playwright';
 import { ChatDeepSeek } from '@langchain/deepseek';
 import { PrismaService } from 'src/prisma/prisma.service';
 import momenttz from 'moment-timezone';
-import { sleep } from 'openai/core.mjs';
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 enum crawlStatus {
   pending = 'pending',

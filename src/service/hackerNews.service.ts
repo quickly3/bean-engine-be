@@ -14,6 +14,8 @@ import { AI_DAILY_REPORT_PROMPT } from 'src/prompts/ai-daily-report.prompt';
 import { REFINE_SUBCATEGORIES_PROMPT } from 'src/prompts/refine-subcategories.prompt';
 import { HACKNEWS_CATEGORY } from 'src/enum/enum';
 import { GEN_SUBCATEGORIES_PROMPT } from 'src/prompts/gen-subcategories.prompt';
+import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 
 export enum recordStatus {
   PENDING = 'pending',
@@ -25,6 +27,7 @@ export enum recordStatus {
 
 @Injectable()
 export class HackerNewsService {
+  llmType = 'deepseek'; // 'deepseek' | 'minimax' - 可通过配置或环境变量动态设置
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
@@ -338,32 +341,127 @@ export class HackerNewsService {
     }
   }
 
+  private async callLLM(prompt: string) {
+    switch (this.llmType) {
+      case 'deepseek':
+        return this.callDeepSeek(prompt);
+      case 'minimax':
+        return this.callMinimax(prompt);
+      case 'minimax-openai':
+        return this.callMinimaxOpenAi(prompt);
+      default:
+        throw new Error(`Unsupported LLM type: ${this.llmType}`);
+    }
+  }
+
+  private async callDeepSeek(prompt: string): Promise<string> {
+    const model = new ChatDeepSeek({
+      apiKey: this.configService.get('deepseek.DS_KEY'),
+      model: 'deepseek-chat',
+    });
+    const resp = await model.invoke([new SystemMessage(prompt)]);
+    if (typeof resp.content === 'string') {
+      return resp.content;
+    } else if (Array.isArray(resp.content)) {
+      return resp.content
+        .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
+        .join('\n');
+    }
+    return '';
+  }
+
+  private async callMinimax(prompt: string): Promise<string> {
+    if (!prompt || !prompt.trim()) {
+      throw new Error('MiniMax 请求内容为空，已跳过本页');
+    }
+
+    const minimaxApiKey = this.configService.get<string>('minimax.apiKey');
+    const minimaxModel = this.configService.get<string>('minimax.model');
+    const minimaxBaseURL = this.configService.get<string>('minimax.apiUrl');
+
+    const minimaxClient = new Anthropic({
+      apiKey: minimaxApiKey,
+      baseURL: minimaxBaseURL,
+    });
+
+    const resp = await minimaxClient.messages.create({
+      model: minimaxModel,
+      max_tokens: 4096,
+      messages: [{ role: 'user', content: prompt }],
+      thinking: {
+        type: 'disabled',
+      },
+    });
+
+    const messageContent = resp.content
+      .filter((block) => block.type === 'text')
+      .map((block) => block.text)
+      .join('\n')
+      .trim();
+
+    if (!messageContent) {
+      throw new Error('MiniMax 返回为空');
+    }
+
+    return messageContent;
+  }
+
+  private async callMinimaxOpenAi(prompt: string): Promise<string> {
+    if (!prompt || !prompt.trim()) {
+      throw new Error('MiniMax 请求内容为空，已跳过本页');
+    }
+
+    const minimaxApiKey = this.configService.get<string>('minimax.apiKey');
+    const minimaxModel = this.configService.get<string>('minimax.model');
+    const minimaxBaseURL = this.configService.get<string>('minimax.baseApiUrl');
+
+    if (!minimaxApiKey || !minimaxModel || !minimaxBaseURL) {
+      throw new Error(
+        'MiniMax 配置不完整，请检查 minimax.apiKey/model/baseApiUrl',
+      );
+    }
+
+    const client = new OpenAI({
+      apiKey: minimaxApiKey,
+      baseURL: minimaxBaseURL,
+    });
+
+    const completion = await client.chat.completions.create({
+      model: minimaxModel,
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 4096,
+    });
+
+    const content: any = completion.choices?.[0]?.message?.content;
+
+    console.log(content);
+    const messageContent =
+      typeof content === 'string'
+        ? content.trim()
+        : Array.isArray(content)
+          ? content
+              .map((part: any) =>
+                typeof part?.text === 'string' ? part.text : '',
+              )
+              .join('\n')
+              .trim()
+          : '';
+
+    if (!messageContent) {
+      throw new Error('MiniMax 返回为空');
+    }
+
+    return messageContent;
+  }
+
   async gptTrans(titles) {
     console.log(
       moment().format('YYYY-MM-DD HH:mm:ss'),
       'Translating titles via DeepSeek',
     );
     const titles_string = JSON.stringify(titles);
-
     const prompt = `${TRANSLATE_TITLES_PROMPT}\n${titles_string}`;
-
-    const messages = [new SystemMessage(prompt)];
-    const model = new ChatDeepSeek({
-      apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
-    });
-    const resp = await model.invoke(messages);
-
-    let respContent: string;
-    if (typeof resp.content === 'string') {
-      respContent = resp.content;
-    } else if (Array.isArray(resp.content)) {
-      respContent = resp.content
-        .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
-        .join('\n');
-    } else {
-      respContent = '';
-    }
+    const respContent = await this.callLLM(prompt);
     const titles_cn = JSON.parse(respContent);
     return titles_cn;
   }
@@ -374,27 +472,8 @@ export class HackerNewsService {
       'Cate titles via DeepSeek',
     );
     const titles_string = JSON.stringify(titles);
-
     const prompt = `${CAT_TITLES_PROMPT}\n${titles_string}`;
-
-    const messages = [new SystemMessage(prompt)];
-    const model = new ChatDeepSeek({
-      apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
-    });
-    const resp = await model.invoke(messages);
-
-    let respContent: string;
-    if (typeof resp.content === 'string') {
-      respContent = resp.content;
-    } else if (Array.isArray(resp.content)) {
-      respContent = resp.content
-        .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
-        .join('\n');
-    } else {
-      respContent = '';
-    }
-
+    const respContent = await this.callLLM(prompt);
     const titles_cn = JSON.parse(respContent);
     return titles_cn;
   }
@@ -437,25 +516,7 @@ export class HackerNewsService {
 
     const input = news.map((n) => ({ title_cn: n.title_cn, url: n.url }));
     const prompt = `${AI_DAILY_REPORT_PROMPT}${JSON.stringify(input)}`;
-    const messages = [new SystemMessage(prompt)];
-
-    const model = new ChatDeepSeek({
-      apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
-    });
-
-    const resp = await model.invoke(messages);
-
-    let respContent: string;
-    if (typeof resp.content === 'string') {
-      respContent = resp.content;
-    } else if (Array.isArray(resp.content)) {
-      respContent = resp.content
-        .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
-        .join('\n');
-    } else {
-      respContent = '';
-    }
+    const respContent = await this.callLLM(prompt);
 
     // Strip markdown code fences if present
     const cleaned = respContent
@@ -566,7 +627,7 @@ export class HackerNewsService {
 
   async genSubCategories() {
     // const categories = Object.values(HACKNEWS_CATEGORY);
-    const categories = [HACKNEWS_CATEGORY.TOOLS_SCRIPT_CLI];
+    const categories = [HACKNEWS_CATEGORY.AI_APPLICATION];
     const PAGE_SIZE = 1000;
 
     const outputDir = path.join(
@@ -630,7 +691,7 @@ export class HackerNewsService {
         }
 
         console.log(
-          `  第 ${pageIndex} 页，共 ${records.length} 条，正在调用 DeepSeek 分析...`,
+          `  第 ${pageIndex} 页，共 ${records.length} 条，正在调用 ${this.llmType} 分析...`,
         );
 
         const titles = records.map((r) => r.title_cn);
@@ -638,25 +699,8 @@ export class HackerNewsService {
           GEN_SUBCATEGORIES_PROMPT.replace('{{category}}', category) +
           JSON.stringify(titles);
 
-        const messages = [new SystemMessage(prompt)];
-        const model = new ChatDeepSeek({
-          apiKey: this.configService.get('deepseek.DS_KEY'),
-          model: 'deepseek-chat',
-        });
-
         try {
-          const resp = await model.invoke(messages);
-
-          let respContent: string;
-          if (typeof resp.content === 'string') {
-            respContent = resp.content;
-          } else if (Array.isArray(resp.content)) {
-            respContent = resp.content
-              .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
-              .join('\n');
-          } else {
-            respContent = '';
-          }
+          const respContent = await this.callLLM(prompt);
 
           const cleaned = respContent
             .replace(/^```(?:json)?\n?/, '')
@@ -727,11 +771,6 @@ export class HackerNewsService {
       `共发现 ${files.length} 个分类文件，子分类数量范围：${minTargetCount}～${maxTargetCount}\n`,
     );
 
-    const model = new ChatDeepSeek({
-      apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
-    });
-
     for (const file of files) {
       // 从文件名还原大分类名称（___→ /，_ → 空格）
       const category = file
@@ -774,18 +813,7 @@ export class HackerNewsService {
         JSON.stringify(allSubCates);
 
       try {
-        const resp = await model.invoke([new SystemMessage(prompt)]);
-
-        let respContent: string;
-        if (typeof resp.content === 'string') {
-          respContent = resp.content;
-        } else if (Array.isArray(resp.content)) {
-          respContent = resp.content
-            .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
-            .join('\n');
-        } else {
-          respContent = '';
-        }
+        const respContent = await this.callLLM(prompt);
 
         const cleaned = respContent
           .replace(/^```(?:json)?\n?/, '')

@@ -6,7 +6,8 @@ import { chromium } from 'playwright-extra';
 import * as cheerio from 'cheerio';
 import { ChatDeepSeek } from '@langchain/deepseek';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
-import { sleep } from 'openai/core';
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class Kr36DetailCrawler {
   private esClient: Client;

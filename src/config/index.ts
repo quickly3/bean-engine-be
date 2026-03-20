@@ -44,6 +44,12 @@ export default () => {
       DS_KEY: process.env.DS_KEY,
       TAVILY_KEY: process.env.TAVILY_KEY,
     },
+    minimax: {
+      apiKey: process.env.MINIMAX_API_KEY,
+      model: process.env.MINIMAX_MODEL,
+      baseApiUrl: process.env.MINIMAX_BASE_API_URL,
+      apiUrl: process.env.MINIMAX_API_URL,
+    },
     github: {
       GITHUB_TOKEN: process.env.GITHUB_TOKEN,
     },
