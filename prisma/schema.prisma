@@ -139,3 +139,32 @@ model HackNews {
   @@index([time])
   @@schema("public")
 }
+
+model WbgDataSource {
+  id                   Int     @id @default(autoincrement())
+  lastupdated          String?
+  name                 String?
+  name_cn              String?
+  code                 String?
+  databid              String?
+  description          String?
+  url                  String?
+  dataavailability     String?
+  metadataavailability String?
+  concepts             String?
+
+  @@index([code])
+  @@schema("public")
+}
+
+model WbgIndicator {
+  id        Int     @id @default(autoincrement())
+  sourceId  Int?
+  indicator String?
+  value     String?
+  value_cn  String?
+
+  @@index([value])
+  @@index([sourceId])
+  @@schema("public")
+}

@@ -196,7 +196,7 @@ export class HackerNewsService {
     for (const records of chunkRecords) {
       current += records.length;
       console.log(`Translating records: ${current} / ${total}`);
-      const _records = _.chunk(records, 20);
+      const _records: any = _.chunk(records, 20);
 
       const promises = _records.map(async (recs) => {
         const ids = recs.map((record) => record.id);
@@ -279,7 +279,7 @@ export class HackerNewsService {
     for (const records of chunkRecords) {
       current += records.length;
       console.log(`Cate records: ${current} / ${total}`);
-      const _records = _.chunk(records, 20);
+      const _records: any = _.chunk(records, 20);
 
       const promises = _records.map(async (recs) => {
         const ids = recs.map((record) => record.id);
