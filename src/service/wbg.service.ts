@@ -56,18 +56,27 @@ export class WbgService {
   }
 
   public async transIndicators() {
-    const inds = await this.prisma.wbgDataSource.findMany();
-    const t = inds.length;
-    let c = 0;
-    for (const ind of inds) {
-      c += 1;
-      console.log(`Processing indicator: ${c} / ${t}`);
-      const { id } = ind;
-      const indFile = `output/wbg/indicators/indicators_${id}.csv`;
-      const allRecords = await readCsv(indFile);
+    const total = await this.prisma.wbgIndicator.count({
+      where: {
+        value_cn: null,
+        sourceId: 2,
+      },
+    });
+    let current = 0;
 
-      const total = allRecords.length;
-      let current = 0;
+    while (true) {
+      const allRecords = await this.prisma.wbgIndicator.findMany({
+        where: {
+          value_cn: null,
+          sourceId: 2,
+        },
+        take: 100,
+      });
+      if (allRecords.length === 0) {
+        console.log('All indicators have been translated.');
+        break;
+      }
+
       const chunkRecords = _.chunk(allRecords, 100);
 
       for (const records of chunkRecords) {
@@ -91,38 +100,30 @@ export class WbgService {
             : [titles_cn];
           return resultArray.map((d: string, i: number) => {
             return {
-              indicator: ids[i],
-              value: titles[i],
+              id: ids[i],
               value_cn: d,
             };
           });
         });
         const results = await Promise.allSettled(promises);
 
-        const datas: any = [];
         for (const res of results) {
           if (res.status === 'fulfilled') {
             const recordsToUpdate = res.value;
             for (const record of recordsToUpdate) {
-              datas.push({
-                sourceId: ind.id,
-                indicator: record.indicator,
-                value: record.value,
-                value_cn: record.value_cn,
+              await this.prisma.wbgIndicator.update({
+                where: {
+                  id: record.id,
+                },
+                data: {
+                  value_cn: record.value_cn,
+                },
               });
             }
           } else {
             console.error('Error translating records:', res.reason);
           }
         }
-        await this.prisma.wbgIndicator.deleteMany({
-          where: {
-            sourceId: ind.id,
-          },
-        });
-        await this.prisma.wbgIndicator.createMany({
-          data: datas,
-        });
       }
     }
   }

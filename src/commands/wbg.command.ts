@@ -21,6 +21,10 @@ export class WbgCommand extends CommandRunner {
           //   npm run cli -- wbg -- -c importIndicators
           await this.wbgService.importIndicators();
           break;
+        case 'transIndicators':
+          //   npm run cli -- wbg -- -c transIndicators
+          await this.wbgService.transIndicators();
+          break;
         default:
           console.log(`未找到子命令: ${options.command}`);
           break;

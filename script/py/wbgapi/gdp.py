@@ -23,8 +23,8 @@ import pandas as pd
 
 # 获取多个国家的 GDP（当前美元，1960年至今）
 df = wb.data.DataFrame(
-    ['NY.GDP.MKTP.CD'],     # GDP指标代码
-    ['USA', 'CHN', 'JPN', 'DEU'],  # 国家/地区代码
+    ['NY.GDP.MKTP.CD','NY.GDP.MKTP.PP.KD'],     # GDP指标代码
+    ['USA','CHN'],  # 国家/地区代码
     time=range(2020, 2026),        # 时间范围
     columns='series'               # 以指标为列
 )
