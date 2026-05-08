@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { readCsv } from 'src/utils/file';
 import { HackerNewsService } from './hackerNews.service';
 import * as _ from 'lodash';
+import { WbgApiService } from 'src/service/wbg-api.service';
 
 @Injectable()
 export class WbgService {
@@ -11,7 +12,61 @@ export class WbgService {
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
     private readonly hackerNewsService: HackerNewsService,
+    private readonly wbgApiService: WbgApiService,
   ) {}
+
+  public async importCountries() {
+    const perPage = 100;
+    const allCountries: any[] = [];
+
+    const firstPage = await this.wbgApiService.getCountryList(1, perPage);
+    const [firstMeta, firstData] = firstPage;
+    allCountries.push(...firstData);
+
+    const totalPages = Number(firstMeta?.pages || 1);
+    for (let page = 2; page <= totalPages; page++) {
+      console.log(`Fetching countries page: ${page} / ${totalPages}`);
+      const [, pageData] = await this.wbgApiService.getCountryList(
+        page,
+        perPage,
+      );
+      allCountries.push(...pageData);
+    }
+
+    const countryRecords = allCountries
+      .filter((country) => country?.id)
+      .map((country) => ({
+        id: String(country.id),
+        iso2Code: country.iso2Code ?? null,
+        name: country.name ?? null,
+        regionId: country.region?.id ?? null,
+        regionIso2Code: country.region?.iso2code ?? null,
+        regionValue: country.region?.value ?? null,
+        adminRegionId: country.adminregion?.id ?? null,
+        adminRegionIso2Code: country.adminregion?.iso2code ?? null,
+        adminRegionValue: country.adminregion?.value ?? null,
+        incomeLevelId: country.incomeLevel?.id ?? null,
+        incomeLevelIso2Code: country.incomeLevel?.iso2code ?? null,
+        incomeLevelValue: country.incomeLevel?.value ?? null,
+        lendingTypeId: country.lendingType?.id ?? null,
+        lendingTypeIso2Code: country.lendingType?.iso2code ?? null,
+        lendingTypeValue: country.lendingType?.value ?? null,
+        capitalCity: country.capitalCity ?? null,
+        longitude: country.longitude ?? null,
+        latitude: country.latitude ?? null,
+      }));
+
+    await this.prisma.wbgCountry.deleteMany();
+
+    if (countryRecords.length > 0) {
+      await this.prisma.wbgCountry.createMany({
+        data: countryRecords,
+      });
+    }
+
+    console.log(`Imported countries: ${countryRecords.length}`);
+  }
+
   public async importWbgData() {
     const sourceFile = 'output/wbg/source.csv';
 
@@ -59,7 +114,6 @@ export class WbgService {
     const total = await this.prisma.wbgIndicator.count({
       where: {
         value_cn: null,
-        sourceId: 2,
       },
     });
     let current = 0;
@@ -68,7 +122,6 @@ export class WbgService {
       const allRecords = await this.prisma.wbgIndicator.findMany({
         where: {
           value_cn: null,
-          sourceId: 2,
         },
         take: 100,
       });

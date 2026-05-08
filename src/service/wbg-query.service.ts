@@ -18,6 +18,14 @@ type IndicatorQuery = {
   keyword?: string;
 };
 
+type CountryQuery = {
+  page?: string | number;
+  pageSize?: string | number;
+  iso2Code?: string;
+  regionId?: string;
+  keyword?: string;
+};
+
 @Injectable()
 export class WbgQueryService {
   constructor(private readonly prisma: PrismaService) {}
@@ -186,6 +194,64 @@ export class WbgQueryService {
         ...item,
         dataSource: item.sourceId ? sourceMap.get(item.sourceId) || null : null,
       })),
+      total,
+      page,
+      pageSize,
+    };
+  }
+
+  public async getCountries(query: CountryQuery) {
+    const { page, pageSize, skip, take } = normalizePagination(
+      query.page,
+      query.pageSize,
+    );
+    console.log(page, pageSize, skip, take);
+
+    const where: Prisma.WbgCountryWhereInput = {};
+
+    if (query.iso2Code) {
+      where.iso2Code = {
+        contains: query.iso2Code,
+        mode: 'insensitive',
+      };
+    }
+
+    if (query.regionId) {
+      where.regionId = {
+        equals: query.regionId,
+      };
+    }
+
+    if (query.keyword) {
+      where.OR = [
+        {
+          name: {
+            contains: query.keyword,
+            mode: 'insensitive',
+          },
+        },
+        {
+          capitalCity: {
+            contains: query.keyword,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
+    const [list, total] = await Promise.all([
+      this.prisma.wbgCountry.findMany({
+        where,
+        skip,
+        take,
+        orderBy: {
+          name: 'asc',
+        },
+      }),
+      this.prisma.wbgCountry.count({ where }),
+    ]);
+
+    return {
+      list,
       total,
       page,
       pageSize,

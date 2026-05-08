@@ -168,3 +168,33 @@ model WbgIndicator {
   @@index([sourceId])
   @@schema("public")
 }
+
+model WbgCountry {
+  id                      String   @id
+  iso2Code                String?  @unique
+  name                    String?
+  regionId                String?
+  regionIso2Code          String?
+  regionValue             String?
+  adminRegionId           String?
+  adminRegionIso2Code     String?
+  adminRegionValue        String?
+  incomeLevelId           String?
+  incomeLevelIso2Code     String?
+  incomeLevelValue        String?
+  lendingTypeId           String?
+  lendingTypeIso2Code     String?
+  lendingTypeValue        String?
+  capitalCity             String?
+  longitude               String?
+  latitude                String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @default(now()) @updatedAt
+
+  @@index([name])
+  @@index([regionId])
+  @@index([adminRegionId])
+  @@index([incomeLevelId])
+  @@index([lendingTypeId])
+  @@schema("public")
+}

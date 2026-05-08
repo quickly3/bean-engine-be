@@ -3,7 +3,7 @@ export function normalizePagination(
   pageSize?: string | number,
 ) {
   const pageNum = Math.max(1, Number(page) || 1);
-  const pageSizeNum = Math.min(100, Math.max(1, Number(pageSize) || 20));
+  const pageSizeNum = Math.min(1000, Math.max(1, Number(pageSize) || 20));
 
   return {
     page: pageNum,

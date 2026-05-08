@@ -1,6 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import {
+  countryPageExample,
   dataSourcePageExample,
   indicatorPageExample,
   indicatorWithSourcePageExample,
@@ -94,6 +95,37 @@ export function ApiGetWbgIndicatorsWithDataSourceDocs() {
       description: 'WbgIndicator（含 dataSource）分页结果',
       schema: {
         example: indicatorWithSourcePageExample,
+      },
+    }),
+  );
+}
+
+export function ApiGetWbgCountriesDocs() {
+  return applyDecorators(
+    ApiOperation({ summary: '查询 WbgCountry 列表' }),
+    ...pageAndPageSizeQueries(),
+    ApiQuery({
+      name: 'iso2Code',
+      required: false,
+      type: String,
+      description: '按 iso2Code 模糊查询',
+    }),
+    ApiQuery({
+      name: 'regionId',
+      required: false,
+      type: String,
+      description: '按 regionId 精确过滤',
+    }),
+    ApiQuery({
+      name: 'keyword',
+      required: false,
+      type: String,
+      description: '按国家名或首都模糊查询',
+    }),
+    ApiOkResponse({
+      description: 'WbgCountry 分页结果',
+      schema: {
+        example: countryPageExample,
       },
     }),
   );

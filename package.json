@@ -21,7 +21,8 @@
     "cli": "ts-node -r tsconfig-paths/register src/cli.ts",
     "prisma:push": "npx prisma db push",
     "prisma:gen": "npx prisma generate",
-    "postman:sync": "ts-node -r tsconfig-paths/register script/sync-postman.ts"
+    "postman:sync": "ts-node -r tsconfig-paths/register script/sync-postman.ts",
+    "postman:async": "ts-node -r tsconfig-paths/register script/sync-postman.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",

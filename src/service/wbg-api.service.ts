@@ -45,6 +45,13 @@ export class WbgApiService {
     });
   }
 
+  public async getCountryList(page = 1, perPage = 100) {
+    return this.request<any>('/countries', {
+      page,
+      per_page: perPage,
+    });
+  }
+
   public async getIndicators(page = 1, perPage = 100) {
     return this.request<any>('/indicator', {
       page,

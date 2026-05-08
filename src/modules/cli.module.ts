@@ -25,6 +25,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WbgCommand } from 'src/commands/wbg.command';
 import { WbgService } from 'src/service/wbg.service';
+import { WbgApiService } from 'src/service/wbg-api.service';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { WbgService } from 'src/service/wbg.service';
     AiToolService,
     BiliService,
     PrismaService,
+    WbgApiService,
     WbgService,
     WbgCommand,
   ],

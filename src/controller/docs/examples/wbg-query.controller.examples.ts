@@ -62,3 +62,33 @@ export const indicatorWithSourcePageExample = {
   page: 1,
   pageSize: 20,
 };
+
+export const countryPageExample = {
+  list: [
+    {
+      id: 'CHN',
+      iso2Code: 'CN',
+      name: 'China',
+      regionId: 'EAS',
+      regionIso2Code: 'Z4',
+      regionValue: 'East Asia & Pacific',
+      adminRegionId: '',
+      adminRegionIso2Code: '',
+      adminRegionValue: '',
+      incomeLevelId: 'UMC',
+      incomeLevelIso2Code: 'XT',
+      incomeLevelValue: 'Upper middle income',
+      lendingTypeId: 'IBD',
+      lendingTypeIso2Code: 'XF',
+      lendingTypeValue: 'IBRD',
+      capitalCity: 'Beijing',
+      longitude: '116.286',
+      latitude: '39.905',
+      createdAt: '2026-05-08T00:00:00.000Z',
+      updatedAt: '2026-05-08T00:00:00.000Z',
+    },
+  ],
+  total: 1,
+  page: 1,
+  pageSize: 20,
+};

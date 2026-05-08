@@ -1,6 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
+  ApiGetWbgCountriesDocs,
   ApiGetWbgDataSourcesDocs,
   ApiGetWbgIndicatorsDocs,
   ApiGetWbgIndicatorsWithDataSourceDocs,
@@ -28,5 +29,11 @@ export class WbgQueryController {
   @ApiGetWbgIndicatorsWithDataSourceDocs()
   async getIndicatorsWithDataSource(@Query() query) {
     return this.wbgQueryService.getIndicatorsWithDataSource(query);
+  }
+
+  @Get('countries')
+  @ApiGetWbgCountriesDocs()
+  async getCountries(@Query() query) {
+    return this.wbgQueryService.getCountries(query);
   }
 }
