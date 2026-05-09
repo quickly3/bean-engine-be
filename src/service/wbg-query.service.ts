@@ -205,7 +205,6 @@ export class WbgQueryService {
       query.page,
       query.pageSize,
     );
-    console.log(page, pageSize, skip, take);
 
     const where: Prisma.WbgCountryWhereInput = {};
 
