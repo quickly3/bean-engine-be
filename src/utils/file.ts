@@ -39,8 +39,9 @@ export async function saveJsonFileToCsv(filepath, jsonData) {
 
 export async function readCsv(filepath) {
   const input_file = fs.readFileSync(filepath, 'utf8');
+  // 最后一行为空时，Papa.parse会多解析出一行空数据，需要过滤掉
   const data = Papa.parse(input_file, { header: true }).data;
-  return data;
+  return data.filter((row) => Object.values(row).some((value) => value !== ''));
 }
 
 export function jsonToCsvString(jsonData) {
