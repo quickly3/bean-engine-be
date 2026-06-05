@@ -12,7 +12,7 @@ export class AiToolService {
   async transJsonArr(jsonArr) {
     const model = new ChatDeepSeek({
       apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
     });
 
     const promptTemplate = PromptTemplate.fromTemplate(

@@ -71,7 +71,7 @@ export class BiliService {
     const messages = [new SystemMessage(prompt), new HumanMessage(titlesStr)];
     const model = new ChatDeepSeek({
       apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
     });
     const resp = await model.invoke(messages);
 

@@ -56,7 +56,7 @@ export class AiController {
     });
     const completion = await openai.chat.completions.create({
       messages: [{ role: 'system', content: 'You are a helpful assistant.' }],
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
     });
     return completion;
   }

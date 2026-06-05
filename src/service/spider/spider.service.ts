@@ -213,7 +213,7 @@ export class SpiderService {
     console.log('开始解析文章:');
     const model = new ChatDeepSeek({
       apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat-v3-0324',
+      model: 'deepseek-v4-flash-v3-0324',
     });
 
     const messages = [
@@ -231,7 +231,7 @@ export class SpiderService {
     console.log(content.length, '内容长度');
     const model = new ChatDeepSeek({
       apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
     });
 
     const messages = [

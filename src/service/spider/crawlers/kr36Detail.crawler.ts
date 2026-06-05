@@ -129,7 +129,7 @@ export default class Kr36DetailCrawler {
     console.log('开始解析文章:');
     const model = new ChatDeepSeek({
       apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
     });
 
     const messages = [

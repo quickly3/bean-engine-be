@@ -265,7 +265,7 @@ export class AiCommand extends CommandRunner {
     // saveJsonFileToCsv(`output/daily/${list.title}.csv`, content);
     // const model = new ChatDeepSeek({
     //   apiKey: this.configService.get('deepseek.DS_KEY'),
-    //   model: 'deepseek-chat',
+    //   model: 'deepseek-v4-flash',
     // });
     // const prompt = `1.将上面的新闻去重，精简，按照内容分类，
     //    2.返回markdown的raw格式

@@ -357,7 +357,7 @@ export class HackerNewsService {
   private async callDeepSeek(prompt: string): Promise<string> {
     const model = new ChatDeepSeek({
       apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
     });
     const resp = await model.invoke([new SystemMessage(prompt)]);
     if (typeof resp.content === 'string') {

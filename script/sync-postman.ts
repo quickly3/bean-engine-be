@@ -92,8 +92,8 @@ async function main() {
 
   const outputPath = path.resolve(
     process.cwd(),
-    'postman',
-    'bean-engine.collection.json',
+    'output',
+    'bean-engine.postman.collection.json',
   );
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.writeFile(
