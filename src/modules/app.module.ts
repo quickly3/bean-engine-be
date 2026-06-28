@@ -35,6 +35,7 @@ import { WbgApiService } from 'src/service/wbg-api.service';
 import { WbgApiController } from 'src/controller/wbg-api.controller';
 import { WbgQueryController } from 'src/controller/wbg-query.controller';
 import { WbgQueryService } from 'src/service/wbg-query.service';
+import { DeepSeekService } from 'src/service/ai/deepseek.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -91,6 +92,7 @@ import { WbgQueryService } from 'src/service/wbg-query.service';
     WbgApiService,
     WbgQueryService,
     PrismaService,
+    DeepSeekService,
   ],
 })
 export class AppModule {}

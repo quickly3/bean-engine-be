@@ -42,6 +42,7 @@ export default () => {
     },
     deepseek: {
       DS_KEY: process.env.DS_KEY,
+      DS_URL: process.env.DS_URL,
       TAVILY_KEY: process.env.TAVILY_KEY,
     },
     minimax: {

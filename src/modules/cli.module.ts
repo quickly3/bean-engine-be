@@ -26,6 +26,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { WbgCommand } from 'src/commands/wbg.command';
 import { WbgService } from 'src/service/wbg.service';
 import { WbgApiService } from 'src/service/wbg-api.service';
+import { DeepSeekService } from 'src/service/ai/deepseek.service';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { WbgApiService } from 'src/service/wbg-api.service';
     WbgApiService,
     WbgService,
     WbgCommand,
+    DeepSeekService,
   ],
 })
 export class CliModule {}

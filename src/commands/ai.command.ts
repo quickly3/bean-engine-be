@@ -34,76 +34,80 @@ export class AiCommand extends CommandRunner {
   }
 
   async run(passedParam: string[], options?: any): Promise<void> {
-    if (!options?.command) {
-      this.printRuntimeGuide();
-      return;
-    }
-
-    switch (options.command) {
-      case 'syncPromptCn':
-        await this.syncPromptCn();
-        break;
-      case 'gpt':
-        await this.gpt();
-        break;
-      case 'gemini':
-        await this.gemini();
-        break;
-      case 'info':
-        await this.info();
-        break;
-      case 'getTopStories':
-        await this.getTopStories();
-        break;
-      case 'transRecords':
-        await this.transRecords();
-        break;
-      case 'cateRecords':
-        await this.cateRecords();
-        break;
-      case 'syncEs':
-        await this.syncEs();
-        break;
-      case 'fetchBilibiliHome':
-        await this.fetchBilibiliHome();
-        break;
-      case 'BilibiliUserCrawler':
-        await this.BilibiliUserCrawler();
-        break;
-      case 'dailyMd':
-        await this.dailyMd();
-        break;
-      case 'upsTitles':
-        await this.upsTitles();
-        break;
-      case 'anaUps':
-        await this.anaUps(options);
-        break;
-      case 'getUpsContents':
-        await this.getUpsContents();
-        break;
-      case 'genFollowings':
-        await this.genFollowings();
-        break;
-      case 'biliLogin':
-        await this.biliLogin();
-        break;
-      case 'videoPage':
-        await this.videoPage();
-        break;
-      case 'upVideoPages':
-        await this.upVideoPages();
-        break;
-      case 'genSubCategories':
-        await this.genSubCategories();
-        break;
-      case 'refineSubCategories':
-        await this.refineSubCategories(options.minCount, options.maxCount);
-        break;
-      default:
-        console.log(`未找到子命令: ${options.command}`);
+    try {
+      if (!options?.command) {
         this.printRuntimeGuide();
-        break;
+        return;
+      }
+
+      switch (options.command) {
+        case 'syncPromptCn':
+          await this.syncPromptCn();
+          break;
+        case 'gpt':
+          await this.gpt();
+          break;
+        case 'gemini':
+          await this.gemini();
+          break;
+        case 'info':
+          await this.info();
+          break;
+        case 'getTopStories':
+          await this.getTopStories();
+          break;
+        case 'transRecords':
+          await this.transRecords();
+          break;
+        case 'cateRecords':
+          await this.cateRecords();
+          break;
+        case 'syncEs':
+          await this.syncEs();
+          break;
+        case 'fetchBilibiliHome':
+          await this.fetchBilibiliHome();
+          break;
+        case 'BilibiliUserCrawler':
+          await this.BilibiliUserCrawler();
+          break;
+        case 'dailyMd':
+          await this.dailyMd();
+          break;
+        case 'upsTitles':
+          await this.upsTitles();
+          break;
+        case 'anaUps':
+          await this.anaUps(options);
+          break;
+        case 'getUpsContents':
+          await this.getUpsContents();
+          break;
+        case 'genFollowings':
+          await this.genFollowings();
+          break;
+        case 'biliLogin':
+          await this.biliLogin();
+          break;
+        case 'videoPage':
+          await this.videoPage();
+          break;
+        case 'upVideoPages':
+          await this.upVideoPages();
+          break;
+        case 'genSubCategories':
+          await this.genSubCategories();
+          break;
+        case 'refineSubCategories':
+          await this.refineSubCategories(options.minCount, options.maxCount);
+          break;
+        default:
+          console.log(`未找到子命令: ${options.command}`);
+          this.printRuntimeGuide();
+          break;
+      }
+    } catch (error) {
+      console.error('执行子命令时发生错误:', error);
     }
   }
 
