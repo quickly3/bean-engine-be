@@ -62,6 +62,11 @@ export class AiCommand extends CommandRunner {
         case 'cateRecords':
           await this.cateRecords();
           break;
+
+        case 'fullStream':
+          await this.fullStream();
+          break;
+
         case 'syncEs':
           await this.syncEs();
           break;
@@ -230,6 +235,12 @@ export class AiCommand extends CommandRunner {
   async cateRecords() {
     await this.hackerNewsService.cateRecords();
     exit(0);
+  }
+
+  async fullStream() {
+    const ids = await this.hackerNewsService.getNewStories2();
+    await this.hackerNewsService.transRecords(ids);
+    await this.hackerNewsService.cateRecords(ids);
   }
 
   async syncEs() {

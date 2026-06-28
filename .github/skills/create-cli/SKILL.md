@@ -58,9 +58,11 @@ export class XxxCommand extends CommandRunner {
     }
 
     switch (options.command) {
+      // npm run cli -- xxx -- -c sub1
       case 'sub1':
         await this.sub1();
         break;
+      // npm run cli -- xxx -- -c sub2
       case 'sub2':
         await this.sub2();
         break;
@@ -152,6 +154,7 @@ export class XxxCommand extends CommandRunner {
    - 继承 `CommandRunner`，实现 `run()` 方法
    - 通过构造函数注入所需的 service
    - 如果需要子命令，添加 `@Option()` 装饰器、`switch/case` 分发、`printRuntimeGuide()` 和 `getCommandDescriptions()`
+   - **每个子命令的 `case` 上方必须添加一行命令示例注释**，格式为 Windows 执行格式 `// npm run cli -- {name} -- -c {subcommand} [必要参数]`，方便快速复制运行
 
 3. **确保 service 已就绪**
    - 命令调用的 service 方法必须已存在或同步创建
@@ -174,6 +177,7 @@ export class XxxCommand extends CommandRunner {
 - 对应 service 方法已实现并被命令调用
 - `src/modules/cli.module.ts` 注册完整，依赖注入可用
 - 包含 `printRuntimeGuide()` 和 `getCommandDescriptions()` 提供使用指引（复合命令模式）
+- 每个子命令 `case` 上方已添加命令示例注释（复合命令模式）
 - 命名、目录与现有代码风格保持一致
 - 导入路径使用从 `src/` 根目录的绝对路径
 

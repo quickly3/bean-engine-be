@@ -5,13 +5,6 @@ export interface GuanUserConfig {
   endPage?: number;
 }
 
-export interface GuanArticleItem {
-  title: string;
-  url: string;
-  createTime: string;
-  commentCount: number;
-}
-
 export interface GuanRawArticleItem {
   id: number;
   title: string;
@@ -59,4 +52,47 @@ export interface GuanRawArticleItem {
   show_member_logo_type: number;
   is_question: boolean;
   is_liaozhubian: boolean;
+}
+
+// 用户资料层（个人画像）
+export interface GuanUserProfile {
+  uid: string;
+  nickname: string;
+  title: string;
+  level: string;
+  avatar: string;
+  articleCount: number;
+  replyCount: number;
+  beRepliedCount: number;
+  likeCount: number;
+  collectCount: number;
+}
+
+// 文章详情层（正文 + 元数据）
+export interface GuanArticleDetail {
+  articleId: string;
+  authorUid: string;
+  authorNick: string;
+  title: string;
+  content: string;
+  images: string[];
+  publishTime: string;
+  location: string;
+  likeCount: number;
+  viewCount: number;
+  commentCount: number;
+  url: string;
+  comments: GuanCommentItem[];
+}
+
+// 评论
+export interface GuanCommentItem {
+  id: string;
+  commenterUid: string;
+  commenter: string;
+  content: string;
+  time: string;
+  location: string;
+  upCount: number;
+  downCount: number;
 }
