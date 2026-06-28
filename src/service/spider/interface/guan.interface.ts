@@ -3,6 +3,11 @@ export interface GuanUserConfig {
   isSelf?: number;
   startPage?: number;
   endPage?: number;
+  /**
+   * 增量爬取：数据库中该作者最近一篇文章的 id。
+   * 翻页过程中一旦遇到该 id，说明后续文章均已入库，停止继续爬取。
+   */
+  stopAtArticleId?: string;
 }
 
 export interface GuanRawArticleItem {

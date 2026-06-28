@@ -168,10 +168,22 @@ export class GuanService {
     uid: string,
     options: { startPage?: number; endPage?: number } = {},
   ): Promise<number> {
+    // 增量爬取：取数据库中该作者最近一篇文章的 id，
+    // 翻页时遇到它即停止，避免重复爬取历史文章
+    const latest = await this.prisma.guanArticle.findFirst({
+      where: { authorUid: uid },
+      orderBy: { publishTime: 'desc' },
+      select: { articleId: true },
+    });
+    if (latest?.articleId) {
+      console.log(`增量爬取：数据库最近文章 id=${latest.articleId}`);
+    }
+
     const crawler = new GuanUserArticleCrawler({
       uid,
       startPage: options.startPage,
       endPage: options.endPage,
+      stopAtArticleId: latest?.articleId,
     });
     const items = await crawler.crawlAllPages();
 

@@ -31,6 +31,7 @@ export class GuanUserArticleCrawler {
 
   async crawlAllPages(): Promise<GuanRawArticleItem[]> {
     const allArticles: GuanRawArticleItem[] = [];
+    const stopAtArticleId = this.config.stopAtArticleId;
 
     for (
       let page = this.config.startPage;
@@ -43,6 +44,19 @@ export class GuanUserArticleCrawler {
         if (articles.length === 0) {
           break; // 如果没有更多文章，停止爬取
         }
+
+        // 增量爬取：遇到数据库中已存在的最近文章，仅保留它之前的新文章并停止
+        if (stopAtArticleId) {
+          const hitIndex = articles.findIndex(
+            (item) => String(item.id) === stopAtArticleId,
+          );
+          if (hitIndex !== -1) {
+            allArticles.push(...articles.slice(0, hitIndex));
+            console.log(`检测到已爬取文章 id=${stopAtArticleId}，停止增量爬取`);
+            break;
+          }
+        }
+
         allArticles.push(...articles);
       } catch (error) {
         console.error(`Error crawling page ${page}:`, error);
