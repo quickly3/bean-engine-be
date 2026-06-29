@@ -43,6 +43,8 @@ export class GuanService {
       withDetail?: boolean;
       withAi?: boolean;
       init?: boolean;
+      batchSize?: number;
+      detailConcurrency?: number;
     } = {},
   ) {
     const {
@@ -51,6 +53,8 @@ export class GuanService {
       withDetail = true,
       withAi = false,
       init = false,
+      batchSize = 50,
+      detailConcurrency = 3,
     } = options;
 
     console.log(`==> 开始爬取观察者网用户 uid=${uid}`);
@@ -67,12 +71,15 @@ export class GuanService {
     const articleCount = await this.crawlUserArticleList(uid, {
       startPage,
       endPage,
+      batchSize,
     });
     console.log(`==> 列表层完成，共入库/更新 ${articleCount} 篇文章`);
 
     // 3. 文章详情层
     if (withDetail) {
-      await this.crawlPendingArticleDetails(uid);
+      await this.crawlPendingArticleDetails(uid, {
+        concurrency: detailConcurrency,
+      });
     }
 
     // 4. AI 分析
@@ -163,10 +170,10 @@ export class GuanService {
     return profile;
   }
 
-  /** 2. 文章列表层：翻页抓取列表并入库（去重 upsert） */
+  /** 2. 文章列表层：翻页抓取列表并入库（批量插入，按 articleId 去重） */
   async crawlUserArticleList(
     uid: string,
-    options: { startPage?: number; endPage?: number } = {},
+    options: { startPage?: number; endPage?: number; batchSize?: number } = {},
   ): Promise<number> {
     // 增量爬取：取数据库中该作者最近一篇文章的 id，
     // 翻页时遇到它即停止，避免重复爬取历史文章
@@ -186,50 +193,63 @@ export class GuanService {
       stopAtArticleId: latest?.articleId,
     });
     const items = await crawler.crawlAllPages();
+    console.log(`==> 列表层抓取完成，共抓取 ${items.length} 篇文章`);
 
-    let saved = 0;
-    for (const item of items) {
-      await this.saveArticleListItem(uid, item);
-      saved += 1;
-    }
-    return saved;
+    // 批量插入新文章，已存在的 articleId 会被跳过
+    return this.saveArticleListItems(uid, items, options.batchSize);
   }
 
-  private async saveArticleListItem(uid: string, item: GuanRawArticleItem) {
-    const articleId = String(item.id);
-    const publishTime = this.normalizeTime(item.created_at || item.pass_at);
+  private async saveArticleListItems(
+    uid: string,
+    items: GuanRawArticleItem[],
+    batchSize = 50,
+  ): Promise<number> {
+    if (!items.length) return 0;
 
-    await this.prisma.guanArticle.upsert({
-      where: { articleId },
-      create: {
-        articleId,
-        authorUid: String(item.user_id || uid),
-        authorNick: item.user_nick,
-        title: item.title,
-        summary: item.summary,
-        images: item.pic ? [item.pic] : [],
-        publishTime,
-        location: item.location_text,
-        likeCount: this.toNum(item.praise_num),
-        viewCount: this.toNum(item.view_count),
-        commentCount: this.toNum(item.comment_count),
-        url:
-          item.post_url ||
-          `https://user.guancha.cn/main/content?id=${articleId}`,
-        state: GuanArticleState.PENDING,
-      },
-      update: {
-        title: item.title,
-        summary: item.summary,
-        likeCount: this.toNum(item.praise_num),
-        viewCount: this.toNum(item.view_count),
-        commentCount: this.toNum(item.comment_count),
-      },
-    });
+    const size = Math.max(1, Math.floor(batchSize));
+    let totalCount = 0;
+
+    for (let i = 0; i < items.length; i += size) {
+      const batch = items.slice(i, i + size);
+      const data = batch.map((item) => {
+        const articleId = String(item.id);
+        const publishTime = this.normalizeTime(item.created_at || item.pass_at);
+
+        return {
+          articleId,
+          authorUid: String(item.user_id || uid),
+          authorNick: item.user_nick,
+          title: item.title,
+          summary: item.summary,
+          images: item.pic ? [item.pic] : [],
+          publishTime,
+          location: item.location_text,
+          likeCount: this.toNum(item.praise_num),
+          viewCount: this.toNum(item.view_count),
+          commentCount: this.toNum(item.comment_count),
+          url:
+            item.post_url ||
+            `https://user.guancha.cn/main/content?id=${articleId}`,
+          state: GuanArticleState.PENDING,
+        };
+      });
+
+      const { count } = await this.prisma.guanArticle.createMany({
+        data,
+        skipDuplicates: true,
+      });
+      totalCount += count;
+    }
+
+    return totalCount;
   }
 
   /** 3. 文章详情层：遍历 pending 文章抓取正文/配图/评论 */
-  async crawlPendingArticleDetails(uid?: string) {
+  async crawlPendingArticleDetails(
+    uid?: string,
+    options: { concurrency?: number } = {},
+  ) {
+    const concurrency = Math.max(1, Math.floor(options.concurrency ?? 3));
     const where: any = { state: GuanArticleState.PENDING };
     if (uid) {
       where.authorUid = uid;
@@ -240,42 +260,78 @@ export class GuanService {
       orderBy: { publishTime: 'desc' },
     });
     const total = articles.length;
-    console.log(`==> 待抓取详情文章数: ${total}`);
+    console.log(`==> 待抓取详情文章数: ${total}，并发数: ${concurrency}`);
 
-    let current = 0;
-    for (const article of articles) {
-      current += 1;
+    let nextIndex = 0;
+    let successCount = 0;
+    let failedCount = 0;
+
+    const crawlOne = async (
+      article: (typeof articles)[number],
+      current: number,
+    ) => {
       console.log(`抓取详情 ${current}/${total} -> ${article.articleId}`);
-      const detail = await this.detailCrawler.crawlArticleDetail(
-        article.articleId,
-      );
+      try {
+        const detail = await this.detailCrawler.crawlArticleDetail(
+          article.articleId,
+        );
 
-      if (!detail) {
+        if (!detail) {
+          await this.prisma.guanArticle.update({
+            where: { articleId: article.articleId },
+            data: { state: GuanArticleState.DETAIL_FAILED },
+          });
+          failedCount += 1;
+          return;
+        }
+
+        await this.prisma.guanArticle.update({
+          where: { articleId: article.articleId },
+          data: {
+            content: detail.content,
+            images: detail.images.length ? detail.images : article.images,
+            location: detail.location || article.location,
+            likeCount: detail.likeCount || article.likeCount,
+            viewCount: detail.viewCount || article.viewCount,
+            commentCount: detail.commentCount || article.commentCount,
+            publishTime:
+              this.normalizeTime(detail.publishTime) || article.publishTime,
+            state: GuanArticleState.DETAILED,
+          },
+        });
+
+        // 评论入库
+        await this.saveComments(article.articleId, detail.comments);
+        successCount += 1;
+      } catch (error) {
+        failedCount += 1;
+        console.error(
+          `抓取文章 ${article.articleId} 详情处理失败:`,
+          error?.message,
+        );
         await this.prisma.guanArticle.update({
           where: { articleId: article.articleId },
           data: { state: GuanArticleState.DETAIL_FAILED },
         });
-        continue;
       }
+    };
 
-      await this.prisma.guanArticle.update({
-        where: { articleId: article.articleId },
-        data: {
-          content: detail.content,
-          images: detail.images.length ? detail.images : article.images,
-          location: detail.location || article.location,
-          likeCount: detail.likeCount || article.likeCount,
-          viewCount: detail.viewCount || article.viewCount,
-          commentCount: detail.commentCount || article.commentCount,
-          publishTime:
-            this.normalizeTime(detail.publishTime) || article.publishTime,
-          state: GuanArticleState.DETAILED,
-        },
-      });
+    const workerCount = Math.min(concurrency, total);
+    await Promise.all(
+      Array.from({ length: workerCount }, async () => {
+        while (nextIndex < total) {
+          const article = articles[nextIndex];
+          const current = nextIndex + 1;
+          nextIndex += 1;
+          await crawlOne(article, current);
+        }
+      }),
+    );
 
-      // 评论入库
-      await this.saveComments(article.articleId, detail.comments);
-    }
+    console.log(
+      `==> 详情抓取完成: 成功 ${successCount} 篇，失败 ${failedCount} 篇`,
+    );
+    return { total, successCount, failedCount, concurrency };
   }
 
   private async saveComments(articleId: string, comments: GuanCommentItem[]) {

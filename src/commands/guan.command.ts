@@ -68,10 +68,18 @@ export class GuanCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-e, --endPage [endPage]',
-    description: '文章列表结束页，默认 999',
+    flags: '-b, --batchSize [batchSize]',
+    description: '批量处理大小，默认 50',
   })
-  getEndPage(val: string): number {
+  getBatchSize(val: string): number {
+    return Number(val);
+  }
+
+  @Option({
+    flags: '--concurrency [concurrency]',
+    description: '详情抓取并发数，默认 3',
+  })
+  getConcurrency(val: string): number {
     return Number(val);
   }
 
@@ -112,7 +120,7 @@ export class GuanCommand extends CommandRunner {
       '  npm run cli -- guan -- -c crawlUser -u 218155 --init  # 爬取前清空旧数据',
     );
     console.log('  npm run cli -- guan -- -c profile -u 218155');
-    console.log('  npm run cli -- guan -- -c detail -u 218155');
+    console.log('  npm run cli -- guan -- -c detail -u 218155 --concurrency 5');
     console.log('  npm run cli -- guan -- -c analyze -u 218155');
   }
 
@@ -122,10 +130,13 @@ export class GuanCommand extends CommandRunner {
       {
         name: 'crawlUser',
         description:
-          '完整爬取：资料 + 列表 + 详情(+AI)，需 -u <uid>，可选 --init 先清空旧数据',
+          '完整爬取：资料 + 列表 + 详情(+AI)，需 -u <uid>，可选 --init 先清空旧数据、--concurrency 设置详情并发',
       },
       { name: 'profile', description: '仅抓取用户资料，需 -u <uid>' },
-      { name: 'detail', description: '抓取 pending 文章详情，可选 -u <uid>' },
+      {
+        name: 'detail',
+        description: '抓取 pending 文章详情，可选 -u <uid>、--concurrency <n>',
+      },
       {
         name: 'analyze',
         description: '对已抓详情文章做 AI 分析，可选 -u <uid>',
@@ -144,6 +155,8 @@ export class GuanCommand extends CommandRunner {
       withDetail: true,
       withAi: !!options.withAi,
       init: !!options.init,
+      batchSize: options.batchSize || 50,
+      detailConcurrency: options.concurrency || 3,
     });
   }
 
@@ -156,7 +169,9 @@ export class GuanCommand extends CommandRunner {
   }
 
   private async crawlDetail(options: any) {
-    await this.guanService.crawlPendingArticleDetails(options?.uid);
+    await this.guanService.crawlPendingArticleDetails(options?.uid, {
+      concurrency: options?.concurrency || 3,
+    });
   }
 
   private async analyze(options: any) {
