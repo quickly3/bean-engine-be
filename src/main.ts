@@ -30,6 +30,10 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, swaggerDocument, {
     jsonDocumentUrl: 'docs/json',
   });
+  app.enableCors({
+    credentials: true,
+    origin: 'http://localhost:4200',
+  });
 
   await app.listen(3000);
 }
