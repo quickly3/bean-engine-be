@@ -19,7 +19,7 @@ async function bootstrap() {
   const feUrl = configService.get('FE_URL').split(',');
   app.enableCors({
     origin: feUrl,
-    credentials: true,
+    // credentials: true,
   });
 
   const swaggerConfig = new DocumentBuilder()
