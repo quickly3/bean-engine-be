@@ -6,8 +6,6 @@ import axios from 'axios';
 import moment from 'moment';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SystemMessage } from '@langchain/core/messages';
-import { ChatDeepSeek } from '@langchain/deepseek';
 import { CAT_TITLES_PROMPT } from 'src/prompts/cat-titles.prompt';
 import { TRANSLATE_TITLES_PROMPT } from 'src/prompts/translate-titles.prompt';
 import { AI_DAILY_REPORT_PROMPT } from 'src/prompts/ai-daily-report.prompt';
@@ -16,6 +14,7 @@ import { HACKNEWS_CATEGORY } from 'src/enum/enum';
 import { GEN_SUBCATEGORIES_PROMPT } from 'src/prompts/gen-subcategories.prompt';
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
+import { DeepSeekService } from './ai/deepseek.service';
 
 export enum recordStatus {
   PENDING = 'pending',
@@ -31,6 +30,7 @@ export class HackerNewsService {
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
+    private readonly deepSeekService: DeepSeekService,
   ) {}
   headers = {
     'User-Agent':
@@ -355,17 +355,20 @@ export class HackerNewsService {
   }
 
   private async callDeepSeek(prompt: string): Promise<string> {
-    const model = new ChatDeepSeek({
-      apiKey: this.configService.get('deepseek.DS_KEY'),
-      model: 'deepseek-v4-flash',
+    // const model = new ChatDeepSeek({
+    //   apiKey: this.configService.get('deepseek.DS_KEY'),
+    //   model: 'deepseek-v4-flash',
+    // });
+    // const resp = await model.invoke([new SystemMessage(prompt)]);
+
+    const resp = await this.deepSeekService.chatWithSystem({
+      system: '',
+      message: prompt,
+      type: 'flash',
     });
-    const resp = await model.invoke([new SystemMessage(prompt)]);
-    if (typeof resp.content === 'string') {
-      return resp.content;
-    } else if (Array.isArray(resp.content)) {
-      return resp.content
-        .map((c: any) => (typeof c === 'string' ? c : (c.text ?? '')))
-        .join('\n');
+
+    if (typeof resp === 'string') {
+      return resp;
     }
     return '';
   }

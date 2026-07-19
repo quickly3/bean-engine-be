@@ -3,13 +3,11 @@ export interface GuanUserConfig {
   isSelf?: number;
   startPage?: number;
   endPage?: number;
-}
-
-export interface GuanArticleItem {
-  title: string;
-  url: string;
-  createTime: string;
-  commentCount: number;
+  /**
+   * 增量爬取：数据库中该作者最近一篇文章的 id。
+   * 翻页过程中一旦遇到该 id，说明后续文章均已入库，停止继续爬取。
+   */
+  stopAtArticleId?: string;
 }
 
 export interface GuanRawArticleItem {
@@ -59,4 +57,47 @@ export interface GuanRawArticleItem {
   show_member_logo_type: number;
   is_question: boolean;
   is_liaozhubian: boolean;
+}
+
+// 用户资料层（个人画像）
+export interface GuanUserProfile {
+  uid: string;
+  nickname: string;
+  title: string;
+  level: string;
+  avatar: string;
+  articleCount: number;
+  replyCount: number;
+  beRepliedCount: number;
+  likeCount: number;
+  collectCount: number;
+}
+
+// 文章详情层（正文 + 元数据）
+export interface GuanArticleDetail {
+  articleId: string;
+  authorUid: string;
+  authorNick: string;
+  title: string;
+  content: string;
+  images: string[];
+  publishTime: string;
+  location: string;
+  likeCount: number;
+  viewCount: number;
+  commentCount: number;
+  url: string;
+  comments: GuanCommentItem[];
+}
+
+// 评论
+export interface GuanCommentItem {
+  id: string;
+  commenterUid: string;
+  commenter: string;
+  content: string;
+  time: string;
+  location: string;
+  upCount: number;
+  downCount: number;
 }

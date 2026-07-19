@@ -198,3 +198,69 @@ model WbgCountry {
   @@index([lendingTypeId])
   @@schema("public")
 }
+
+// 观察者网·风闻社区 作者
+model GuanUser {
+  uid            String    @id
+  nickname       String?
+  title          String?
+  level          String?
+  avatar         String?
+  articleCount   Int?      @default(0)
+  replyCount     Int?      @default(0)
+  beRepliedCount Int?      @default(0)
+  likeCount      Int?      @default(0)
+  collectCount   Int?      @default(0)
+  crawlStatus    String?   @default("pending")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+
+  @@index([nickname])
+  @@schema("public")
+}
+
+// 观察者网·风闻社区 文章
+model GuanArticle {
+  articleId    String    @id
+  authorUid    String?
+  authorNick   String?
+  title        String?
+  summary      String?
+  content      String?
+  images       String[]  @default([])
+  publishTime  DateTime?
+  location     String?
+  likeCount    Int?      @default(0)
+  viewCount    Int?      @default(0)
+  commentCount Int?      @default(0)
+  url          String?
+  state        String?   @default("pending")
+  // AI 衍生字段
+  category     String?
+  aiSummary    String?
+  sentiment    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+
+  @@index([authorUid])
+  @@index([publishTime])
+  @@index([state])
+  @@schema("public")
+}
+
+// 观察者网·风闻社区 评论
+model GuanComment {
+  id           String    @id
+  articleId    String
+  commenterUid String?
+  commenter    String?
+  content      String?
+  time         DateTime?
+  location     String?
+  upCount      Int?      @default(0)
+  downCount    Int?      @default(0)
+  createdAt    DateTime  @default(now())
+
+  @@index([articleId])
+  @@schema("public")
+}
