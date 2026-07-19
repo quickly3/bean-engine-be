@@ -19,6 +19,7 @@ async function bootstrap() {
   const feUrl = configService.get('FE_URL').split(',');
   app.enableCors({
     origin: feUrl,
+    credentials: true,
   });
 
   const swaggerConfig = new DocumentBuilder()
@@ -29,10 +30,6 @@ async function bootstrap() {
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, swaggerDocument, {
     jsonDocumentUrl: 'docs/json',
-  });
-  app.enableCors({
-    credentials: true,
-    origin: 'http://localhost:4200',
   });
 
   await app.listen(3000);
