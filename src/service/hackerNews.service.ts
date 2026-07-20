@@ -9,6 +9,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CAT_TITLES_PROMPT } from 'src/prompts/cat-titles.prompt';
 import { TRANSLATE_TITLES_PROMPT } from 'src/prompts/translate-titles.prompt';
 import { AI_DAILY_REPORT_PROMPT } from 'src/prompts/ai-daily-report.prompt';
+import { AI_DAILY_REPORT_MD_PROMPT } from 'src/prompts/ai-daily-report-md.prompt';
+import { AI_NEWS_DAILY_PROMPT } from 'src/prompts/ai-news-daily.prompt';
 import { REFINE_SUBCATEGORIES_PROMPT } from 'src/prompts/refine-subcategories.prompt';
 import { HACKNEWS_CATEGORY } from 'src/enum/enum';
 import { GEN_SUBCATEGORIES_PROMPT } from 'src/prompts/gen-subcategories.prompt';
@@ -481,24 +483,41 @@ export class HackerNewsService {
     return titles_cn;
   }
 
-  async getAiNewsByDate(date?: string) {
+  async getAiNewsByDate(
+    date?: string,
+    category = HACKNEWS_CATEGORY.AI_APPLICATION,
+    take = 50,
+  ) {
     const targetDate = date
       ? moment(date, 'YYYY-MM-DD')
       : moment().startOf('day');
 
     const news = await this.prisma.hackNews.findMany({
+      select: {
+        title_cn: true,
+        title: true,
+        category: true,
+        level: true,
+        url: true,
+      },
       where: {
         createdAt: {
           gte: targetDate.startOf('day').toDate(),
           lte: targetDate.endOf('day').toDate(),
         },
-        category: HACKNEWS_CATEGORY.AI_APPLICATION,
+        ...(category && { category }),
         title_cn: { not: null },
         url: { not: null },
       },
       orderBy: { score: 'desc' },
-      take: 50,
+      ...(take && { take }),
     });
+    console.log(
+      moment().format('YYYY-MM-DD HH:mm:ss'),
+      `Fetched ${news.length} AI news for date: ${targetDate.format(
+        'YYYY-MM-DD',
+      )}`,
+    );
 
     return news;
   }
@@ -534,6 +553,134 @@ export class HackerNewsService {
       ...report,
       news,
     };
+  }
+
+  /**
+   * 生成 Markdown 格式的 AI 每日报告，并写入 output 目录
+   * @param date 报告日期，不传则使用当天
+   * @returns 包含文件路径和报告内容的对象
+   */
+  async generateAiDailyReportMd(date?: string) {
+    const targetDate = date || moment().format('YYYY-MM-DD');
+
+    const news = await this.getAiNewsByDate(targetDate);
+
+    if (news.length === 0) {
+      const emptyContent = `# AI 日报 · ${targetDate}\n\n> 面向全栈开发者的每日 AI 技术情报\n\n## 📌 今日概览\n\n当天暂无 AI 相关新闻\n`;
+      const filePath = await this.writeDailyReportMd(targetDate, emptyContent);
+      return { date: targetDate, total: 0, filePath, content: emptyContent };
+    }
+
+    const input = news.map((n) => ({ title_cn: n.title_cn, url: n.url }));
+    const prompt = `${AI_DAILY_REPORT_MD_PROMPT}${JSON.stringify(input)}`;
+    const respContent = await this.callLLM(prompt);
+
+    // 替换日期占位符
+    const content = respContent
+      .replace(/^```(?:markdown)?\n?/, '')
+      .replace(/\n?```$/, '')
+      .trim()
+      .replace('{{date}}', targetDate);
+
+    const filePath = await this.writeDailyReportMd(targetDate, content);
+
+    return {
+      date: targetDate,
+      total: news.length,
+      filePath,
+      content,
+    };
+  }
+
+  /**
+   * 生成 Markdown 格式的 AI 摸鱼日报，并写入 output 目录
+   * @param date 报告日期，不传则使用当天
+   * @returns 包含文件路径和报告内容的对象
+   */
+  async generateNewsDailyReportMd(date?: string) {
+    const targetDate = date || moment().subtract(1, 'day').format('YYYY-MM-DD');
+    // 报告标题使用次日日期：今天生成的是对昨天新闻的总结，呈现为"明日期"的日报
+    const reportDate = moment(targetDate, 'YYYY-MM-DD')
+      .add(1, 'day')
+      .format('YYYY-MM-DD');
+
+    // category=null 表示查询全部分类，take=null 表示不限制条数
+    const news = await this.getAiNewsByDate(targetDate, null, null);
+
+    if (news.length === 0) {
+      const emptyContent = `# 🐟 AI 摸鱼日报 · ${reportDate}\n\n> 打工人的 AI 摸鱼指南 · 带薪看报，快乐摸鱼\n\n## 🔥 今日摸鱼速报\n\n今天没新闻可摸鱼，早点下班吧\n`;
+      const filePath = await this.writeNewsDailyReportMd(
+        reportDate,
+        emptyContent,
+      );
+      return {
+        date: targetDate,
+        reportDate,
+        total: 0,
+        filePath,
+        content: emptyContent,
+      };
+    }
+
+    // 传递完整字段：title_cn、title、category、level、url
+    const input = news.map((n) => ({
+      title_cn: n.title_cn,
+      title: n.title,
+      category: n.category,
+      level: n.level,
+      url: n.url,
+    }));
+    // prompt 中提示：本日报是对昨日（targetDate）新闻的总结，但以今日（reportDate）视角发布
+    const prompt = `${AI_NEWS_DAILY_PROMPT}\n\n【重要提示】\n本日报是对昨天（${targetDate}）发生的新闻的总结回顾。报告标题日期使用今日日期（${reportDate}），即"回顾昨日、发布今日"的模式。撰写时可以适当使用"昨天"、"昨日"等表述来描述事件发生时间，让读者明确这是对前一天动态的梳理。\n\n以下是昨天（${targetDate}）的新闻数据（JSON 格式）：${JSON.stringify(input)}`;
+    const respContent = await this.callLLM(prompt);
+
+    // 替换日期占位符（使用次日日期作为报告标题日期）
+    const content = respContent
+      .replace(/^```(?:markdown)?\n?/, '')
+      .replace(/\n?```$/, '')
+      .trim()
+      .replace('{{date}}', reportDate);
+
+    const filePath = await this.writeNewsDailyReportMd(reportDate, content);
+
+    return {
+      date: targetDate,
+      reportDate,
+      total: news.length,
+      filePath,
+      content,
+    };
+  }
+
+  /**
+   * 将全量新闻 Markdown 报告写入 output/ai_daily_reports/ 目录
+   * 文件名使用 news-daily-report 前缀，与 AI 专用报告区分
+   */
+  private async writeNewsDailyReportMd(
+    date: string,
+    content: string,
+  ): Promise<string> {
+    const dir = path.join(process.cwd(), 'output', 'ai_daily_reports');
+    fs.mkdirSync(dir, { recursive: true });
+    const filePath = path.join(dir, `news-daily-report-${date}.md`);
+    fs.writeFileSync(filePath, content, 'utf-8');
+    console.log(`AI 摸鱼日报已写入: ${filePath}`);
+    return filePath;
+  }
+
+  /**
+   * 将 Markdown 报告写入 output/ai_daily_reports/ 目录
+   */
+  private async writeDailyReportMd(
+    date: string,
+    content: string,
+  ): Promise<string> {
+    const dir = path.join(process.cwd(), 'output', 'ai_daily_reports');
+    fs.mkdirSync(dir, { recursive: true });
+    const filePath = path.join(dir, `ai-daily-report-${date}.md`);
+    fs.writeFileSync(filePath, content, 'utf-8');
+    console.log(`AI 日报已写入: ${filePath}`);
+    return filePath;
   }
 
   async syncEs() {

@@ -30,6 +30,7 @@ import { DeepSeekService } from 'src/service/ai/deepseek.service';
 import { GuanCommand } from 'src/commands/guan.command';
 import { GuanService } from 'src/service/guan/guan.service';
 import { LlmBaseService } from 'src/service/ai/llm-base.service';
+import { HacknewsCommand } from 'src/commands/hacknews.command';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { LlmBaseService } from 'src/service/ai/llm-base.service';
     GuanCommand,
     GuanService,
     LlmBaseService,
+    HacknewsCommand,
   ],
 })
 export class CliModule {}
