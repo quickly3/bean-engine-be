@@ -11,12 +11,15 @@ import { TRANSLATE_TITLES_PROMPT } from 'src/prompts/translate-titles.prompt';
 import { AI_DAILY_REPORT_PROMPT } from 'src/prompts/ai-daily-report.prompt';
 import { AI_DAILY_REPORT_MD_PROMPT } from 'src/prompts/ai-daily-report-md.prompt';
 import { AI_NEWS_DAILY_PROMPT } from 'src/prompts/ai-news-daily.prompt';
+import { HACKNEWS_DAILY_REPORT_PROMPT } from 'src/prompts/hacknews-daily-report.prompt';
 import { REFINE_SUBCATEGORIES_PROMPT } from 'src/prompts/refine-subcategories.prompt';
 import { HACKNEWS_CATEGORY } from 'src/enum/enum';
 import { GEN_SUBCATEGORIES_PROMPT } from 'src/prompts/gen-subcategories.prompt';
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import { DeepSeekService } from './ai/deepseek.service';
+import { FeishuRobot } from './feishu/feishuRobot';
+import { ArkAiService } from './ai/arkAi.service';
 
 export enum recordStatus {
   PENDING = 'pending',
@@ -33,6 +36,7 @@ export class HackerNewsService {
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
     private readonly deepSeekService: DeepSeekService,
+    private readonly arkAiService: ArkAiService,
   ) {}
   headers = {
     'User-Agent':
@@ -345,6 +349,8 @@ export class HackerNewsService {
 
   private async callLLM(prompt: string) {
     switch (this.llmType) {
+      case 'glm':
+        return this.callGLM(prompt);
       case 'deepseek':
         return this.callDeepSeek(prompt);
       case 'minimax':
@@ -354,6 +360,19 @@ export class HackerNewsService {
       default:
         throw new Error(`Unsupported LLM type: ${this.llmType}`);
     }
+  }
+
+  private async callGLM(prompt: string): Promise<string> {
+    const resp = await this.arkAiService.chatWithSystem({
+      system: '',
+      message: prompt,
+      type: 'glm',
+    });
+
+    if (typeof resp === 'string') {
+      return resp;
+    }
+    return '';
   }
 
   private async callDeepSeek(prompt: string): Promise<string> {
@@ -608,7 +627,7 @@ export class HackerNewsService {
     const news = await this.getAiNewsByDate(targetDate, null, null);
 
     if (news.length === 0) {
-      const emptyContent = `# 🐟 AI 摸鱼日报 · ${reportDate}\n\n> 打工人的 AI 摸鱼指南 · 带薪看报，快乐摸鱼\n\n## 🔥 今日摸鱼速报\n\n今天没新闻可摸鱼，早点下班吧\n`;
+      const emptyContent = `# 🐟 每日摸鱼新闻 · ${reportDate}\n\n> 打工人的互联网摸鱼指南 · 带薪看报，快乐摸鱼\n\n## 🔥 今日摸鱼速报\n\n今天没新闻可摸鱼，早点下班吧\n`;
       const filePath = await this.writeNewsDailyReportMd(
         reportDate,
         emptyContent,
@@ -622,17 +641,20 @@ export class HackerNewsService {
       };
     }
 
-    // 传递完整字段：title_cn、title、category、level、url
-    const input = news.map((n) => ({
+    // prompt 输入中不传 url，只传 id 以减少 token；生成后再还原链接
+    const input = news.map((n, i) => ({
+      id: i + 1,
       title_cn: n.title_cn,
       title: n.title,
       category: n.category,
       level: n.level,
-      url: n.url,
     }));
+    const idUrlMap = new Map(input.map((n) => [n.id, news[n.id - 1].url]));
+    const csvData = this.newsToCsv(input);
     // prompt 中提示：本日报是对昨日（targetDate）新闻的总结，但以今日（reportDate）视角发布
-    const prompt = `${AI_NEWS_DAILY_PROMPT}\n\n【重要提示】\n本日报是对昨天（${targetDate}）发生的新闻的总结回顾。报告标题日期使用今日日期（${reportDate}），即"回顾昨日、发布今日"的模式。撰写时可以适当使用"昨天"、"昨日"等表述来描述事件发生时间，让读者明确这是对前一天动态的梳理。\n\n以下是昨天（${targetDate}）的新闻数据（JSON 格式）：${JSON.stringify(input)}`;
+    const prompt = `${AI_NEWS_DAILY_PROMPT}\n\n【重要提示】\n本日报是对昨天（${targetDate}）发生的新闻的总结回顾。报告标题日期使用今日日期（${reportDate}），即"回顾昨日、发布今日"的模式。撰写时可以适当使用"昨天"、"昨日"等表述来描述事件发生时间，让读者明确这是对前一天动态的梳理。\n\n以下是昨天（${targetDate}）的新闻数据（CSV 格式）：\n${csvData}`;
     const respContent = await this.callLLM(prompt);
+    // const respContent = await this.callGLM(prompt);
 
     // 替换日期占位符（使用次日日期作为报告标题日期）
     const content = respContent
@@ -641,15 +663,181 @@ export class HackerNewsService {
       .trim()
       .replace('{{date}}', reportDate);
 
-    const filePath = await this.writeNewsDailyReportMd(reportDate, content);
+    const restoredContent = this.restoreUrlById(content, idUrlMap);
+
+    const filePath = await this.writeNewsDailyReportMd(
+      reportDate,
+      restoredContent,
+    );
+    const feishu = new FeishuRobot(this.configService);
+    await feishu.set_app_access_token();
+
+    const sfContent = feishu.toFeishuMdFormat(
+      `每日摸鱼新闻 · ${reportDate}`,
+      restoredContent,
+    );
+
+    await feishu.sendToBeanPost(sfContent);
 
     return {
       date: targetDate,
       reportDate,
       total: news.length,
       filePath,
-      content,
+      content: restoredContent,
     };
+  }
+
+  /**
+   * 将新闻数据转为 CSV 格式，用于减小 prompt 体积
+   *
+   * 相比 JSON，省去了每条记录重复的字段名和引号开销，
+   * 当新闻条数较多时显著缩减 prompt 长度。
+   *
+   * @param news 原始新闻数组
+   * @returns CSV 格式字符串
+   */
+  private newsToCsv(
+    news: Array<{
+      id: number;
+      title_cn: string;
+      title: string;
+      category: string;
+      level: number;
+    }>,
+  ): string {
+    const header = 'id,title_cn,title,category,level';
+    const rows = news.map((n) => {
+      // CSV 转义：字段中的逗号、双引号、换行需要用双引号包裹并转义
+      const escapeCsv = (val: string | number) => {
+        const s = String(val ?? '');
+        if (/[",\n\r]/.test(s)) {
+          return `"${s.replace(/"/g, '""')}"`;
+        }
+        return s;
+      };
+      return [
+        escapeCsv(n.id),
+        escapeCsv(n.title_cn),
+        escapeCsv(n.title),
+        escapeCsv(n.category),
+        escapeCsv(n.level),
+      ].join(',');
+    });
+    return [header, ...rows].join('\n');
+  }
+
+  /**
+   * 将 AI 输出中的链接 ID 占位符替换为真实 URL。
+   * 例如：[标题](ID:12) -> [标题](https://example.com)
+   */
+  private restoreUrlById(
+    content: string,
+    idUrlMap: Map<number, string>,
+  ): string {
+    return content.replace(/\((?:id|ID)\s*[:：]\s*(\d+)\)/g, (raw, idText) => {
+      const id = Number(idText);
+      const url = idUrlMap.get(id);
+      return url ? `(${url})` : raw;
+    });
+  }
+
+  /**
+   * 生成 Markdown 格式的 HackNews 技术日报，并写入 output 目录
+   * 与摸鱼日报不同，本报告突出 HackNews 的专业性，不含娱乐化表达
+   * @param date 报告日期，不传则使用昨天的日期
+   * @returns 包含文件路径和报告内容的对象
+   */
+  async generateHackNewsDailyReportMd(date?: string) {
+    const targetDate = date || moment().subtract(1, 'day').format('YYYY-MM-DD');
+    // 报告标题使用次日日期：今天生成的是对昨天新闻的总结，呈现为"明日期"的日报
+    const reportDate = moment(targetDate, 'YYYY-MM-DD')
+      .add(1, 'day')
+      .format('YYYY-MM-DD');
+
+    // category=null 表示查询全部分类，take=null 表示不限制条数
+    const news = await this.getAiNewsByDate(targetDate, null, null);
+
+    if (news.length === 0) {
+      const emptyContent = `# 📰 HackNews 技术日报 · ${reportDate}\n\n> 每日 HackerNews 热门精选 · 为开发者筛选值得关注的动态\n\n## 🔥 今日速报\n\n今天暂无新闻内容\n`;
+      const filePath = await this.writeHackNewsDailyReportMd(
+        reportDate,
+        emptyContent,
+      );
+      return {
+        date: targetDate,
+        reportDate,
+        total: 0,
+        filePath,
+        content: emptyContent,
+      };
+    }
+
+    // prompt 输入中不传 url，只传 id 以减少 token；生成后再还原链接
+    const input = news.map((n, i) => ({
+      id: i + 1,
+      title_cn: n.title_cn,
+      title: n.title,
+      category: n.category,
+      level: n.level,
+    }));
+    const idUrlMap = new Map(input.map((n) => [n.id, news[n.id - 1].url]));
+    // 转为 CSV 格式以减小 prompt 体积
+    const csvData = this.newsToCsv(input);
+    // prompt 中提示：本日报是对昨日（targetDate）新闻的总结，但以今日（reportDate）视角发布
+    const prompt = `${HACKNEWS_DAILY_REPORT_PROMPT}\n\n【重要提示】\n本日报是对昨天（${targetDate}）发生的新闻的总结回顾。报告标题日期使用今日日期（${reportDate}），即"回顾昨日、发布今日"的模式。撰写时可以适当使用"昨天"、"昨日"等表述来描述事件发生时间，让读者明确这是对前一天动态的梳理。\n\n以下是昨天（${targetDate}）的新闻数据（CSV 格式）：\n${csvData}`;
+
+    // const respContent = await this.callGLM(prompt);
+
+    const respContent = await this.callDeepSeek(prompt);
+
+    // 替换日期占位符（使用次日日期作为报告标题日期）
+    const content = respContent
+      .replace(/^```(?:markdown)?\n?/, '')
+      .replace(/\n?```$/, '')
+      .trim()
+      .replace('{{date}}', reportDate);
+
+    const restoredContent = this.restoreUrlById(content, idUrlMap);
+
+    const filePath = await this.writeHackNewsDailyReportMd(
+      reportDate,
+      restoredContent,
+    );
+
+    const feishu = new FeishuRobot(this.configService);
+    await feishu.set_app_access_token();
+
+    const sfContent = feishu.toFeishuMdFormat(
+      `HackNews 技术日报 · ${reportDate}`,
+      restoredContent,
+    );
+
+    await feishu.sendToBeanPost(sfContent);
+
+    return {
+      date: targetDate,
+      reportDate,
+      total: news.length,
+      filePath,
+      content: restoredContent,
+    };
+  }
+
+  /**
+   * 将 HackNews 技术日报写入 output/ai_daily_reports/ 目录
+   * 文件名使用 hacknews-daily-report 前缀，与其他报告区分
+   */
+  private async writeHackNewsDailyReportMd(
+    date: string,
+    content: string,
+  ): Promise<string> {
+    const dir = path.join(process.cwd(), 'output', 'ai_daily_reports');
+    fs.mkdirSync(dir, { recursive: true });
+    const filePath = path.join(dir, `hacknews-daily-report-${date}.md`);
+    fs.writeFileSync(filePath, content, 'utf-8');
+    console.log(`HackNews 技术日报已写入: ${filePath}`);
+    return filePath;
   }
 
   /**
@@ -664,7 +852,7 @@ export class HackerNewsService {
     fs.mkdirSync(dir, { recursive: true });
     const filePath = path.join(dir, `news-daily-report-${date}.md`);
     fs.writeFileSync(filePath, content, 'utf-8');
-    console.log(`AI 摸鱼日报已写入: ${filePath}`);
+    console.log(`每日摸鱼新闻已写入: ${filePath}`);
     return filePath;
   }
 
