@@ -31,6 +31,7 @@ import { GuanCommand } from 'src/commands/guan.command';
 import { GuanService } from 'src/service/guan/guan.service';
 import { LlmBaseService } from 'src/service/ai/llm-base.service';
 import { HacknewsCommand } from 'src/commands/hacknews.command';
+import { ArkAiService } from 'src/service/ai/arkAi.service';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { HacknewsCommand } from 'src/commands/hacknews.command';
     GuanService,
     LlmBaseService,
     HacknewsCommand,
+    ArkAiService,
   ],
 })
 export class CliModule {}

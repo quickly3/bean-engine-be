@@ -192,6 +192,7 @@ export class FeishuRobot {
       msg_type: 'post',
       content: JSON.stringify(content),
     };
+
     try {
       const response = await axios({
         method: 'post',
@@ -223,5 +224,15 @@ export class FeishuRobot {
     } catch (error) {
       console.error(error.response.data);
     }
+  }
+
+  toFeishuMdFormat(title, mdContent) {
+    const postContent = {
+      zh_cn: {
+        title: title,
+        content: [[{ tag: 'md', text: mdContent }]],
+      },
+    };
+    return postContent;
   }
 }

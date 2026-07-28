@@ -4,16 +4,15 @@ import OpenAI from 'openai';
 import _ from 'lodash';
 
 const modelMap = {
-  flash: 'deepseek-v4-flash',
-  pro: 'deepseek-v4-pro',
+  glm: 'glm-5.2',
 };
 
 @Injectable()
-export class DeepSeekService {
+export class ArkAiService {
   public openai: OpenAI;
   constructor(private readonly configService: ConfigService) {
-    const dsKey = this.configService.get<string>('deepseek.DS_KEY');
-    const dsUrl = this.configService.get<string>('deepseek.DS_URL');
+    const dsKey = this.configService.get<string>('ARK.ARK_KEY');
+    const dsUrl = this.configService.get<string>('ARK.ARK_URL');
 
     this.openai = new OpenAI({
       baseURL: dsUrl,
@@ -24,7 +23,7 @@ export class DeepSeekService {
   async completion(options) {
     const { message, type } = options;
 
-    const model = type ? modelMap[type] : modelMap.flash;
+    const model = type ? modelMap[type] : modelMap.glm;
 
     const messages: any = [
       {
@@ -55,12 +54,12 @@ export class DeepSeekService {
   async chatWithSystem(options: {
     system: string;
     message: string;
-    type?: 'flash' | 'pro';
+    type?: 'glm';
     thinking?: { type: 'disabled' | 'enabled' };
   }): Promise<string> {
     const { system, message, type, thinking } = options;
 
-    const model = type ? modelMap[type] : modelMap.flash;
+    const model = type ? modelMap[type] : modelMap.glm;
 
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: 'system', content: system },

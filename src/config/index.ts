@@ -45,6 +45,10 @@ export default () => {
       DS_URL: process.env.DS_URL,
       TAVILY_KEY: process.env.TAVILY_KEY,
     },
+    ARK: {
+      ARK_KEY: process.env.ARK_KEY,
+      ARK_URL: process.env.ARK_URL,
+    },
     minimax: {
       apiKey: process.env.MINIMAX_API_KEY,
       model: process.env.MINIMAX_MODEL,

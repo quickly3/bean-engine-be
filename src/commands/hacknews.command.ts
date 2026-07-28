@@ -30,9 +30,13 @@ export class HacknewsCommand extends CommandRunner {
         case 'aiDailyReportMd':
           await this.aiDailyReportMd(options.date);
           break;
-        // npm run cli -- hacknews -- -c newsDailyReportMd --date 2026-07-19
+        // yarn cli hacknews -c newsDailyReportMd
         case 'newsDailyReportMd':
           await this.newsDailyReportMd(options.date);
+          break;
+        // yarn cli hacknews -c hackNewsDailyReportMd
+        case 'hackNewsDailyReportMd':
+          await this.hackNewsDailyReportMd(options.date);
           break;
         default:
           console.log(`未找到子命令: ${options.command}`);
@@ -90,6 +94,10 @@ export class HacknewsCommand extends CommandRunner {
     console.log(
       '  npm run cli -- hacknews -- -c newsDailyReportMd --date 2026-07-19',
     );
+    console.log('  npm run cli -- hacknews -- -c hackNewsDailyReportMd');
+    console.log(
+      '  npm run cli -- hacknews -- -c hackNewsDailyReportMd --date 2026-07-19',
+    );
   }
 
   private getCommandDescriptions() {
@@ -109,6 +117,11 @@ export class HacknewsCommand extends CommandRunner {
         description:
           '生成 HackerNews 全量新闻每日精选报告（Markdown 文件），面向开发者和 AI 爱好者，可通过 --date 指定日期（默认当天）',
       },
+      {
+        name: 'hackNewsDailyReportMd',
+        description:
+          '生成 HackNews 技术日报（Markdown 文件），突出专业性，不含娱乐化表达，可通过 --date 指定日期（默认昨天）',
+      },
     ];
   }
 
@@ -126,6 +139,14 @@ export class HacknewsCommand extends CommandRunner {
 
   private async newsDailyReportMd(date?: string) {
     const result = await this.hackerNewsService.generateNewsDailyReportMd(date);
+    console.log(`\n报告日期: ${result.date}`);
+    console.log(`新闻数量: ${result.total}`);
+    console.log(`文件路径: ${result.filePath}`);
+  }
+
+  private async hackNewsDailyReportMd(date?: string) {
+    const result =
+      await this.hackerNewsService.generateHackNewsDailyReportMd(date);
     console.log(`\n报告日期: ${result.date}`);
     console.log(`新闻数量: ${result.total}`);
     console.log(`文件路径: ${result.filePath}`);
