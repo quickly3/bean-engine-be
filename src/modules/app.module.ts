@@ -37,6 +37,7 @@ import { WbgQueryController } from 'src/controller/wbg-query.controller';
 import { WbgQueryService } from 'src/service/wbg-query.service';
 import { DeepSeekService } from 'src/service/ai/deepseek.service';
 import { LlmBaseService } from 'src/service/ai/llm-base.service';
+import { ArkAiService } from 'src/service/ai/arkAi.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -95,6 +96,7 @@ import { LlmBaseService } from 'src/service/ai/llm-base.service';
     PrismaService,
     DeepSeekService,
     LlmBaseService,
+    ArkAiService,
   ],
 })
 export class AppModule {}
