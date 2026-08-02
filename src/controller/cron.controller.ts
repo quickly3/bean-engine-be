@@ -29,7 +29,8 @@ export class CronController {
   @Cron(CronExpression.EVERY_DAY_AT_7AM)
   async dayCron() {
     if (process.env.NODE_ENV === 'location') return;
-    await this.dailyReportService.sendToFs('company');
+    // await this.dailyReportService.sendToFs('company');
+    await this.hackerNewsService.generateHackNewsDailyReportMd();
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM)

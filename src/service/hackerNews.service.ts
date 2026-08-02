@@ -800,10 +800,10 @@ export class HackerNewsService {
 
     const restoredContent = this.restoreUrlById(content, idUrlMap);
 
-    const filePath = await this.writeHackNewsDailyReportMd(
-      reportDate,
-      restoredContent,
-    );
+    // const filePath = await this.writeHackNewsDailyReportMd(
+    //   reportDate,
+    //   restoredContent,
+    // );
 
     const feishu = new FeishuRobot(this.configService);
     await feishu.set_app_access_token();
@@ -813,13 +813,14 @@ export class HackerNewsService {
       restoredContent,
     );
 
-    await feishu.sendToBeanPost(sfContent);
+    // await feishu.sendToBeanPost(sfContent);
+    await feishu.sendToCompanyPost(sfContent);
 
     return {
       date: targetDate,
       reportDate,
       total: news.length,
-      filePath,
+      filePath: null,
       content: restoredContent,
     };
   }

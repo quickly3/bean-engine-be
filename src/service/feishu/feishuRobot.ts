@@ -47,7 +47,9 @@ export class FeishuRobot {
       this.headers = {
         Authorization: `Bearer ${this.app_access_token}`,
       };
-    } catch (error) {}
+    } catch (error) {
+      console.error(error.response.data);
+    }
   }
 
   async getChatgroupList() {
