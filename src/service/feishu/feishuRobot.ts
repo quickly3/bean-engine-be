@@ -228,6 +228,113 @@ export class FeishuRobot {
     }
   }
 
+  /**
+   * 获取公司群（sendToCompanyPost 发送的目标群）最近的消息列表
+   * @param pageSize 查询条数，默认 5
+   * @param options 可选参数
+   * @param options.startTime 起始时间（毫秒时间戳），用于读取该时间之后的最新数据
+   * @param options.endTime 结束时间（毫秒时间戳）
+   */
+  async getCompanyMessageList(pageSize = 5) {
+    try {
+      const params = {
+        container_id_type: 'chat',
+        container_id: this.company_receive_id,
+        page_size: pageSize,
+        sort_type: 'ByCreateTimeDesc',
+        // ...(startTime ? { start_time: startTime } : {}),
+        // ...(endTime ? { end_time: endTime } : {}),
+      };
+
+      const response = await axios({
+        method: 'get',
+        url: 'https://open.feishu.cn/open-apis/im/v1/messages',
+        params,
+        headers: this.headers,
+      });
+      return response.data.data.items;
+    } catch (error) {
+      console.error(error.response?.data);
+    }
+  }
+
+  /**
+   * 获取指定消息的已读用户列表
+   * @param messageId 消息 ID
+   */
+  async getMessageReadUsers(messageId: string) {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `https://open.feishu.cn/open-apis/im/v1/messages/${messageId}/read_users`,
+        params: {
+          page_size: 100,
+          user_id_type: 'open_id',
+        },
+        headers: this.headers,
+      });
+      return response.data.data;
+    } catch (error) {
+      console.error(error.response?.data.error);
+    }
+  }
+
+  /**
+   * 根据 open_id 列表查询用户名字
+   * @param userIds open_id 列表
+   */
+  async getUserNames(userIds: string[]) {
+    const names = [];
+    for (const userId of userIds) {
+      try {
+        const response = await axios({
+          method: 'get',
+          url: `https://open.feishu.cn/open-apis/contact/v3/users/${userId}`,
+          params: { user_id_type: 'open_id' },
+          headers: this.headers,
+        });
+        names.push(response.data.data.user.name);
+      } catch (error) {
+        console.error(error.response?.data);
+        names.push(userId);
+      }
+    }
+    return names;
+  }
+
+  /**
+   * 查询发送到公司群的最近几条消息的已读情况
+   * @param pageSize 查询最近消息条数，默认 5
+   */
+  async getCompanyPostReadStatus(pageSize = 1) {
+    const items = await this.getCompanyMessageList(pageSize);
+    if (!items) return [];
+
+    const result = [];
+    for (const item of items) {
+      const readData = await this.getMessageReadUsers(item.message_id);
+      const readUsers = readData?.items ?? [];
+
+      const content = JSON.parse(item.body.content);
+      const title = content.title;
+
+      const user_ids = readUsers.map((user) => user.user_id);
+      const user_names = await this.getUserNames(user_ids);
+
+      result.push({
+        // message_id: item.message_id,
+        // msg_type: item.msg_type,
+        // create_time: item.create_time,
+        // sender: item.sender,
+        title,
+        // read_count: readUsers.length,
+        // read_users: readUsers,
+        user_names,
+      });
+    }
+    return result;
+  }
+
   toFeishuMdFormat(title, mdContent) {
     const postContent = {
       zh_cn: {
