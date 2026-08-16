@@ -33,6 +33,7 @@ import { LlmBaseService } from 'src/service/ai/llm-base.service';
 import { HacknewsCommand } from 'src/commands/hacknews.command';
 import { ArkAiService } from 'src/service/ai/arkAi.service';
 import { FeishuCommand } from 'src/commands/feishu.command';
+import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { FeishuCommand } from 'src/commands/feishu.command';
     HacknewsCommand,
     ArkAiService,
     FeishuCommand,
+    HacknewsAgentService,
   ],
 })
 export class CliModule {}
