@@ -15,9 +15,12 @@ import { HACKNEWS_DAILY_REPORT_PROMPT } from 'src/prompts/hacknews-daily-report.
 import { REFINE_SUBCATEGORIES_PROMPT } from 'src/prompts/refine-subcategories.prompt';
 import { HACKNEWS_CATEGORY } from 'src/enum/enum';
 import { GEN_SUBCATEGORIES_PROMPT } from 'src/prompts/gen-subcategories.prompt';
+import { SUMMARIZE_CONTENT_PROMPT } from 'src/prompts/summarize-content.prompt';
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import { DeepSeekService } from './ai/deepseek.service';
+import { DeepSeekFetchResponse } from './ai/ds.interface';
+import * as cheerio from 'cheerio';
 import { FeishuRobot } from './feishu/feishuRobot';
 import { ArkAiService } from './ai/arkAi.service';
 
@@ -500,6 +503,129 @@ export class HackerNewsService {
     const respContent = await this.callLLM(prompt);
     const titles_cn = JSON.parse(respContent);
     return titles_cn;
+  }
+
+  /**
+   * 根据 HackerNews ID 抓取原文并生成中文摘要
+   * 1. 从 DB 获取记录的 url
+   * 2. 调用 DeepSeek fetchPage 抓取网页内容（Markdown），保存到 content 字段
+   * 3. 调用 LLM 用中文提取重要内容，保存到 summary_cn 字段
+   * @param id HackerNews 记录 ID
+   */
+  async fetchContentAndSummarize(id: number) {
+    const record = await this.prisma.hackNews.findUnique({
+      where: { id },
+    });
+
+    if (!record) {
+      throw new Error(`HackNews 记录不存在: ${id}`);
+    }
+    if (!record.url) {
+      throw new Error(`HackNews 记录 ${id} 没有 url，无法抓取`);
+    }
+
+    console.log(`[${id}] 抓取页面: ${record.url}`);
+    let page: DeepSeekFetchResponse;
+    try {
+      page = await this.deepSeekService.fetchPage({ url: record.url });
+    } catch (err) {
+      console.warn(
+        `[${id}] DeepSeek 抓取失败（${_.get(err, 'message', err)}），改用直接抓取...`,
+      );
+      page = await this.fetchPageDirect(record.url);
+    }
+
+    if (!page?.content) {
+      throw new Error(`HackNews 记录 ${id} 抓取内容为空`);
+    }
+
+    await this.prisma.hackNews.update({
+      where: { id },
+      data: { content: page.content },
+    });
+    console.log(
+      `[${id}] 原文已保存（${page.content.length} 字符），正在生成中文摘要...`,
+    );
+
+    const prompt = `${SUMMARIZE_CONTENT_PROMPT}\n\n标题：${record.title ?? ''}\n\n正文：\n${page.content.slice(0, 30000)}`;
+    const summaryCn = await this.callLLM(prompt);
+
+    await this.prisma.hackNews.update({
+      where: { id },
+      data: { summary_cn: summaryCn },
+    });
+    console.log(`[${id}] 中文摘要已保存`);
+
+    return { id, contentLength: page.content.length, summaryCn };
+  }
+
+  /**
+   * 直接抓取网页并转为 Markdown 兜底方案
+   * 当 DeepSeek /v1/tools/fetch 抓取失败（如目标站屏蔽其抓取器）时使用
+   */
+  private async fetchPageDirect(url: string): Promise<DeepSeekFetchResponse> {
+    const resp = await axios.get<string>(url, {
+      headers: this.headers,
+      timeout: 30_000,
+      maxRedirects: 5,
+    });
+    const $ = cheerio.load(resp.data);
+    $(
+      'script, style, noscript, nav, footer, header, aside, iframe, form, svg',
+    ).remove();
+
+    const title =
+      $('title').text().trim() || $('h1').first().text().trim() || '';
+
+    const root = $('article').length
+      ? $('article')
+      : $('main').length
+        ? $('main')
+        : $('body');
+
+    const parts: string[] = [];
+    let lastLine = '';
+    root
+      .find('h1, h2, h3, h4, h5, h6, p, li, pre, blockquote')
+      .each((_, el) => {
+        const tag = (
+          el as unknown as { tagName?: string }
+        ).tagName?.toLowerCase();
+        const text =
+          tag === 'li'
+            ? $(el)
+                .clone()
+                .children('ul, ol')
+                .remove()
+                .end()
+                .text()
+                .replace(/\s+/g, ' ')
+                .trim()
+            : $(el).text().replace(/\s+/g, ' ').trim();
+        if (!text || text.length < 2) return;
+
+        let line: string;
+        if (tag?.startsWith('h') && tag.length === 2) {
+          line = `\n${'#'.repeat(Number(tag[1]))} ${text}`;
+        } else if (tag === 'li') {
+          line = `- ${text}`;
+        } else if (tag === 'pre') {
+          line = `\n\`\`\`\n${text}\n\`\`\``;
+        } else {
+          line = text;
+        }
+        // 跳过嵌套元素导致的重复行
+        if (line === lastLine) return;
+        lastLine = line;
+        parts.push(line);
+      });
+
+    const content = parts
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    return { title, content };
   }
 
   async getAiNewsByDate(

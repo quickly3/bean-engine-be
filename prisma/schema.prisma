@@ -132,6 +132,8 @@ model HackNews {
   text_cn      String?
   type         String?
   url          String?
+  content      String?
+  summary_cn   String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
 
@@ -170,26 +172,26 @@ model WbgIndicator {
 }
 
 model WbgCountry {
-  id                      String   @id
-  iso2Code                String?  @unique
-  name                    String?
-  regionId                String?
-  regionIso2Code          String?
-  regionValue             String?
-  adminRegionId           String?
-  adminRegionIso2Code     String?
-  adminRegionValue        String?
-  incomeLevelId           String?
-  incomeLevelIso2Code     String?
-  incomeLevelValue        String?
-  lendingTypeId           String?
-  lendingTypeIso2Code     String?
-  lendingTypeValue        String?
-  capitalCity             String?
-  longitude               String?
-  latitude                String?
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @default(now()) @updatedAt
+  id                  String   @id
+  iso2Code            String?  @unique
+  name                String?
+  regionId            String?
+  regionIso2Code      String?
+  regionValue         String?
+  adminRegionId       String?
+  adminRegionIso2Code String?
+  adminRegionValue    String?
+  incomeLevelId       String?
+  incomeLevelIso2Code String?
+  incomeLevelValue    String?
+  lendingTypeId       String?
+  lendingTypeIso2Code String?
+  lendingTypeValue    String?
+  capitalCity         String?
+  longitude           String?
+  latitude            String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
 
   @@index([name])
   @@index([regionId])
@@ -201,19 +203,19 @@ model WbgCountry {
 
 // 观察者网·风闻社区 作者
 model GuanUser {
-  uid            String    @id
+  uid            String   @id
   nickname       String?
   title          String?
   level          String?
   avatar         String?
-  articleCount   Int?      @default(0)
-  replyCount     Int?      @default(0)
-  beRepliedCount Int?      @default(0)
-  likeCount      Int?      @default(0)
-  collectCount   Int?      @default(0)
-  crawlStatus    String?   @default("pending")
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @default(now()) @updatedAt
+  articleCount   Int?     @default(0)
+  replyCount     Int?     @default(0)
+  beRepliedCount Int?     @default(0)
+  likeCount      Int?     @default(0)
+  collectCount   Int?     @default(0)
+  crawlStatus    String?  @default("pending")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
 
   @@index([nickname])
   @@schema("public")

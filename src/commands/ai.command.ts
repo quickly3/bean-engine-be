@@ -12,6 +12,7 @@ import { SearchService } from 'src/service/search.service';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { BiliService } from 'src/service/bili/bili.service';
+import { DeepSeekService } from 'src/service/ai/deepseek.service';
 import { exit } from 'process';
 
 @Command({
@@ -28,6 +29,7 @@ export class AiCommand extends CommandRunner {
     private readonly hackerNewsService: HackerNewsService,
     private readonly searchService: SearchService,
     private readonly biliService: BiliService,
+    private readonly deepSeekService: DeepSeekService,
   ) {
     super();
     this.feishu = new FeishuRobot(this.configService);
@@ -106,6 +108,15 @@ export class AiCommand extends CommandRunner {
         case 'refineSubCategories':
           await this.refineSubCategories(options.minCount, options.maxCount);
           break;
+        case 'dsSearch':
+          await this.dsSearch(options);
+          break;
+        case 'dsFetch':
+          await this.dsFetch(options);
+          break;
+        case 'hnSummarize':
+          await this.hnSummarize(options);
+          break;
         default:
           console.log(`未找到子命令: ${options.command}`);
           this.printRuntimeGuide();
@@ -141,6 +152,47 @@ export class AiCommand extends CommandRunner {
     return parseInt(val, 10) || 8;
   }
 
+  @Option({
+    flags: '-q, --query [query]',
+    description:
+      '搜索词（dsSearch 用），支持 site: / - / "..." / lang: / after: / before: 操作符',
+  })
+  getQuery(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--count [count]',
+    description: '搜索返回条数（dsSearch 用，1-50，默认 10）',
+  })
+  getCount(val: string): number {
+    return parseInt(val, 10) || 10;
+  }
+
+  @Option({
+    flags: '--need-content',
+    description: '搜索结果是否返回页面正文（dsSearch 用）',
+  })
+  getNeedContent(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-u, --url [url]',
+    description: '要抓取的网页地址（dsFetch 用）',
+  })
+  getUrl(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--id [id]',
+    description: 'HackerNews 记录 ID（hnSummarize 用）',
+  })
+  getId(val: string): number {
+    return parseInt(val, 10);
+  }
+
   private printRuntimeGuide() {
     console.log('AiCommand 运行说明:');
     console.log('for linux npm run cli ai -- -c <command> [--mid <mid>]');
@@ -157,6 +209,10 @@ export class AiCommand extends CommandRunner {
     console.log('  npm run cli ai -- -c gpt');
     console.log('  npm run cli ai -- -c getTopStories');
     console.log('  npm run cli ai -- -c anaUps --mid 23947287');
+    console.log(
+      '  npm run cli ai -- -c dsSearch --query "DeepSeek API" --count 3 --need-content',
+    );
+    console.log('  npm run cli ai -- -c dsFetch --url https://example.com');
   }
 
   private getCommandDescriptions() {
@@ -190,6 +246,20 @@ export class AiCommand extends CommandRunner {
         name: 'refineSubCategories',
         description:
           '归并精炼已生成的子分类，可通过 --min-count（默认 5）和 --max-count（默认 8）指定数量范围',
+      },
+      {
+        name: 'dsSearch',
+        description:
+          'DeepSeek 网页搜索，需配合 --query 使用，可选 --count（默认 10）和 --need-content',
+      },
+      {
+        name: 'dsFetch',
+        description: 'DeepSeek 网页抓取，返回 Markdown 内容，需配合 --url 使用',
+      },
+      {
+        name: 'hnSummarize',
+        description:
+          '抓取 HackerNews 原文并生成中文摘要，需配合 --id 使用（结果写入 content / summary_cn 字段）',
       },
     ];
   }
@@ -338,5 +408,66 @@ export class AiCommand extends CommandRunner {
       minCount ?? 5,
       maxCount ?? 8,
     );
+  }
+
+  async dsSearch(options) {
+    if (!options?.query) {
+      console.log(
+        '请通过 --query 指定搜索词，例如: npm run cli ai -- -c dsSearch --query "DeepSeek API"',
+      );
+      return;
+    }
+
+    const resp = await this.deepSeekService.search({
+      query: options.query,
+      count: options.count,
+      need_content: options.needContent,
+    });
+
+    console.log(`共 ${resp.results.length} 条结果:\n`);
+    resp.results.forEach((item, index) => {
+      console.log(
+        `[${index + 1}] ${item.title}  (score: ${item.rerank_score?.toFixed(2)}, authority: ${item.authority})`,
+      );
+      console.log(`    ${item.url}`);
+      if (item.date) {
+        console.log(`    date: ${item.date}`);
+      }
+      console.log(`    ${item.summary}`);
+      if (item.content) {
+        console.log(`    content: ${item.content}`);
+      }
+      console.log('');
+    });
+  }
+
+  async dsFetch(options) {
+    if (!options?.url) {
+      console.log(
+        '请通过 --url 指定要抓取的网页地址，例如: npm run cli ai -- -c dsFetch --url https://example.com',
+      );
+      return;
+    }
+
+    const resp = await this.deepSeekService.fetchPage({ url: options.url });
+
+    console.log(`# ${resp.title}\n`);
+    console.log(resp.content);
+  }
+
+  async hnSummarize(options) {
+    const id = options?.id;
+    if (!id) {
+      console.log(
+        '请通过 --id 指定 HackerNews 记录 ID，例如: npm run cli ai -- -c hnSummarize --id 12345678',
+      );
+      return;
+    }
+
+    const resp = await this.hackerNewsService.fetchContentAndSummarize(id);
+
+    console.log('\n===== 中文摘要 =====\n');
+    console.log(resp.summaryCn);
+    exit(0);
   }
 }
