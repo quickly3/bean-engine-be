@@ -1,5 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { HackerNewsService } from 'src/service/hackerNews.service';
+import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
 import { exit } from 'process';
 
 @Command({
@@ -8,7 +9,10 @@ import { exit } from 'process';
     'HackerNews 相关命令入口。使用 `npm run cli -- hacknews --help` 查看帮助，使用 `npm run cli -- hacknews -c <command>` 执行具体子命令。',
 })
 export class HacknewsCommand extends CommandRunner {
-  constructor(private readonly hackerNewsService: HackerNewsService) {
+  constructor(
+    private readonly hackerNewsService: HackerNewsService,
+    private readonly hacknewsAgentService: HacknewsAgentService,
+  ) {
     super();
   }
 
@@ -38,6 +42,10 @@ export class HacknewsCommand extends CommandRunner {
         case 'hackNewsDailyReportMd':
           await this.hackNewsDailyReportMd(options.date);
           break;
+        // npm run cli -- hacknews -- -c agent [--goal "抓取最新新闻并生成今日日报"]
+        case 'agent':
+          await this.agent(options.goal);
+          break;
         default:
           console.log(`未找到子命令: ${options.command}`);
           this.printRuntimeGuide();
@@ -62,6 +70,15 @@ export class HacknewsCommand extends CommandRunner {
     description: '报告日期，格式 YYYY-MM-DD。不传则使用当天日期',
   })
   getDate(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--goal [goal]',
+    description:
+      'agent 任务目标描述，例如 "抓取最新新闻并生成今日 AI 日报"。不传则使用默认目标',
+  })
+  getGoal(val: string): string {
     return val;
   }
 
@@ -98,6 +115,10 @@ export class HacknewsCommand extends CommandRunner {
     console.log(
       '  npm run cli -- hacknews -- -c hackNewsDailyReportMd --date 2026-07-19',
     );
+    console.log('  npm run cli -- hacknews -- -c agent');
+    console.log(
+      '  npm run cli -- hacknews -- -c agent --goal "抓取最新新闻并生成今日 AI 日报"',
+    );
   }
 
   private getCommandDescriptions() {
@@ -121,6 +142,11 @@ export class HacknewsCommand extends CommandRunner {
         name: 'hackNewsDailyReportMd',
         description:
           '生成 HackNews 技术日报（Markdown 文件），突出专业性，不含娱乐化表达，可通过 --date 指定日期（默认昨天）',
+      },
+      {
+        name: 'agent',
+        description:
+          '智能体模式：由 LLM 自主决策执行抓取/翻译/分类/日报全流程，可通过 --goal 指定任务目标',
       },
     ];
   }
@@ -150,5 +176,26 @@ export class HacknewsCommand extends CommandRunner {
     console.log(`\n报告日期: ${result.date}`);
     console.log(`新闻数量: ${result.total}`);
     console.log(`文件路径: ${result.filePath}`);
+  }
+
+  /**
+   * 智能体模式：由 LLM 自主决策执行 HackerNews 全流程任务
+   * @param goal 任务目标描述，不传则使用默认目标（抓取->翻译->分类->日报）
+   */
+  private async agent(goal?: string) {
+    const target =
+      goal ||
+      '执行 HackerNews 全流程：抓取最新新闻入库，翻译为中文，完成分类打标，并生成昨天的 AI 每日报告';
+
+    const result = await this.hacknewsAgentService.run(target);
+
+    console.log('\n========== Agent 执行轨迹 ==========');
+    result.steps.forEach((step, i) => {
+      console.log(`\n[Step ${i + 1}] ${step.action}`);
+      console.log(`  Thought: ${step.thought}`);
+      console.log(`  Observation: ${step.observation}`);
+    });
+    console.log('\n========== Agent 最终结论 ==========');
+    console.log(result.finalAnswer);
   }
 }

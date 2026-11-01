@@ -38,6 +38,7 @@ import { WbgQueryService } from 'src/service/wbg-query.service';
 import { DeepSeekService } from 'src/service/ai/deepseek.service';
 import { LlmBaseService } from 'src/service/ai/llm-base.service';
 import { ArkAiService } from 'src/service/ai/arkAi.service';
+import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -97,6 +98,7 @@ import { ArkAiService } from 'src/service/ai/arkAi.service';
     DeepSeekService,
     LlmBaseService,
     ArkAiService,
+    HacknewsAgentService,
   ],
 })
 export class AppModule {}
