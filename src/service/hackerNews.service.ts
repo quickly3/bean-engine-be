@@ -19,8 +19,7 @@ import { SUMMARIZE_CONTENT_PROMPT } from 'src/prompts/summarize-content.prompt';
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import { DeepSeekService } from './ai/deepseek.service';
-import { DeepSeekFetchResponse } from './ai/ds.interface';
-import * as cheerio from 'cheerio';
+import { DeepSeekFetchResponse, DeepSeekSearchResult } from './ai/ds.interface';
 import { FeishuRobot } from './feishu/feishuRobot';
 import { ArkAiService } from './ai/arkAi.service';
 
@@ -525,29 +524,65 @@ export class HackerNewsService {
     }
 
     console.log(`[${id}] 抓取页面: ${record.url}`);
-    let page: DeepSeekFetchResponse;
-    try {
-      page = await this.deepSeekService.fetchPage({ url: record.url });
-    } catch (err) {
+    const domain = this.getDomain(record.url);
+
+    // 检查该 domain 是否已有 DeepSeek 抓取失败记录，有则跳过抓取，改用搜索补全摘要
+    const knownFailure = domain
+      ? await this.prisma.fetchFailedDomain.findUnique({ where: { domain } })
+      : null;
+
+    let page: DeepSeekFetchResponse | null = null;
+    let fetchError: string | null = null;
+
+    if (knownFailure) {
+      fetchError = knownFailure.error ?? '';
       console.warn(
-        `[${id}] DeepSeek 抓取失败（${_.get(err, 'message', err)}），改用直接抓取...`,
+        `[${id}] domain ${domain} 已有 DeepSeek 失败记录（${fetchError}），跳过抓取，改用搜索补全摘要`,
       );
-      page = await this.fetchPageDirect(record.url);
+    } else {
+      try {
+        page = await this.deepSeekService.fetchPage({ url: record.url });
+      } catch (err) {
+        fetchError = String(_.get(err, 'message', err));
+        console.warn(
+          `[${id}] DeepSeek 抓取失败（${fetchError}），记录 domain 并改用搜索补全摘要`,
+        );
+        if (domain) {
+          await this.prisma.fetchFailedDomain.upsert({
+            where: { domain },
+            create: { domain, error: fetchError },
+            update: { error: fetchError },
+          });
+        }
+      }
     }
 
-    if (!page?.content) {
-      throw new Error(`HackNews 记录 ${id} 抓取内容为空`);
+    let sourceText = '';
+    if (page?.content) {
+      sourceText = page.content;
+    } else {
+      // 抓取失败：改用 DeepSeek 搜索获取素材，补全中文摘要
+      sourceText = await this.searchContentForSummary(
+        id,
+        record.title,
+        record.url,
+        fetchError,
+      );
+      console.log(
+        `[${id}] 抓取失败，已通过搜索补全素材（${sourceText.length} 字符）`,
+      );
     }
 
+    // 无论抓取成功与否，都把本次抓取的正文保存到 content
     await this.prisma.hackNews.update({
       where: { id },
-      data: { content: page.content },
+      data: { content: sourceText },
     });
     console.log(
-      `[${id}] 原文已保存（${page.content.length} 字符），正在生成中文摘要...`,
+      `[${id}] 正文已保存（${sourceText.length} 字符），正在生成中文摘要...`,
     );
 
-    const prompt = `${SUMMARIZE_CONTENT_PROMPT}\n\n标题：${record.title ?? ''}\n\n正文：\n${page.content.slice(0, 30000)}`;
+    const prompt = `${SUMMARIZE_CONTENT_PROMPT}\n\n标题：${record.title ?? ''}\n\n正文：\n${sourceText.slice(0, 30000)}`;
     const summaryCn = await this.callLLM(prompt);
 
     await this.prisma.hackNews.update({
@@ -556,76 +591,57 @@ export class HackerNewsService {
     });
     console.log(`[${id}] 中文摘要已保存`);
 
-    return { id, contentLength: page.content.length, summaryCn };
+    return { id, contentLength: sourceText.length, summaryCn };
   }
 
   /**
-   * 直接抓取网页并转为 Markdown 兜底方案
-   * 当 DeepSeek /v1/tools/fetch 抓取失败（如目标站屏蔽其抓取器）时使用
+   * 抓取失败时的搜索兜底：用 DeepSeek 搜索获取相关素材，拼装成可供摘要使用的正文
    */
-  private async fetchPageDirect(url: string): Promise<DeepSeekFetchResponse> {
-    const resp = await axios.get<string>(url, {
-      headers: this.headers,
-      timeout: 30_000,
-      maxRedirects: 5,
-    });
-    const $ = cheerio.load(resp.data);
-    $(
-      'script, style, noscript, nav, footer, header, aside, iframe, form, svg',
-    ).remove();
+  private async searchContentForSummary(
+    id: number,
+    title: string | null,
+    url: string,
+    fetchError: string | null,
+  ): Promise<string> {
+    let results: DeepSeekSearchResult[] = [];
+    let searchError: string | null = null;
 
-    const title =
-      $('title').text().trim() || $('h1').first().text().trim() || '';
-
-    const root = $('article').length
-      ? $('article')
-      : $('main').length
-        ? $('main')
-        : $('body');
-
-    const parts: string[] = [];
-    let lastLine = '';
-    root
-      .find('h1, h2, h3, h4, h5, h6, p, li, pre, blockquote')
-      .each((_, el) => {
-        const tag = (
-          el as unknown as { tagName?: string }
-        ).tagName?.toLowerCase();
-        const text =
-          tag === 'li'
-            ? $(el)
-                .clone()
-                .children('ul, ol')
-                .remove()
-                .end()
-                .text()
-                .replace(/\s+/g, ' ')
-                .trim()
-            : $(el).text().replace(/\s+/g, ' ').trim();
-        if (!text || text.length < 2) return;
-
-        let line: string;
-        if (tag?.startsWith('h') && tag.length === 2) {
-          line = `\n${'#'.repeat(Number(tag[1]))} ${text}`;
-        } else if (tag === 'li') {
-          line = `- ${text}`;
-        } else if (tag === 'pre') {
-          line = `\n\`\`\`\n${text}\n\`\`\``;
-        } else {
-          line = text;
-        }
-        // 跳过嵌套元素导致的重复行
-        if (line === lastLine) return;
-        lastLine = line;
-        parts.push(line);
+    try {
+      const resp = await this.deepSeekService.search({
+        query: (title || url).slice(0, 128),
+        count: 5,
+        ori_question: (title || url).slice(0, 128),
+        need_content: true,
       });
+      results = resp.results ?? [];
+    } catch (err) {
+      searchError = String(_.get(err, 'message', err));
+    }
 
-    const content = parts
-      .join('\n')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim();
+    const parts = results
+      .filter((r) => r.summary || r.content || r.snippet)
+      .map((r) => {
+        const body = (r.content || r.summary || r.snippet || '').slice(0, 5000);
+        return `## ${r.title}\n来源：${r.url}\n${r.summary ? r.summary + '\n' : ''}${body}`;
+      })
+      .filter((text) => text.trim().length > 0);
 
-    return { title, content };
+    if (!parts.length) {
+      throw new Error(
+        `[${id}] DeepSeek 抓取失败且搜索补全失败（抓取: ${fetchError ?? '未知'}；搜索: ${searchError ?? '无结果'})`,
+      );
+    }
+
+    return parts.join('\n\n');
+  }
+
+  /** 从 URL 提取 hostname，解析失败返回 null */
+  private getDomain(url: string): string | null {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return null;
+    }
   }
 
   async getAiNewsByDate(

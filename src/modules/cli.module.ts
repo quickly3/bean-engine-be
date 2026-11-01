@@ -34,11 +34,15 @@ import { HacknewsCommand } from 'src/commands/hacknews.command';
 import { ArkAiService } from 'src/service/ai/arkAi.service';
 import { FeishuCommand } from 'src/commands/feishu.command';
 import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
+import { HackNewsSummaryQueueService } from 'src/service/hacknewsSummaryQueue.service';
+import { AuthModule } from './auth.module';
+import { UserCommand } from 'src/commands/user.command';
 
 @Module({
   imports: [
     CommandModule,
     PrismaModule,
+    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
@@ -84,6 +88,8 @@ import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
     ArkAiService,
     FeishuCommand,
     HacknewsAgentService,
+    HackNewsSummaryQueueService,
+    UserCommand,
   ],
 })
 export class CliModule {}

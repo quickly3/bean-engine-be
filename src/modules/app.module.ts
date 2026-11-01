@@ -39,6 +39,11 @@ import { DeepSeekService } from 'src/service/ai/deepseek.service';
 import { LlmBaseService } from 'src/service/ai/llm-base.service';
 import { ArkAiService } from 'src/service/ai/arkAi.service';
 import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
+import { HackNewsSummaryQueueService } from 'src/service/hacknewsSummaryQueue.service';
+import { HackNewsSummaryQueueWorker } from 'src/service/hacknewsSummaryQueue.worker';
+import { HackNewsSummaryController } from 'src/controller/hacknews-summary.controller';
+import { AuthModule } from './auth.module';
+import { AuthController } from 'src/controller/auth.controller';
 
 // import { EsService } from 'src/service/es.service';
 // import { JuejinNeoService } from 'src/service/juejinNeo.service';
@@ -48,6 +53,7 @@ import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
   imports: [
     CommandModule,
     PrismaModule,
+    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
@@ -76,6 +82,8 @@ import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
     BiliController,
     WbgApiController,
     WbgQueryController,
+    HackNewsSummaryController,
+    AuthController,
   ],
   providers: [
     AppService,
@@ -99,6 +107,8 @@ import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
     LlmBaseService,
     ArkAiService,
     HacknewsAgentService,
+    HackNewsSummaryQueueService,
+    HackNewsSummaryQueueWorker,
   ],
 })
 export class AppModule {}

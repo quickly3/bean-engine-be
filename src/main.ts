@@ -26,6 +26,7 @@ async function bootstrap() {
     .setTitle('Bean Engine API')
     .setDescription('Bean Engine backend API documentation')
     .setVersion('1.0.0')
+    .addBearerAuth()
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, swaggerDocument, {

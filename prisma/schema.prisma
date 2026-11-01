@@ -142,6 +142,48 @@ model HackNews {
   @@schema("public")
 }
 
+// 登录账号：通过 CLI 创建
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  nickname     String?
+  passwordHash String
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+
+  @@schema("public")
+}
+
+// DeepSeek 抓取失败的域名记录：命中该表的 domain 将跳过 DeepSeek 抓取
+model FetchFailedDomain {
+  id        Int      @id @default(autoincrement())
+  domain    String   @unique
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@schema("public")
+}
+
+// HackerNews 摘要任务队列：一个表同时作为队列和 job 运行状态记录
+model HackNewsSummaryJob {
+  id         String    @id @default(uuid())
+  hackNewsId Int
+  // pending | processing | success | failed
+  status     String    @default("pending")
+  error      String?
+  result     Json?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([status, createdAt])
+  @@index([hackNewsId])
+  @@schema("public")
+}
+
 model WbgDataSource {
   id                   Int     @id @default(autoincrement())
   lastupdated          String?

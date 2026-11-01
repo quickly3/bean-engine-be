@@ -1,6 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { HackerNewsService } from 'src/service/hackerNews.service';
 import { HacknewsAgentService } from 'src/service/agent/hacknewsAgent.service';
+import { HackNewsSummaryQueueService } from 'src/service/hacknewsSummaryQueue.service';
 import { exit } from 'process';
 
 @Command({
@@ -12,6 +13,7 @@ export class HacknewsCommand extends CommandRunner {
   constructor(
     private readonly hackerNewsService: HackerNewsService,
     private readonly hacknewsAgentService: HacknewsAgentService,
+    private readonly hackNewsSummaryQueueService: HackNewsSummaryQueueService,
   ) {
     super();
   }
@@ -46,6 +48,14 @@ export class HacknewsCommand extends CommandRunner {
         case 'agent':
           await this.agent(options.goal);
           break;
+        // npm run cli -- hacknews -- -c summarizeEnqueue --id 12345678
+        case 'summarizeEnqueue':
+          await this.summarizeEnqueue(options.id);
+          break;
+        // npm run cli -- hacknews -- -c summarizeWorker
+        case 'summarizeWorker':
+          await this.summarizeWorker();
+          break;
         default:
           console.log(`未找到子命令: ${options.command}`);
           this.printRuntimeGuide();
@@ -70,6 +80,14 @@ export class HacknewsCommand extends CommandRunner {
     description: '报告日期，格式 YYYY-MM-DD。不传则使用当天日期',
   })
   getDate(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--id [id]',
+    description: 'HackerNews 记录 ID，用于 summarizeEnqueue 入队摘要任务',
+  })
+  getId(val: string): string {
     return val;
   }
 
@@ -119,6 +137,10 @@ export class HacknewsCommand extends CommandRunner {
     console.log(
       '  npm run cli -- hacknews -- -c agent --goal "抓取最新新闻并生成今日 AI 日报"',
     );
+    console.log(
+      '  npm run cli -- hacknews -- -c summarizeEnqueue --id 12345678',
+    );
+    console.log('  npm run cli -- hacknews -- -c summarizeWorker');
   }
 
   private getCommandDescriptions() {
@@ -148,6 +170,15 @@ export class HacknewsCommand extends CommandRunner {
         description:
           '智能体模式：由 LLM 自主决策执行抓取/翻译/分类/日报全流程，可通过 --goal 指定任务目标',
       },
+      {
+        name: 'summarizeEnqueue',
+        description:
+          '把指定 HackerNews 记录的摘要任务写入队列，可通过 --id 指定记录 ID',
+      },
+      {
+        name: 'summarizeWorker',
+        description: '启动摘要任务队列 worker，持续消费队列中的 job',
+      },
     ];
   }
 
@@ -176,6 +207,44 @@ export class HacknewsCommand extends CommandRunner {
     console.log(`\n报告日期: ${result.date}`);
     console.log(`新闻数量: ${result.total}`);
     console.log(`文件路径: ${result.filePath}`);
+  }
+
+  /**
+   * 把 HackerNews 摘要任务写入队列
+   * @param id HackerNews 记录 ID
+   */
+  private async summarizeEnqueue(id?: string) {
+    const hackNewsId = Number(id);
+    if (!id || Number.isNaN(hackNewsId)) {
+      console.log(
+        '请通过 --id 指定 HackerNews 记录 ID，例如: npm run cli -- hacknews -- -c summarizeEnqueue --id 12345678',
+      );
+      return;
+    }
+
+    const job = await this.hackNewsSummaryQueueService.enqueue(hackNewsId);
+    console.log(`任务已入队: job=${job.id}, hackNewsId=${job.hackNewsId}`);
+  }
+
+  /**
+   * 启动队列 worker，持续消费待执行 job（Ctrl+C 退出）
+   */
+  private async summarizeWorker() {
+    console.log('HackNews 摘要任务队列 worker 已启动（Ctrl+C 退出）');
+
+    let stopping = false;
+    process.once('SIGINT', () => {
+      stopping = true;
+    });
+
+    while (!stopping) {
+      const processed = await this.hackNewsSummaryQueueService.processNext();
+      if (!processed) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    }
+
+    console.log('HackNews 摘要任务队列 worker 已停止');
   }
 
   /**

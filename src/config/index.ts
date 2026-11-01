@@ -58,6 +58,10 @@ export default () => {
     github: {
       GITHUB_TOKEN: process.env.GITHUB_TOKEN,
     },
+    jwt: {
+      secret: process.env.JWT_SECRET || 'bean-engine-jwt-secret',
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    },
     HTTPS_PROXY: process.env.HTTPS_PROXY,
   };
 };

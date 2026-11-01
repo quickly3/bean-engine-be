@@ -709,7 +709,7 @@ export class SearchService {
     const total = await this.prismaService.hackNews.count({
       where,
     });
-    const data = await this.prismaService.hackNews.findMany({
+    const data: any[] = await this.prismaService.hackNews.findMany({
       take,
       skip,
       orderBy: {
@@ -717,6 +717,27 @@ export class SearchService {
       },
       where,
     });
+
+    const hnIds: any[] = data.map((item) => item.id);
+    if (hnIds.length > 0) {
+      const HackNewsSummaryJobs =
+        await this.prismaService.hackNewsSummaryJob.findMany({
+          where: {
+            hackNewsId: {
+              in: hnIds,
+            },
+          },
+        });
+
+      data.forEach((item) => {
+        const job = HackNewsSummaryJobs.find(
+          (job) => job.hackNewsId === item.id,
+        );
+        if (job) {
+          item.fetchStatus = job.status;
+        }
+      });
+    }
 
     return {
       total,
