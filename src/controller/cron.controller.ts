@@ -6,6 +6,7 @@ import { HackerNewsService } from 'src/service/hackerNews.service';
 import { RssService } from 'src/service/rss/rss.service';
 import { SearchService } from 'src/service/search.service';
 
+const DISABLE_CRON = process.env.DISABLE_CRON === 'true';
 @ApiTags('cron')
 @Controller('cron')
 export class CronController {
@@ -26,26 +27,34 @@ export class CronController {
     return this.hackerNewsService.generateAiDailyReport(date);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_7AM)
+  @Cron(CronExpression.EVERY_DAY_AT_7AM, {
+    disabled: DISABLE_CRON,
+  })
   async dayCron() {
     if (process.env.NODE_ENV === 'location') return;
     // await this.dailyReportService.sendToFs('company');
     await this.hackerNewsService.generateHackNewsDailyReportMd();
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  @Cron(CronExpression.EVERY_DAY_AT_3AM, {
+    disabled: DISABLE_CRON,
+  })
   async esClear() {
     if (process.env.NODE_ENV === 'location') return;
     await this.searchService.esClearLast();
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  @Cron(CronExpression.EVERY_DAY_AT_3AM, {
+    disabled: DISABLE_CRON,
+  })
   async rssCrawl() {
     if (process.env.NODE_ENV === 'location') return;
     await this.rssService.parseOpml();
   }
 
-  @Cron(CronExpression.EVERY_HOUR)
+  @Cron(CronExpression.EVERY_HOUR, {
+    disabled: DISABLE_CRON,
+  })
   async getNewStories() {
     if (process.env.NODE_ENV === 'location') return;
     const ids = await this.hackerNewsService.getNewStories2();
