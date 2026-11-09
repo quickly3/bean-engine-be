@@ -56,6 +56,10 @@ export class HacknewsCommand extends CommandRunner {
         case 'summarizeWorker':
           await this.summarizeWorker();
           break;
+        // npm run cli -- hacknews -- -c backfillDomain
+        case 'backfillDomain':
+          await this.backfillDomain();
+          break;
         default:
           console.log(`未找到子命令: ${options.command}`);
           this.printRuntimeGuide();
@@ -141,6 +145,7 @@ export class HacknewsCommand extends CommandRunner {
       '  npm run cli -- hacknews -- -c summarizeEnqueue --id 12345678',
     );
     console.log('  npm run cli -- hacknews -- -c summarizeWorker');
+    console.log('  npm run cli -- hacknews -- -c backfillDomain');
   }
 
   private getCommandDescriptions() {
@@ -178,6 +183,11 @@ export class HacknewsCommand extends CommandRunner {
       {
         name: 'summarizeWorker',
         description: '启动摘要任务队列 worker，持续消费队列中的 job',
+      },
+      {
+        name: 'backfillDomain',
+        description:
+          '回填历史 HackNews 记录的 domain 字段（从 url 解析 hostname），可重复执行',
       },
     ];
   }
@@ -245,6 +255,14 @@ export class HacknewsCommand extends CommandRunner {
     }
 
     console.log('HackNews 摘要任务队列 worker 已停止');
+  }
+
+  /**
+   * 回填历史 HackNews 记录的 domain 字段
+   */
+  private async backfillDomain() {
+    const result = await this.hackerNewsService.backfillDomain();
+    console.log(JSON.stringify(result, null, 2));
   }
 
   /**

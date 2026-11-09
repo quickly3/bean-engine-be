@@ -170,6 +170,8 @@ export class HackerNewsService {
         }
 
         resp.state = recordStatus.PENDING;
+        // 从 url 中提取域名单独保存，便于按来源域名统计/过滤
+        resp.domain = this.getDomain(resp.url);
         datas.push(resp);
       }
     }
@@ -633,6 +635,64 @@ export class HackerNewsService {
     }
 
     return parts.join('\n\n');
+  }
+
+  /**
+   * 回填历史 HackNews 记录的 domain 字段
+   * 与 getNewStories2 入库逻辑保持一致：从 url 解析 hostname 写入 domain。
+   * 只处理 url 非空且 domain 为空的记录，可重复执行。
+   * @param batchSize 每批处理的记录数
+   */
+  async backfillDomain(batchSize = 1000) {
+    const where = { url: { not: null }, domain: null };
+    const total = await this.prisma.hackNews.count({ where });
+    console.log(`待回填记录数: ${total}`);
+
+    let lastId = 0;
+    let processed = 0;
+    let updated = 0;
+    let skipped = 0;
+
+    while (true) {
+      const records = await this.prisma.hackNews.findMany({
+        where: { ...where, id: { gt: lastId } },
+        select: { id: true, url: true },
+        orderBy: { id: 'asc' },
+        take: batchSize,
+      });
+
+      if (records.length === 0) break;
+      lastId = records[records.length - 1].id;
+
+      // 按 domain 分组，减少 update 次数
+      const groups = new Map<string, number[]>();
+      for (const record of records) {
+        const domain = this.getDomain(record.url);
+        if (!domain) {
+          skipped++;
+          continue;
+        }
+        const ids = groups.get(domain) ?? [];
+        ids.push(record.id);
+        groups.set(domain, ids);
+      }
+
+      for (const [domain, ids] of groups) {
+        const res = await this.prisma.hackNews.updateMany({
+          where: { id: { in: ids } },
+          data: { domain },
+        });
+        updated += res.count;
+      }
+
+      processed += records.length;
+      console.log(`回填进度: ${processed} / ${total}`);
+    }
+
+    console.log(
+      `回填完成: 处理 ${processed} 条，更新 ${updated} 条，url 无法解析跳过 ${skipped} 条`,
+    );
+    return { total, processed, updated, skipped };
   }
 
   /** 从 URL 提取 hostname，解析失败返回 null */

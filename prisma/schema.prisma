@@ -132,6 +132,7 @@ model HackNews {
   text_cn      String?
   type         String?
   url          String?
+  domain       String?
   content      String?
   summary_cn   String?
   createdAt    DateTime @default(now())
@@ -139,6 +140,7 @@ model HackNews {
 
   @@index([type])
   @@index([time])
+  @@index([domain])
   @@schema("public")
 }
 
